@@ -11,19 +11,11 @@ t_vec vector(const double x, const double y, const double z)
 
 t_vec unit(const t_vec* v)
 {
+	const double l = length(v);
 	t_vec ret;
-	if (!v->x)
-		ret.x = 0;
-	else
-		ret.x = 1;
-	if (!v->y)
-		ret.y = 0;
-	else
-		ret.y = 1;
-	if (!v->z)
-		ret.z = 0;
-	else
-		ret.z = 1;
+	ret.x = v->x / l;
+	ret.y = v->y / l;
+	ret.z = v->z / l;
 	return (ret);
 }
 

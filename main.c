@@ -41,8 +41,6 @@ int	main(int argc, char *argv[])
 		,origin.y + (- horizontal.y / 2) + (-vertical.y / 2) + (0) 
 		,origin.z + (- horizontal.z / 2) + (-vertical.z / 2) + (-focal_length));
 	
-	printf("%lf, %lf, %lf\n", lower_left_corner.x, lower_left_corner.y, lower_left_corner.z);
-	
 	ft_mlx_init(&vars);
 	double u;
 	double v;
@@ -58,8 +56,10 @@ int	main(int argc, char *argv[])
 			lower_left_corner.y + (u * horizontal.y) + (v * vertical.y) - origin.y,
 			lower_left_corner.z + (u * horizontal.z) + (v * vertical.z) - origin.z);
 			ray_tmp = ray(origin, dir);
-			ft_pixel_put(&vars, i, j, get_color_from_ray_tmp(&ray_tmp));
-			//ft_pixel_put(&vars, i, j, rgb_to_int(0, 0.5, 0.7, 1.0));
+			if (i == 0)
+				//printf("%lf\n", unit(&(ray_tmp.dir)).y);
+				printf("%lf\n", lower_left_corner.y + (u * horizontal.y) + (v * vertical.y) - origin.y);
+			ft_pixel_put(&vars, i, window_height - 1 - j, get_color_from_ray_tmp(&ray_tmp));
 		}
 	}
 	mlx_loop(vars.mlx);
