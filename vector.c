@@ -1,67 +1,103 @@
 #include "vector.h"
 
-t_vec vector(const double x, const double y, const double z)
+t_vec create_vec(double x, double y, double z)
 {
-	t_vec ret;
-	ret.x = x;
-	ret.y = y;
-	ret.z = z;
-	return (ret);
+    t_vec vec;
+    vec.x = x;
+    vec.y = y;
+    vec.z = z;
+    return (vec);
 }
 
-t_vec unit(const t_vec* v)
+void set_vec(t_vec *vec, double x, double y, double z)
 {
-	const double l = length(v);
-	t_vec ret;
-	ret.x = v->x / l;
-	ret.y = v->y / l;
-	ret.z = v->z / l;
-	return (ret);
+    vec->x = x;
+    vec->y = y;
+    vec->z = z;
 }
 
-t_vec plus(const t_vec* v1, const t_vec* v2)
+double vec_len(t_vec vec)
 {
-	t_vec ret;
-	ret.x = v1->x + v2->x;
-	ret.y = v1->y + v2->y;
-	ret.z = v1->z + v2->z;
-	return (ret);
+    return (sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z));
 }
 
-t_vec minus(const t_vec* v1, const t_vec* v2)
+t_vec vec_sum(t_vec vec1, t_vec vec2)
 {
-	t_vec ret;
-	ret.x = v1->x - v2->x;
-	ret.y = v1->y - v2->y;
-	ret.z = v1->z - v2->z;
-	return (ret);
+    vec1.x += vec2.x;
+    vec1.y += vec2.y;
+    vec1.z += vec2.z;
+    return (vec1);
 }
 
-t_vec multiply(t_vec* v1, double t)
+t_vec      vec_sub(t_vec vec, t_vec vec2)
 {
-	t_vec ret;
-	ret.x = v1->x * t;
-	ret.y = v1->y * t;
-	ret.z = v1->z * t;
-	return (ret);
+    vec.x -= vec2.x;
+    vec.y -= vec2.y;
+    vec.z -= vec2.z;
+    return (vec);
 }
 
-double length(const t_vec* v)
+t_vec vec_scalar_mul(t_vec vec, double s)
 {
-	return (sqrt((v->x) * (v->x) + (v->y) * (v->y) + (v->z) * (v->z)));
+    vec.x *= s;
+    vec.y *= s;
+    vec.z *= s;
+    return (vec);
 }
 
-double dot(const t_vec* v1, const t_vec* v2)
+t_vec   vec_mul(t_vec vec1, t_vec vec2)
 {
-	return ((v1->x * v2->x) + (v1->y * v2->y) + (v1->z * v2->z));
+    vec1.x *= vec2.x;
+    vec1.y *= vec2.y;
+    vec1.z *= vec2.z;
+    return (vec1);
 }
 
-t_vec cross(const t_vec* v1, const t_vec* v2)
+t_vec      vec_division(t_vec vec, double t)
 {
-	t_vec ret;
+    vec.x *= 1 / t;
+    vec.y *= 1 / t;
+    vec.z *= 1 / t;
 
-	ret.x = v1->y * v2->z + v1->z * v2->y;
-	ret.y = v1->z * v2->x + v1->x * v2->z;
-	ret.z = v1->x * v2->y + v1->y * v2->x;
-	return (ret);
+    return vec;
+}
+
+double  vdot(t_vec vec, t_vec vec2)
+{
+    return (vec.x * vec2.x + vec.y * vec2.y + vec.z * vec2.z);
+}
+
+t_vec  vcross(t_vec vec1, t_vec vec2)
+{
+    t_vec vec;
+
+    vec.x = vec1.y * vec2.z - vec1.z * vec2.y;
+    vec.y = vec1.z * vec2.x - vec1.x * vec2.z;
+    vec.z = vec1.x * vec2.y - vec1.y * vec2.x;
+    return (vec);
+}
+
+t_vec      unit_vec(t_vec vec)
+{
+    double len = vec_len(vec);
+    if (len == 0)
+    {
+        printf("Error : the length of vector is 0\n");
+        exit(1);
+    }
+    vec.x /= len;
+    vec.y /= len;
+    vec.z /= len;
+    return (vec);
+}
+
+t_vec  vmin(t_vec vec1, t_vec vec2)
+{
+    if (vec1.x > vec2.x)
+        vec1.x = vec2.x;
+    if (vec1.y > vec2.y)
+        vec1.y = vec2.y;
+    if (vec1.z > vec2.z)
+        vec1.z = vec2.z;
+    return (vec1);
 }

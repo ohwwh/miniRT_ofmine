@@ -20,7 +20,7 @@ LIBINCSDIR=./libohw/includes
 SRCSDIR=./
 INCSDIR=./
 SRCSBNSDIR=./
-SRCS_NAME=main.c vector.c ft_mlx.c ray.c
+SRCS_NAME=main.c vector.c ft_mlx.c ray.c sphere.c random.c
 SRCS=$(addprefix $(SRCSDIR), $(SRCS_NAME))
 
 BONUS_NAME=${SRCS_NAME:.c=_bonus.c}
