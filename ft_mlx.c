@@ -7,7 +7,7 @@
 
 int rgb_to_int(double t, double r, double g, double b)
 {
-	return ((int)(255 * t) << 24 | (int)(255 * r) << 16 | (int)(255 * g) << 8 | (int)(255 * b));
+	return ((int)(255.999 * t) << 24 | (int)(255.999 * r) << 16 | (int)(255.999 * g) << 8 | (int)(255.999 * b));
 }
 
 void ft_pixel_put(t_vars *vars, int x, int y, int color)

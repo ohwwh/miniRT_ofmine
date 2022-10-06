@@ -56,9 +56,8 @@ int	main(int argc, char *argv[])
 			lower_left_corner.y + (u * horizontal.y) + (v * vertical.y) - origin.y,
 			lower_left_corner.z + (u * horizontal.z) + (v * vertical.z) - origin.z);
 			ray_tmp = ray(origin, dir);
-			if (i == 0)
-				//printf("%lf\n", unit(&(ray_tmp.dir)).y);
-				printf("%lf\n", lower_left_corner.y + (u * horizontal.y) + (v * vertical.y) - origin.y);
+			/*if (i == 0)
+				printf("%lf\n", lower_left_corner.y + (u * horizontal.y) + (v * vertical.y) - origin.y);*/
 			ft_pixel_put(&vars, i, window_height - 1 - j, get_color_from_ray_tmp(&ray_tmp));
 		}
 	}
