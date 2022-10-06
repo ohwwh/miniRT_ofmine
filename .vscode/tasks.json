@@ -11,7 +11,7 @@
                 "-I${workspaceFolder}/incs/",
                 "-L${workspaceFolder}/mlx/",
                 "-L../libohw/",
-                "${workspaceFolder}/srcs/*.c",
+                "${workspaceFolder}/*.c",
                 //"${so_long.c parsing.c get_next_line.c get_next_line_utils.c}",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}",
