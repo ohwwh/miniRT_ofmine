@@ -15,7 +15,8 @@
 #include "sphere.h"
 #include "random.h"
 #include "libohw/includes/libft.h"
-#define MAX_DEPTH 25
+#define MAX_DEPTH 50
+//#define ANTI 100
 
 t_vec rand_sphere()
 {
@@ -64,9 +65,9 @@ t_color ray_color(t_ray r, void* world[], int depth)
 	int i = 0;
 	t_record rec;
 	rec.t = 0.0;
-	rec.t_min = 0.0001;
+	rec.t_min = 0.001;
 	rec.t_max = INFINITY;
-	double bias = 1;
+	float bias = 1;
 
 	if (depth <= 0)
         return (create_vec(0,0,0));
@@ -87,7 +88,7 @@ t_color ray_color(t_ray r, void* world[], int depth)
 	if (rec.t > 0)
 	{
 		t_vec target = vec_sum(vec_sum(rec.p, vec_scalar_mul(rec.normal, bias)), rand_sphere());
-		return vec_scalar_mul(ray_color(ray(rec.p, vec_sub(target, rec.p)), world,depth - 1), 0.5);
+		return vec_scalar_mul(ray_color(ray(rec.p, vec_sub(target, rec.p)), world,depth - 1), 0.3);
 	}
 	t = 0.5 * (unit_vec((r.dir)).y + 1.0);
 	return (create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)));
@@ -165,19 +166,28 @@ int	main(int argc, char *argv[])
 		for (int i = 0; i < window_width; ++i)
 		{
 			t_color color = create_vec(0, 0, 0); // 여기서 뭔가 바꼈는데??
+			for (int s = 0; s < ANTI; s ++)
+			{
+				u = ((double)i + random_double()) / (window_width-1);
+				v = ((double)j + random_double()) / (window_height-1);
+				dir = create_vec(lower_left_corner.x + (u * horizontal.x) + (v * vertical.x) - origin.x,
+				lower_left_corner.y + (u * horizontal.y) + (v * vertical.y) - origin.y,
+				lower_left_corner.z + (u * horizontal.z) + (v * vertical.z) - origin.z);
+				ray_tmp = ray(origin, dir);
+				color = vec_sum(color, ray_color(ray_tmp, world, MAX_DEPTH));
+			}
+			//ANTI = 0 일때 예외처리
+			color = vec_division(color, ANTI);
+			ft_pixel_put(&vars, i, window_height - 1 - j, rgb_to_int(color));
+			/*t_color color = create_vec(0, 0, 0);
 			u = ((double)i) / (window_width-1);
 			v = ((double)j) / (window_height-1);
 			dir = create_vec(lower_left_corner.x + (u * horizontal.x) + (v * vertical.x) - origin.x,
 			lower_left_corner.y + (u * horizontal.y) + (v * vertical.y) - origin.y,
 			lower_left_corner.z + (u * horizontal.z) + (v * vertical.z) - origin.z);
 			ray_tmp = ray(origin, dir);
-			/*t_record rec;
-			rec.t = 0.0;
-			rec.t_min = 0;
-			rec.t_max = INFINITY;*/
-			if (i == 320 && j == 200)
-				printf("break\n");
-			ft_pixel_put(&vars, i, window_height - 1 - j, rgb_to_int(ray_color(ray_tmp, world, MAX_DEPTH)));
+			color = vec_sum(color, ray_color(ray_tmp, world, MAX_DEPTH));
+			ft_pixel_put(&vars, i, window_height - 1 - j, rgb_to_int(color));*/ //안티앨리어싱 없음
 		}
 	}
 	mlx_loop(vars.mlx);
