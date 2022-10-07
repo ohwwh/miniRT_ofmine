@@ -27,9 +27,9 @@ int hit_sphere(t_sphere* s, t_ray* r, t_record* rec)
 	root = (-b - sqrtd) / a;
 	if (root < rec->t_min || rec->t_max < root)
 	{
-    	root = (-b + sqrtd) / a;
-     	if (root < rec->t_min || rec->t_max < root)
-        	return (0);
+		root = (-b + sqrtd) / a;
+		if (root < rec->t_min || rec->t_max < root)
+			return (0);
 	}
 	rec->t = root;
 	rec->p = ray_end(r, root);

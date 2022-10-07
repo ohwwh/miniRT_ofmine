@@ -15,7 +15,7 @@
 #include "sphere.h"
 #include "random.h"
 #include "libohw/includes/libft.h"
-#define MAX_DEPTH 50
+#define MAX_DEPTH 25
 
 t_vec rand_sphere()
 {
@@ -23,9 +23,10 @@ t_vec rand_sphere()
 
 	while (1)
 	{
-		ret = create_vec(random_double(),random_double(),random_double());
+		ret = create_vec(random_double(), random_double(), random_double());
 		if (vec_len(ret) >= 1.0)
 			continue ;
+		//printf("%lf\n", ret.x);
 		return (ret);
 	}
 }
@@ -56,51 +57,20 @@ t_vec rand_sphere()
 	return (create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)));
 }*/
 
-/*t_color ray_color(t_ray r, void* world[], t_record *rec, int depth)
-{
-	double t;
-	t_vec n;
-	int i = 0;
-
-	if (depth <= 0)
-        return (create_vec(0,0,0));
-	while (i < 2)
-	{
-		if (hit_sphere((t_sphere *)world[i], &r, rec))
-		{
-			t_vec target = vec_sum(vec_sum(rec->p, rec->normal), rand_sphere());
-			return vec_scalar_mul(ray_color(ray(rec->p, vec_sub(target, rec->p)), world, rec, depth - 1), 0.5);
-		}
-		i ++;
-	}
-	while (i < 2)
-	{
-		hit_sphere((t_sphere *)world[i], &r, rec);
-		i ++;
-	}
-	if (rec->t > 0)
-	{
-		t_vec target = vec_sum(vec_sum(rec->p, rec->normal), rand_sphere());
-		return vec_scalar_mul(ray_color(ray(rec->p, vec_sub(target, rec->p)), world, rec, depth - 1), 0.5);
-	}
-	t = 0.5 * (unit_vec((r.dir)).y + 1.0);
-	return (create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)));
-}*/
-
-/*t_color ray_color(t_ray r, void* world[], int depth)
+t_color ray_color(t_ray r, void* world[], int depth)
 {
 	double t;
 	t_vec n;
 	int i = 0;
 	t_record rec;
 	rec.t = 0.0;
-	rec.t_min = 0.001;
+	rec.t_min = 0.0001;
 	rec.t_max = INFINITY;
-	double bias = 1e-6;
+	double bias = 1;
 
 	if (depth <= 0)
         return (create_vec(0,0,0));
-	while (i < 2)
+	/*while (i < 2)
 	{
 		if (hit_sphere((t_sphere *)world[i], &r, &rec))
 		{
@@ -108,7 +78,7 @@ t_vec rand_sphere()
 			return vec_scalar_mul(ray_color(ray(rec.p, vec_sub(target, rec.p)), world, depth - 1), 0.5);
 		}
 		i ++;
-	}
+	}*/
 	while (i < 2)
 	{
 		hit_sphere((t_sphere *)world[i], &r, &rec);
@@ -121,9 +91,9 @@ t_vec rand_sphere()
 	}
 	t = 0.5 * (unit_vec((r.dir)).y + 1.0);
 	return (create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)));
-}*/
+}
 
-t_color ray_color(t_ray r, void* world[], int depth)
+/*t_color ray_color(t_ray r, void* world[], int depth)
 {
 	double t;
 	t_vec n;
@@ -144,7 +114,7 @@ t_color ray_color(t_ray r, void* world[], int depth)
 		}
 		i ++;
 	}
-	/*while (i < 2)
+	while (i < 2)
 	{
 		hit_sphere((t_sphere *)world[i], &r, &rec);
 		i ++;
@@ -152,16 +122,16 @@ t_color ray_color(t_ray r, void* world[], int depth)
 	if (rec.t > 0)
 	{
 		t_vec target = vec_sum(vec_sum(rec.p, rec.normal), rand_sphere());
-		return vec_scalar_mul(ray_color(ray(rec.p, vec_sub(target, rec.p)), world,depth - 1), 0.5);
-	}*/
+		return vec_scalar_mul(ray_color(ray(rec.p, vec_sub(target, rec.p)), world, depth - 1), 0.5);
+	}
 	t = 0.5 * (unit_vec((r.dir)).y + 1.0);
 	return (create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)));
-}
+}*/
 
 int	main(int argc, char *argv[])
 {
 	t_sphere sphere = create_sphere(create_vec(0,0,-1), 0.5);
-	t_sphere surface = create_sphere(create_vec(0, -1000, 0), 990);
+	t_sphere surface = create_sphere(create_vec(0, -100.5, -1), 100);
 	void *world[10];
 	world[9] = 0;
 	world[0] = (void *)(&sphere);
@@ -170,7 +140,7 @@ int	main(int argc, char *argv[])
 	//double ratio = 16.0 / 10.0;
 	int window_width = 640;
 	int window_height = 400;
-	double ratio = (double)640 / (double)400;
+	double ratio = (double)window_width / (double)window_height;
 
 	double viewport_height = 2.0;
 	double viewport_width = ratio * viewport_height;
@@ -185,6 +155,7 @@ int	main(int argc, char *argv[])
 	//(orgin) - (horizontal / 2) - (vertical / 2) - vector(0,0,focal_length)
 	
 	ft_mlx_init(&vars);
+	srand(time(0));
 	double u;
 	double v;
 	t_vec dir;
@@ -193,6 +164,7 @@ int	main(int argc, char *argv[])
 	{
 		for (int i = 0; i < window_width; ++i)
 		{
+			t_color color = create_vec(0, 0, 0); // 여기서 뭔가 바꼈는데??
 			u = ((double)i) / (window_width-1);
 			v = ((double)j) / (window_height-1);
 			dir = create_vec(lower_left_corner.x + (u * horizontal.x) + (v * vertical.x) - origin.x,
