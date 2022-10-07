@@ -18,6 +18,11 @@ int rgb_to_int(t_color c)
 
 /*int rgb_to_int(t_color c)
 {
+	return ((int)(255.999 * 0) << 24 | (int)(255.999 * (clamp(c.x))) << 16 | (int)(255.999 * (clamp(c.y))) << 8 | (int)(255.999 * (clamp(c.z))));
+}*/
+
+/*int rgb_to_int(t_color c)
+{
 	return ((int)(255.999 * 0) << 24 | (int)(255.999 * c.x) << 16 | (int)(255.999 * c.y) << 8 | (int)(255.999 * c.z));
 }*/
 

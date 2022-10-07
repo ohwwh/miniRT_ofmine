@@ -165,7 +165,9 @@ int	main(int argc, char *argv[])
 	{
 		for (int i = 0; i < window_width; ++i)
 		{
-			t_color color = create_vec(0, 0, 0); // 여기서 뭔가 바꼈는데??
+			t_color color = create_vec(1 * 60.0, 0.2 * 60.0, 0.6 * 60.0); // 여기서 뭔가 바꼈는데??
+			//기본 색상을 어떻게 지정할까? 원하는 색의 rgb값 / 256 * anti 
+			//물체마다 따로 지정하려면 어떻게 하나?
 			for (int s = 0; s < ANTI; s ++)
 			{
 				u = ((double)i + random_double()) / (window_width-1);
