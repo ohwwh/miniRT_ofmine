@@ -36,7 +36,7 @@ void	ft_mlx_init(t_vars *vars)
 	vars->mlx = mlx_init();
 	if (!vars->mlx)
 		printf("Error\nmlx_init fail\n");
-	vars->win = mlx_new_window(vars->mlx, 640, 400, "menu");
+	vars->win = mlx_new_window(vars->mlx, 640, 320, "menu");
 	if (!vars->win)
 	{
 		printf("Error\nmlx_new_window fail\n");

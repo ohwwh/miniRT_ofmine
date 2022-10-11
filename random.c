@@ -10,5 +10,5 @@ double random_double()
     return (ret);*/
     if (ANTI == 0 || ANTI == 1)
         return (0);
-    return ((double)rand() / (double)RAND_MAX);
+    return (2 * ((double)rand() / (double)RAND_MAX) - 1);
 }

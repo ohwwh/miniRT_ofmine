@@ -10,7 +10,7 @@ int front_face(t_ray *r, t_record* rec)
 	return (1);
 }
 
-int hit_sphere(t_sphere* s, t_ray* r, t_record* rec)
+int hit_sphere(t_sphere* s, int i, t_ray* r, t_record* rec)
 {
 	t_vec oc = create_vec(r->org.x - s->center.x
 	,r->org.y - s->center.y
@@ -35,16 +35,19 @@ int hit_sphere(t_sphere* s, t_ray* r, t_record* rec)
 	rec->p = ray_end(r, root);
 	rec->t_max = root;
 	rec->normal = vec_division(vec_sub(rec->p, s->center), s->rad);
+	rec->idx = i;
+	rec->mat = s->mat;
 	front_face(r, rec);
-	//rec->normal = unit_vec(vec_sub(rec->p, s->center));
 	return (1);
 }
 
-t_sphere create_sphere(t_point c, double r)
+t_sphere create_sphere(t_point c, double r, t_color color, int mat)
 {
 	t_sphere ret;
 	ret.center = c;
 	ret.rad = r;
+	ret.color = color;
+	ret.mat = mat;
 	return (ret);
 }
 

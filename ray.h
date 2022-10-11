@@ -14,9 +14,12 @@ typedef struct s_record {
 	double t_min;
 	double t;
 	int front_face;
+	int idx;
+	int mat;
 } t_record;
 
 t_ray 	ray(t_point org, t_vec dir);
 t_point 	ray_end(t_ray* ray, double t);
+t_vec reflect(t_vec v, t_vec n);
 
 #endif

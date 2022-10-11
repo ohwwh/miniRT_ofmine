@@ -2,7 +2,7 @@
 #define RANDOM_H
 #include <time.h>
 #include <stdlib.h>
-#define ANTI 100
+#define ANTI 1000
 
 double random_double();
 

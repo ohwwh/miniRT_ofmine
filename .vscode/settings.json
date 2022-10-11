@@ -3,6 +3,8 @@
         "so_long": "c",
         "libft.h": "c",
         "ft_printf.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "__functional_03": "c",
+        "functional": "c"
     }
 }
