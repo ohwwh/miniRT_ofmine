@@ -32,7 +32,7 @@ void ft_pixel_put(t_vars *vars, int x, int y, int color)
 }
 
 void	ft_mlx_init(t_vars *vars)
-{
+{	
 	vars->mlx = mlx_init();
 	if (!vars->mlx)
 		printf("Error\nmlx_init fail\n");

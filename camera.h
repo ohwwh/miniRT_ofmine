@@ -2,12 +2,13 @@
 #define CAMERA_H
 #include "vector.h"
 
-
 typedef struct s_camera {
 	t_point origin;
 	t_point lower_left_corner;
 	t_vec horizontal;
 	t_vec vertical;
+	t_point lookat;
+	
 
 } t_camera;
 

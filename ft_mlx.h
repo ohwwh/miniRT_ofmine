@@ -1,13 +1,22 @@
 #ifndef FT_MLX_H
 #define FT_MLX_H
-#include "./mlx/mlx.h"
-#include "vector.h"
 #include <stdio.h>
-#include <stdlib.h>
+#include "./mlx/mlx.h"
+#include "camera.h"
+#include "vector.h"
 
 typedef struct s_vars {
 	void* mlx;
 	void* win;
+	int is_move;
+	int is_trace;
+	int window_height;
+	int window_width;
+	void **world;
+	int anti;
+	int changed;
+	t_camera camera;
+	
 } t_vars;
 
 int 	rgb_to_int(t_color c);

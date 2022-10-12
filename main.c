@@ -10,16 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ray.h"
-#include "ft_mlx.h"
-#include "sphere.h"
-#include "random.h"
-#include "light.h"
-#include "camera.h"
-#include "libohw/includes/libft.h"
+#include "miniRT.h"
 #define MAX_DEPTH 50 //재귀의 횟수가 깊어질 수록 그림자의 색깔이 물체의 색깔과 비슷해진다
-//#define ANTI 100
-
+t_color color;
 
 t_vec rand_sphere()
 {
@@ -27,7 +20,7 @@ t_vec rand_sphere()
 
 	while (1)
 	{
-		ret = create_vec(random_double(), random_double(), random_double());
+		ret = create_vec(random_double(7), random_double(7), random_double(7));
 		if (vec_len(ret) >= 1.0)
 			continue ;
 		//printf("%lf\n", ret.x);
@@ -76,6 +69,30 @@ t_vec rand_hemi_sphere(t_vec normal)
 
 }*/
 
+t_color ray_color_2(t_ray r, void* world[])
+{
+	t_record rec;
+	int i;
+	double t;
+
+	rec.t = 0.0;
+	rec.t_min = 0.001;
+	rec.t_max = INFINITY;
+	i = 0;
+	while ((t_sphere *)world[i])
+	{
+		hit_sphere((t_sphere *)world[i], i, &r, &rec);
+		i ++;
+	}
+	if (rec.t > 0)
+		return (((t_sphere *)world[rec.idx])->color);
+	t = 0.5 * (unit_vec((r.dir)).y + 1.0);
+	return (vec_scalar_mul(
+		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 0.7)
+	);
+	//return (create_vec(1,1,1));
+}
+
 t_color ray_color(t_ray r, void* world[], int depth)
 {
 	double t;
@@ -103,7 +120,7 @@ t_color ray_color(t_ray r, void* world[], int depth)
 			//target = vec_sum(vec_sum(rec.p, rec.normal), rand_sphere()); //wihtout lambertian
 			target = vec_sum(rec.p, rand_hemi_sphere(rec.normal)); //with lambertian
 			//lambertian 반사 구현할 때, 0으로 나누는 경우가 생김. 원문에서 bullet으로 검색해서 예외 처리 할 것
-			color = vec_mul(color, ray_color(ray(rec.p, vec_sub(target, rec.p)), world,depth - 1));
+			color = vec_mul(color, ray_color(ray(rec.p, vec_sub(target, rec.p)), world, depth - 1));
 		}
 			
 		else if (rec.mat == 1) //metal 재질인 경우
@@ -111,7 +128,7 @@ t_color ray_color(t_ray r, void* world[], int depth)
 			target = reflect(unit_vec(r.dir), rec.normal);
 			t_ray scattered = ray(rec.p, target);
 			if (vdot(scattered.dir, rec.normal) > 0)
-				color = vec_mul(color, ray_color(ray(rec.p, target), world,depth - 1));
+				color = vec_mul(color, ray_color(ray(rec.p, target), world, depth - 1));
 			else
 				color = create_vec(0, 0, 0);
 		}
@@ -120,13 +137,50 @@ t_color ray_color(t_ray r, void* world[], int depth)
 		//color = vec_sum(color, point_light_get(&r, &rec, &light));
 		return (color);
 	}
-	/*if (depth < MAX_DEPTH)
-		return (create_vec(1, 1, 1)); //하늘 색을 반영할 것인가 말 것인가......*/
 	t = 0.5 * (unit_vec((r.dir)).y + 1.0);
 	return (vec_scalar_mul(
-		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 0.7)
+		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 0.1)
 	);
 	//return (create_vec(1,1,1));
+}
+
+void print_init(t_vars vars)
+{
+	double u;
+	double v;
+	t_vec dir;
+	t_ray ray_tmp;
+	int k = 0;
+	for (int j = vars.window_height - 1; j >= 0; --j)
+	{
+		if (vars.is_trace == 1)
+		{
+			printf("\rScanlines remaining: %d", j);
+			fflush(stdout);
+		}
+		for (int i = 0; i < vars.window_width; ++i)
+		{
+			//기본 색상을 어떻게 지정할까? 원하는 색의 rgb값 / 256 * anti 
+			//물체마다 따로 지정하려면 어떻게 하나?
+			//t_color color = create_vec(0, 0, 0);
+			color = create_vec(0, 0, 0);
+			for (int s = 0; s < vars.anti; s ++)
+			{
+				u = ((double)i + random_double(vars.anti)) / (vars.window_width-1);
+				v = ((double)j + random_double(vars.anti)) / (vars.window_height-1);
+				dir = create_vec(vars.camera.lower_left_corner.x + (u * vars.camera.horizontal.x) + (v * vars.camera.vertical.x) - vars.camera.origin.x,
+				vars.camera.lower_left_corner.y + (u * vars.camera.horizontal.y) + (v * vars.camera.vertical.y) - vars.camera.origin.y,
+				vars.camera.lower_left_corner.z + (u * vars.camera.horizontal.z) + (v * vars.camera.vertical.z) - vars.camera.origin.z);
+				ray_tmp = ray(vars.camera.origin, dir);
+				if (vars.is_trace == 1)
+					color = vec_sum(color, ray_color(ray_tmp, vars.world, MAX_DEPTH));
+				else
+					color = vec_sum(color, ray_color_2(ray_tmp, vars.world));
+			}
+			color = vec_division(color, vars.anti);
+			ft_pixel_put(&vars, i, vars.window_height - 1 - j, rgb_to_int(color));
+		}
+	}
 }
 
 int	main(int argc, char *argv[])
@@ -136,65 +190,41 @@ int	main(int argc, char *argv[])
 	t_sphere surface = create_sphere(create_vec(0, -100.5, -1), 100, 
 	//create_vec(1, 0.75, 0.8));
 	create_vec(0.8, 0.8, 0), 0);
-	t_sphere metal = create_sphere(create_vec(-1,0, -1), 0.5, 
+	t_sphere metal = create_sphere(create_vec(1,0, -1), 0.5, 
 	create_vec(0.8, 0.8, 0.8), 1);
 	t_sphere light = create_sphere(create_vec(4,8, -1), 4, 
 	create_vec(8, 8, 8), -1);
+
+	/*t_sphere light2 = create_sphere(create_vec(-4,8, -1), 4, 
+	create_vec(8, 8, 8), -1);*/
 	void *world[10];
 	world[4] = 0;
 	world[0] = (void *)(&sphere);
 	world[1] = (void *)(&surface);
 	world[2] = (void *)(&metal);
 	world[3] = (void *)(&light);
+	//world[4] = (void *)(&light2);
 	t_vars	vars;
-	//double ratio = 16.0 / 10.0;
+	vars.is_trace = 0;
+	vars.anti = 2;
+	vars.is_move = -1;
+	vars.changed = 0;
+	vars.world = world;
+	vars.window_width = 640;
+	vars.window_height = 320;
 	int window_width = 640;
 	int window_height = 320;
-	double ratio = (double)window_width / (double)window_height;
+	double ratio = (double)vars.window_width / (double)vars.window_height;
 
-	t_camera camera = create_camera(create_vec(0,2,5), create_vec(0,0,-1), create_vec(0, 1, 0), 30, ratio);
+	t_camera camera = create_camera(create_vec(-1,2,1), create_vec(0,0,-1), create_vec(0, 1, 0), 80, ratio);
 	//t_camera camera = create_camera(create_vec(0,0,0), create_vec(0,0,-1), create_vec(0, 1, 0), 90, ratio);
-	
+
+	vars.camera = camera;
 	ft_mlx_init(&vars);
-	//srand(time(0));
-	double u;
-	double v;
-	t_vec dir;
-	t_ray ray_tmp;
-	for (int j = window_height - 1; j >= 0; --j)
-	{
-		for (int i = 0; i < window_width; ++i)
-		{
-			//t_color color = create_vec(1 * 60.0, 0.2 * 60.0, 0.6 * 60.0); // 여기서 뭔가 바꼈는데??
-			//기본 색상을 어떻게 지정할까? 원하는 색의 rgb값 / 256 * anti 
-			//물체마다 따로 지정하려면 어떻게 하나?
-			t_color color = create_vec(0, 0, 0);
-			for (int s = 0; s < ANTI; s ++)
-			{
-				u = ((double)i + random_double()) / (window_width-1);
-				v = ((double)j + random_double()) / (window_height-1);
-				dir = create_vec(camera.lower_left_corner.x + (u * camera.horizontal.x) + (v * camera.vertical.x) - camera.origin.x,
-				camera.lower_left_corner.y + (u * camera.horizontal.y) + (v * camera.vertical.y) - camera.origin.y,
-				camera.lower_left_corner.z + (u * camera.horizontal.z) + (v * camera.vertical.z) - camera.origin.z);
-				ray_tmp = ray(camera.origin, dir);
-				color = vec_sum(color, ray_color(ray_tmp, world, MAX_DEPTH));
-			}
-			printf("\rremaining pixel: %d", window_height * window_width - (i * (window_height - 1 - j)));
-			fflush(stdout);
-			//ANTI = 0 일때 예외처리
-			color = vec_division(color, ANTI);
-			ft_pixel_put(&vars, i, window_height - 1 - j, rgb_to_int(color));
-			/*t_color color = create_vec(0, 0, 0);
-			u = ((double)i) / (window_width-1);
-			v = ((double)j) / (window_height-1);
-			dir = create_vec(lower_left_corner.x + (u * horizontal.x) + (v * vertical.x) - origin.x,
-			lower_left_corner.y + (u * horizontal.y) + (v * vertical.y) - origin.y,
-			lower_left_corner.z + (u * horizontal.z) + (v * vertical.z) - origin.z);
-			ray_tmp = ray(origin, dir);
-			color = vec_sum(color, ray_color(ray_tmp, world, MAX_DEPTH));
-			ft_pixel_put(&vars, i, window_height - 1 - j, rgb_to_int(color));*/ //안티앨리어싱 없음
-		}
-	}
+	print_init(vars);
+	mlx_hook(vars.win, 2, 0, &keybind, &vars);
+	mlx_hook(vars.win, 3, 0, &keyrelease, &vars);
+	mlx_loop_hook(vars.mlx, &key_hook_move, &vars);
 	mlx_loop(vars.mlx);
 	return (0);
 }

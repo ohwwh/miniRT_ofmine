@@ -1,9 +1,7 @@
 #ifndef SPHERE_H
 #define SPHERE_H
-
-#include "vector.h"
 #include "ray.h"
-#include "ft_mlx.h"
+#include "vector.h"
 
 typedef struct s_sphere {
     t_point center;

@@ -5,6 +5,7 @@
         "ft_printf.h": "c",
         "stdlib.h": "c",
         "__functional_03": "c",
-        "functional": "c"
+        "functional": "c",
+        "ray": "c"
     }
 }

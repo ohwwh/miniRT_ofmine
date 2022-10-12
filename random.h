@@ -1,9 +1,8 @@
 #ifndef RANDOM_H
 #define RANDOM_H
-#include <time.h>
+#include <math.h>
 #include <stdlib.h>
-#define ANTI 100
 
-double random_double();
+double random_double(int anti);
 
 #endif
