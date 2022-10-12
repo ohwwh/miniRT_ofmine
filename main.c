@@ -139,7 +139,7 @@ int	main(int argc, char *argv[])
 	t_sphere metal = create_sphere(create_vec(-1,0, -1), 0.5, 
 	create_vec(0.8, 0.8, 0.8), 1);
 	t_sphere light = create_sphere(create_vec(4,8, -1), 4, 
-	create_vec(15, 15, 15), -1);
+	create_vec(8, 8, 8), -1);
 	void *world[10];
 	world[4] = 0;
 	world[0] = (void *)(&sphere);
@@ -179,6 +179,8 @@ int	main(int argc, char *argv[])
 				ray_tmp = ray(camera.origin, dir);
 				color = vec_sum(color, ray_color(ray_tmp, world, MAX_DEPTH));
 			}
+			printf("\rremaining pixel: %d", window_height * window_width - (i * (window_height - 1 - j)));
+			fflush(stdout);
 			//ANTI = 0 일때 예외처리
 			color = vec_division(color, ANTI);
 			ft_pixel_put(&vars, i, window_height - 1 - j, rgb_to_int(color));
