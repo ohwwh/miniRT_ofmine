@@ -206,7 +206,7 @@ int	main(int argc, char *argv[])
 	//world[4] = (void *)(&light2);
 	t_vars	vars;
 	vars.is_trace = 0;
-	vars.anti = 2;
+	vars.anti = 1;
 	vars.is_move = -1;
 	vars.changed = 0;
 	vars.world = world;
@@ -216,8 +216,8 @@ int	main(int argc, char *argv[])
 	int window_height = 320;
 	double ratio = (double)vars.window_width / (double)vars.window_height;
 
-	t_camera camera = create_camera(create_vec(-1,2,1), create_vec(0,0,-1), create_vec(0, 1, 0), 80, ratio);
-	//t_camera camera = create_camera(create_vec(0,0,0), create_vec(0,0,-1), create_vec(0, 1, 0), 90, ratio);
+	//t_camera camera = create_camera(create_vec(-1,2,1), create_vec(0,0,-1), create_vec(0, 1, 0), 80, ratio);
+	t_camera camera = create_camera(create_vec(0,0,0.2), create_vec(0,0,-1), create_vec(0, 1, 0), 90, ratio);
 
 	vars.camera = camera;
 	ft_mlx_init(&vars);
