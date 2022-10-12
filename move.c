@@ -26,9 +26,13 @@ int key_hook_move(t_vars* vars)
         if (vars->is_move == 13){
             vars->camera.origin = vec_sum(vars->camera.origin, micro_vec(vec_sub(vars->camera.lookat, vars->camera.origin)));
             printf("%lf, %lf, %lf\n", vars->camera.origin.x, vars->camera.origin.y, vars->camera.origin.z);
+            //printf("%lf, %lf, %lf\n", vars->camera.lookat.x, vars->camera.lookat.y, vars->camera.lookat.z);
+            /*vars->camera.origin.x = 0;
+            vars->camera.origin.y = 0;
+            vars->camera.origin.z = 0;*/
             print_init(*vars);
         }
-        /*else if (vars->is_move == 0){
+        else if (vars->is_move == 0){
             t_vec dir = vec_sum(vars->camera.lookat, vars->camera.origin);
             t_vec a_dir = create_vec(1, vars->camera.origin.y, (-(dir.x + (dir.y * vars->camera.origin.y)) / dir.z));
             t_vec cross = vcross(a_dir, dir);
@@ -38,13 +42,13 @@ int key_hook_move(t_vars* vars)
             vars->camera.lookat = vec_sum(vars->camera.origin, micro_vec(a_dir));
             printf("%lf, %lf, %lf\n", vars->camera.origin.x, vars->camera.origin.y, vars->camera.origin.z);
             print_init(*vars);
-        }*/
+        }
         else if (vars->is_move == 1){
             vars->camera.origin = vec_sum(vars->camera.origin, micro_vec(vec_sub(vars->camera.origin, vars->camera.lookat)));
-            //printf("%lf, %lf, %lf\n", vars->camera.origin.x, vars->camera.origin.y, vars->camera.origin.z);
+            printf("%lf, %lf, %lf\n", vars->camera.origin.x, vars->camera.origin.y, vars->camera.origin.z);
             print_init(*vars);
         }
-        /*else if (vars->is_move == 2){
+        else if (vars->is_move == 2){
             t_vec dir = vec_sum(vars->camera.lookat, vars->camera.origin);
             t_vec a_dir = create_vec(1, vars->camera.origin.y, (-(dir.x + (dir.y * vars->camera.origin.y)) / dir.z));
             t_vec cross = vcross(dir, a_dir);
@@ -54,7 +58,7 @@ int key_hook_move(t_vars* vars)
             vars->camera.lookat = vec_sub(vars->camera.origin, micro_vec(a_dir));
             printf("%lf, %lf, %lf\n", vars->camera.origin.x, vars->camera.origin.y, vars->camera.origin.z);
             print_init(*vars);
-        }*/
+        }
     }
     return (1);
 }

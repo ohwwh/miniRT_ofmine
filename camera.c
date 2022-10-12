@@ -21,6 +21,7 @@ t_camera create_camera(t_point lookfrom, t_point lookat, t_vec vup, double vfov,
 	t_vec v = vcross(w, u);
 
 	ret.origin = lookfrom;
+	ret.lookat = lookat;
 	ret.horizontal = vec_scalar_mul(u, viewport_width);
 	ret.vertical = vec_scalar_mul(v, viewport_height);
 	ret.lower_left_corner = create_vec(ret.origin.x + (-ret.horizontal.x / 2) + (-ret.vertical.x / 2) + (-w.x)

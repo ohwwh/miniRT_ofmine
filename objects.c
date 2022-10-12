@@ -1,4 +1,5 @@
-#include "sphere.h"
+#include "objects.h"
+
 
 int front_face(t_ray *r, t_record* rec)
 {
@@ -10,7 +11,7 @@ int front_face(t_ray *r, t_record* rec)
 	return (1);
 }
 
-int hit_sphere(t_sphere* s, int i, t_ray* r, t_record* rec)
+int hit_sphere(t_object* s, t_ray* r, t_record* rec)
 {
 	t_vec oc = create_vec(r->origin.x - s->center.x
 	,r->origin.y - s->center.y
@@ -19,7 +20,7 @@ int hit_sphere(t_sphere* s, int i, t_ray* r, t_record* rec)
 	double root;
 	double a = vdot((r->dir), (r->dir));
 	double b = vdot(oc, (r->dir));
-	double c = vdot(oc, oc) - s->rad * s->rad;
+	double c = vdot(oc, oc) - s->radius * s->radius;
 	double discriminant = b * b - a * c;
 	if (discriminant < 0)
 			return (0);
@@ -34,20 +35,21 @@ int hit_sphere(t_sphere* s, int i, t_ray* r, t_record* rec)
 	rec->t = root;
 	rec->p = ray_end(r, root);
 	rec->t_max = root;
-	rec->normal = vec_division(vec_sub(rec->p, s->center), s->rad);
-	rec->idx = i;
+	rec->normal = vec_division(vec_sub(rec->p, s->center), s->radius);
+	rec->color = s->color;
 	rec->mat = s->mat;
 	front_face(r, rec);
 	return (1);
 }
 
-t_sphere create_sphere(t_point c, double r, t_color color, int mat)
+t_object create_sphere(t_point c, double r, t_color color, int mat)
 {
-	t_sphere ret;
+	t_object ret;
+
+    ret.type = 3;
 	ret.center = c;
-	ret.rad = r;
+	ret.radius = r;
 	ret.color = color;
 	ret.mat = mat;
 	return (ret);
 }
-

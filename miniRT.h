@@ -7,7 +7,7 @@
 #include <math.h>
 #include "ray.h"
 #include "ft_mlx.h"
-#include "sphere.h"
+#include "objects.h"
 #include "random.h"
 #include "light.h"
 #include "camera.h"

@@ -46,11 +46,11 @@ t_vec rand_hemi_sphere(t_vec normal)
 
 	while (i < 2)
 	{
-		if (hit_sphere((t_sphere *)world[i], &ray, rec))
+		if (hit_object((t_object*)world[i], &ray, rec))
 		{
 			if (i == 0)
 			{
-				n = unit_vec(vec_sub(ray_end(&ray, rec->t), ((t_sphere *)world[i])->center));
+				n = unit_vec(vec_sub(ray_end(&ray, rec->t), ((t_object*)world[i])->center));
 				return (vec_scalar_mul(create_vec(n.x + 1, n.y + 1, n.z + 1), 0.5));
 			}
 			else
@@ -79,13 +79,13 @@ t_color ray_color_2(t_ray r, void* world[])
 	rec.t_min = 0.001;
 	rec.t_max = INFINITY;
 	i = 0;
-	while ((t_sphere *)world[i])
+	while ((t_object *)world[i])
 	{
-		hit_sphere((t_sphere *)world[i], i, &r, &rec);
+		hit_sphere((t_object*)world[i], &r, &rec);
 		i ++;
 	}
 	if (rec.t > 0)
-		return (((t_sphere *)world[rec.idx])->color);
+		return (rec.color); //record에 color까지 저장하고, idx를 굳이 저장하지 말것
 	t = 0.5 * (unit_vec((r.dir)).y + 1.0);
 	return (vec_scalar_mul(
 		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 0.7)
@@ -93,7 +93,7 @@ t_color ray_color_2(t_ray r, void* world[])
 	//return (create_vec(1,1,1));
 }
 
-t_color ray_color(t_ray r, void* world[], int depth)
+t_color ray_color(t_ray r, t_object* world, int depth)
 {
 	double t;
 	t_vec n;
@@ -105,15 +105,17 @@ t_color ray_color(t_ray r, void* world[], int depth)
 
 	if (depth <= 0)
         return (create_vec(0,0,0));
-	while ((t_sphere *)world[i])
+	/*while ((t_object*)world[i])
 	{
-		hit_sphere((t_sphere *)world[i], i, &r, &rec);
+		hit_sphere((t_object*)world[i], &r, &rec);
 		i ++;
-	}
+	}*/
+	find_hitpoint(ray, world, &rec);
+	//hit_cylinder(rec, &r, (t_cylinder *)world[5]);
 	if (rec.t > 0)
 	{
 		t_color color;
-		color  = ((t_sphere *)world[rec.idx])->color;
+		color  = rec.color;
 		t_vec target;
 		if (rec.mat == 0)//diffuse 재질인 경우
 		{
@@ -185,31 +187,34 @@ void print_init(t_vars vars)
 
 int	main(int argc, char *argv[])
 {
-	t_sphere sphere = create_sphere(create_vec(0,0,-1), 0.5, 
-	create_vec(0.7, 0.3, 0.3), 0);
-	t_sphere surface = create_sphere(create_vec(0, -100.5, -1), 100, 
+	t_object light = create_sphere(create_vec(4,8, -1), 4, 
+	create_vec(8, 8, 8), -1);
+	t_object surface = create_sphere(create_vec(0, -100.5, -1), 100, 
 	//create_vec(1, 0.75, 0.8));
 	create_vec(0.8, 0.8, 0), 0);
-	t_sphere metal = create_sphere(create_vec(1,0, -1), 0.5, 
+	light.next = &surface;
+	t_object sphere = create_sphere(create_vec(0,0,-1), 0.5, 
+	create_vec(0.7, 0.3, 0.3), 0);
+	surface.next = &sphere;
+	t_object metal = create_sphere(create_vec(1,0, -1), 0.5, 
 	create_vec(0.8, 0.8, 0.8), 1);
-	t_sphere light = create_sphere(create_vec(4,8, -1), 4, 
-	create_vec(8, 8, 8), -1);
+	sphere.next = &metal;
+	metal.next = 0;
 
-	/*t_sphere light2 = create_sphere(create_vec(-4,8, -1), 4, 
-	create_vec(8, 8, 8), -1);*/
-	void *world[10];
+	/*void *world[10];
 	world[4] = 0;
 	world[0] = (void *)(&sphere);
 	world[1] = (void *)(&surface);
 	world[2] = (void *)(&metal);
-	world[3] = (void *)(&light);
+	world[3] = (void *)(&light);*/
+	//world[5] = (void *)(&cylinder);
 	//world[4] = (void *)(&light2);
 	t_vars	vars;
 	vars.is_trace = 0;
 	vars.anti = 1;
 	vars.is_move = -1;
 	vars.changed = 0;
-	vars.world = world;
+	vars.world = &light;
 	vars.window_width = 640;
 	vars.window_height = 320;
 	int window_width = 640;
@@ -217,13 +222,14 @@ int	main(int argc, char *argv[])
 	double ratio = (double)vars.window_width / (double)vars.window_height;
 
 	//t_camera camera = create_camera(create_vec(-1,2,1), create_vec(0,0,-1), create_vec(0, 1, 0), 80, ratio);
-	t_camera camera = create_camera(create_vec(0,0,0.2), create_vec(0,0,-1), create_vec(0, 1, 0), 90, ratio);
+	t_camera camera = create_camera(create_vec(0,0,3), create_vec(0,0,-1), create_vec(0, 1, 0), 90, ratio);
 
 	vars.camera = camera;
 	ft_mlx_init(&vars);
 	print_init(vars);
 	mlx_hook(vars.win, 2, 0, &keybind, &vars);
 	mlx_hook(vars.win, 3, 0, &keyrelease, &vars);
+	//mlx_hook(vars.win,)
 	mlx_loop_hook(vars.mlx, &key_hook_move, &vars);
 	mlx_loop(vars.mlx);
 	return (0);

@@ -12,7 +12,7 @@ typedef struct s_vars {
 	int is_trace;
 	int window_height;
 	int window_width;
-	void **world;
+	t_object* world;
 	int anti;
 	int changed;
 	t_camera camera;
