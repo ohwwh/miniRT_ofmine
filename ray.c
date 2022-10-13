@@ -49,16 +49,57 @@ int find_hitpoint(t_ray* ray, t_object *objs, t_record* rec)
         }
         else if (tmp->type == 1)
         {
-           //hit_plane(saved, ray, tmp);
+        	hit_plane(tmp, ray, rec);
         }
         else if (tmp->type == 2)
         {
             hit_cylinder(tmp, ray, rec);
-	        //saved = hit_caps(saved, ray, tmp);
+	        hit_caps(tmp, ray, rec);
         }
         tmp = tmp->next;
     }
     return (1);
+}
+
+int hit_caps(t_object *cy, t_ray *ray, t_record *rec)
+{
+	t_object top_cap;
+	t_record hr;
+
+	top_cap.center.x = cy->dir.x;
+	top_cap.center.y = cy->dir.y;
+	top_cap.center.z = cy->dir.z;
+
+	top_cap.center = unit_vec(top_cap.center);
+
+	top_cap.center.x = cy->height * top_cap.center.x + cy->center.x;
+	top_cap.center.y = cy->height * top_cap.center.y + cy->center.y;
+	top_cap.center.z = cy->height * top_cap.center.z + cy->center.z;
+	
+	top_cap.dir.x = cy->dir.x;
+	top_cap.dir.y = cy->dir.y;
+	top_cap.dir.z = cy->dir.z;
+
+	top_cap.color.x = cy->color.x;
+	top_cap.color.y = cy->color.y;
+	top_cap.color.z = cy->color.z;
+	top_cap.mat = cy->mat;
+
+	hr = *rec;
+	hit_plane(&top_cap, ray, &hr);
+	if (powf(hr.p.x - top_cap.center.x, 2.) + powf(hr.p.y - top_cap.center.y, 2.) + powf(hr.p.z - top_cap.center.z, 2.) <= powf(cy->radius, 2.))
+	{
+		*rec = hr;
+		return (1);
+	}
+	//hr = *rec;
+	hit_plane(cy, ray, &hr);
+	if (powf(hr.p.x - cy->center.x, 2.) + powf(hr.p.y - cy->center.y, 2.) + powf(hr.p.z - cy->center.z, 2.) <= powf(cy->radius, 2.))
+	{
+		*rec = hr;
+		return (1);
+	}
+	return (0);
 }
 
 int hit_sphere(t_object* s, t_ray* r, t_record* rec)
@@ -118,45 +159,73 @@ int hit_cylinder(t_object *cy, t_ray *ray, t_record *rec)
 		- (vdot(oc, normalized) * vdot(oc, normalized))
 		- (cy->radius) * (cy->radius);
 	D = b * b - 4 * a * c;
-	/*if (D < EPS)
-		return (0);*/
-	if (1)
+	if (D < EPS)
+		return (0);
+	else
     {
         t1 = (-b + sqrt(D)) / (2 * a);
 	    t2 = (-b - sqrt(D)) / (2 * a);
-		/*if (t1 < EPS)
-			return (0);*/
-		if (1)
+		if (t1 < EPS)
+			return (0);
+		else
 		{
 	    	h1 = vdot(ray->dir, normalized) * t1 + vdot(oc, normalized);
 	    	h2 = vdot(ray->dir, normalized) * t2 + vdot(oc, normalized);
-			if (h2 <= cy->height)
-				hr.t = t2;
-			else if (h1 <= cy->height)
-				hr.t = t1;
+			if (h2 >= EPS && h2 <= cy->height)
+				root = t2;
+			else if (h1 >= EPS && h1 <= cy->height)
+				root = t1;
 			else
 				return (0);
 		}
     }
-	root = t2;
 	if (root < rec->t_min || rec->t_max < root)
-	{
-		root = t1;
-		if (root < rec->t_min || rec->t_max < root)
-			return (0);
-	}
+		return (0);
 	rec->t = root;
 	rec->t_max = root;
 	rec->mat = cy->mat;
-	if (1)
+	rec->color = cy->color;
+	rec->p = vec_sum(ray->origin, vec_scalar_mul(ray->dir, root));
+	oc = unit_vec(cy->dir);
+	m = vdot(ray->dir, vec_scalar_mul(oc, root))
+		+ vdot(vec_sub(ray->origin, cy->center), oc);
+	rec->normal = unit_vec(vec_sub(vec_sub(rec->p, cy->center),
+		vec_scalar_mul(oc, m)));
+	front_face(ray, rec);
+    return (1);
+}
+
+int hit_plane(t_object *pl, t_ray *ray, t_record* rec)
+{
+	t_record hr;
+    t_vec	x;
+	t_vec	normal;
+	double	b;
+	double	a;
+	double root;
+
+	normal = unit_vec(pl->dir);
+	x = vec_sub(ray->origin, pl->center);
+	b = vdot(ray->dir, normal);
+	if (b != 0)
 	{
-		rec->color = cy->color;
-		rec->p = vec_sum(ray->origin, vec_scalar_mul(ray->dir, rec->t));
-		oc = unit_vec(cy->dir);
-		m = vdot(ray->dir, vec_scalar_mul(oc, root))
-			+ vdot(vec_sub(ray->origin, cy->center), oc);
-		rec->normal = unit_vec(vec_sub(vec_sub(rec->p, cy->center),
-			vec_scalar_mul(oc, m)));
+		a = vdot(x, normal);
+		root = -a / b;
+		if (root < EPS)
+            return (0);
 	}
+    else
+	    return (0);
+    if (root < rec->t_min || rec->t_max < root)
+		return (0);
+	rec->t = root;
+	rec->t_max = root;
+	rec->mat = pl->mat;
+	rec->color = pl->color;
+	rec->p = vec_sum(ray->origin, vec_scalar_mul(ray->dir, root));
+	rec->normal = pl->dir;
+	if (vdot(ray->dir, rec->normal) > __DBL_EPSILON__) // 부동 소수점 오차 범위 내에서 비교
+		rec->normal = unit_vec(vec_scalar_mul(pl->dir, -1));
+	front_face(ray, rec);
     return (1);
 }

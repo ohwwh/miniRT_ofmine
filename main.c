@@ -111,10 +111,10 @@ t_color ray_color(t_ray r, t_object* world, int depth)
 		t_vec target;
 		if (rec.mat == 0)//diffuse 재질인 경우
 		{
-			//target = vec_sum(vec_sum(rec.p, rec.normal), rand_sphere()); //wihtout lambertian
+			/*//target = vec_sum(vec_sum(rec.p, rec.normal), rand_sphere()); //wihtout lambertian
 			target = vec_sum(rec.p, rand_hemi_sphere(rec.normal)); //with lambertian
 			//lambertian 반사 구현할 때, 0으로 나누는 경우가 생김. 원문에서 bullet으로 검색해서 예외 처리 할 것
-			color = vec_mul(color, ray_color(ray(rec.p, vec_sub(target, rec.p)), world, depth - 1));
+			color = vec_mul(color, ray_color(ray(rec.p, vec_sub(target, rec.p)), world, depth - 1));*/
 
 
 			/*target = vec_sum(vec_sum(rec.p, rec.normal), unit_vec(rand_sphere()));
@@ -144,11 +144,11 @@ t_color ray_color(t_ray r, t_object* world, int depth)
 			else
 				scat_pdf = cos / 3.1415926535897932385;
 			color = vec_mul(vec_scalar_mul(color, scat_pdf), 
-			vec_division(ray_color(scattered, world, depth - 1), pdf));*/
-			//hemisphere를 이용한 난반사 구현(lambertian)
+			vec_division(ray_color(scattered, world, depth - 1), pdf));
+			//hemisphere를 이용한 난반사 구현(lambertian)*/
 
 
-			/*t_vec on_light = create_vec(random_double(0,4,7), 8, random_double(-3,-1,7));
+			t_vec on_light = create_vec(random_double(0,4,7), 8, random_double(-3,-1,7));
 			t_vec to_light = vec_sub(on_light, rec.p);
 			double distance_squared = pow(vec_len(to_light), 2);
 			to_light = unit_vec(to_light);
@@ -172,7 +172,7 @@ t_color ray_color(t_ray r, t_object* world, int depth)
 				scat_pdf = cos / 3.1415926535897932385;
 			color = vec_mul(vec_scalar_mul(color, scat_pdf), 
 			vec_division(ray_color(scattered, world, depth - 1), pdf));
-			//light sampling*/
+			//light sampling
 		}
 			
 		else if (rec.mat == 1) //metal 재질인 경우
@@ -191,7 +191,7 @@ t_color ray_color(t_ray r, t_object* world, int depth)
 	}
 	t = 0.5 * (unit_vec((r.dir)).y + 1.0);
 	return (vec_scalar_mul(
-		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 0.2)
+		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 1)
 	);
 	//return (create_vec(1,1,1));
 }
@@ -238,16 +238,21 @@ void print_init(t_vars vars)
 
 int	main(int argc, char *argv[])
 {
-	t_object light = create_sphere(create_vec(0,8, -1), 4, 
-	create_vec(8, 8, 8), -1);
+	t_object light = create_sphere(create_vec(5,8, -1), 4, 
+	create_vec(30, 30, 30), -1);
 
-	t_object surface = create_sphere(create_vec(0, -100.5, -1), 100, 
+	t_object surface = create_plane(create_vec(0, 0, 0), create_vec(0, -1, 0), 
 	//create_vec(1, 0.75, 0.8));
 	create_vec(0.8, 0.8, 0), 0);
-	light.next = &surface;
+	light.next = &surface;	
 
-	t_object sphere = create_sphere(create_vec(-0.7,0,-1), 0.5, 
-	create_vec(0.7, 0.3, 0.3), 0);
+	/*t_object surface = create_sphere(create_vec(0, -100.5, -1), 100, 
+	//create_vec(1, 0.75, 0.8));
+	create_vec(0.8, 0.8, 0), 0);
+	light.next = &surface;*/
+
+	t_object sphere = create_sphere(create_vec(-0.7,0.5,-1), 0.5, 
+	create_vec(0.7, 0.3, 0.3), 1);
 	surface.next = &sphere;
 
 	t_object metal = create_sphere(create_vec(1,0, -1), 0.5, 
@@ -255,8 +260,8 @@ int	main(int argc, char *argv[])
 	sphere.next = &metal;
 	metal.next = 0;
 
-	t_object cylinder = create_cylinder(create_vec(1,0,-1), 0.5, 1, 
-	create_vec(1,1,0), create_vec(0.3,0.3,0.7), 0);
+	t_object cylinder = create_cylinder(create_vec(1,1,-1), 0.4, 1, 
+	create_vec(1,-1,0), create_vec(0.3,0.3,0.7), 0);
 	cylinder.next = 0;
 	light.next = &surface;
 	surface.next = &cylinder;
@@ -276,7 +281,7 @@ int	main(int argc, char *argv[])
 	double ratio = (double)vars.window_width / (double)vars.window_height;
 
 	//t_camera camera = create_camera(create_vec(-2,2,1), create_vec(0,0,-1), create_vec(0, 1, 0), 70, ratio);
-	t_camera camera = create_camera(create_vec(0,0,1), create_vec(0,0,-1), create_vec(0, 1, 0), 90, ratio);
+	t_camera camera = create_camera(create_vec(0,1,1), create_vec(0,0,-1), create_vec(0, 1, 0), 90, ratio);
 
 	vars.camera = camera;
 	ft_mlx_init(&vars);
