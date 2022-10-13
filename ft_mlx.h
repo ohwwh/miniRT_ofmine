@@ -4,6 +4,7 @@
 #include "./mlx/mlx.h"
 #include "camera.h"
 #include "vector.h"
+#include "objects.h"
 
 typedef struct s_vars {
 	void* mlx;
@@ -12,10 +13,10 @@ typedef struct s_vars {
 	int is_trace;
 	int window_height;
 	int window_width;
+	t_camera camera;
 	t_object* world;
 	int anti;
 	int changed;
-	t_camera camera;
 	
 } t_vars;
 

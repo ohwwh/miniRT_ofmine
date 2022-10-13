@@ -65,18 +65,18 @@ int hit_cylinder(t_cylinder *cy, int i, t_ray *ray, t_record *rec)
     {
         t1 = (-b + sqrt(D)) / (2 * a);
 	    t2 = (-b - sqrt(D)) / (2 * a);
-	    if (t1 < EPS)
-		    return (0);
+		if (t1 < EPS)
+			return (0);
 		else
 		{
 	    	h1 = vdot(ray->dir, normalized) * t1 + vdot(oc, normalized);
 	    	h2 = vdot(ray->dir, normalized) * t2 + vdot(oc, normalized);
-	    	if (h2 >= EPS && h2 <= cy->p.y)
-		    	hr.t = t2;
-	    	else if (h1 >= EPS && h1 <= cy->p.y)
-		    	hr.t = t1;
-	    	else
-            	return (0);
+			if (h2 >= EPS && h2 <= cy->p.y)
+				hr.t = t2;
+			else if (h1 >= EPS && h1 <= cy->p.y)
+				hr.t = t1;
+			else
+				return (0);
 		}
     }
 	root = t1;

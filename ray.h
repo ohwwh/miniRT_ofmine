@@ -23,6 +23,8 @@ typedef struct s_record {
 t_ray 	ray(t_point org, t_vec dir);
 t_point 	ray_end(t_ray* ray, double t);
 t_vec reflect(t_vec v, t_vec n);
+int hit_sphere(t_object* s, t_ray* r, t_record* rec);
+int hit_cylinder(t_object *cy, t_ray *ray, t_record *rec);
 int find_hitpoint(t_ray *ray, t_object *objs, t_record* rec);
 
 #endif

@@ -4,10 +4,14 @@
 
 typedef struct s_camera {
 	t_point origin;
+	t_point lookat;
+	t_vec vup;
+	double vfov;
+	double ratio;
+
 	t_point lower_left_corner;
 	t_vec horizontal;
 	t_vec vertical;
-	t_point lookat;
 	
 
 } t_camera;

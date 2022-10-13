@@ -1,6 +1,5 @@
 #ifndef OBJECTS_H
 #define OBJECTS_H
-#include "ray.h"
 #include "vector.h"
 
 typedef struct s_object {
@@ -11,11 +10,11 @@ typedef struct s_object {
 	double 			height;
 	t_vec			color;
 	t_vec			norm;
-	struct s_objs	*next;
+	struct s_object	*next;
     int mat;
 } t_object;
 
-int hit_sphere(t_object* s, t_ray* r, t_record* rec);
 t_object create_sphere(t_point c, double r, t_color color, int mat);
+t_object create_cylinder(t_point c, double r, double h, t_vec dir, t_color color, int mat);
 
 #endif

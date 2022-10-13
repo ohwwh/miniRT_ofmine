@@ -10,7 +10,7 @@ typedef struct s_sphere {
     int mat;
 } t_sphere;
 
-int hit_sphere(t_sphere* s, int i, t_ray* r, t_record* rec);
-t_sphere create_sphere(t_point c, double r, t_color color, int mat);
+//int hit_sphere(t_sphere* s, int i, t_ray* r, t_record* rec);
+//t_sphere create_sphere(t_point c, double r, t_color color, int mat);
 
 #endif

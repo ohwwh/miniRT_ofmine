@@ -3,6 +3,6 @@
 #include <math.h>
 #include <stdlib.h>
 
-double random_double(int anti);
+double random_double(double min, double max, int anti);
 
 #endif
