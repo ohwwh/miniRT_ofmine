@@ -6,6 +6,7 @@
         "stdlib.h": "c",
         "__functional_03": "c",
         "functional": "c",
-        "ray": "c"
+        "ray": "c",
+        "ray.h": "c"
     }
 }

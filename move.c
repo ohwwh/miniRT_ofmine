@@ -39,7 +39,6 @@ int key_hook_move(t_vars* vars)
             t_vec new_org = vec_sum(vars->camera.origin, micro_vec(a_dir));
             t_vec new_lookat = vec_sum(vars->camera.lookat, micro_vec(a_dir));
             vars->camera = create_camera(new_org, new_lookat, vars->camera.vup, vars->camera.vfov, vars->camera.ratio);
-            //printf("%lf, %lf, %lf\n", vars->camera.origin.x, vars->camera.origin.y, vars->camera.origin.z);
             print_init(*vars);
         }
         else if (vars->is_move == 1){
@@ -57,7 +56,6 @@ int key_hook_move(t_vars* vars)
             t_vec new_org = vec_sub(vars->camera.origin, micro_vec(a_dir));
             t_vec new_lookat = vec_sub(vars->camera.lookat, micro_vec(a_dir));
             vars->camera = create_camera(new_org, new_lookat, vars->camera.vup, vars->camera.vfov, vars->camera.ratio);
-            //printf("%lf, %lf, %lf\n", vars->camera.origin.x, vars->camera.origin.y, vars->camera.origin.z);
             print_init(*vars);
         }
     }
@@ -80,7 +78,7 @@ int	keybind(int keycode, t_vars* vars)
         if (vars->is_trace == 0)
         {
             vars->is_trace = 1;
-            vars->anti = 500;
+            vars->anti = 100;
             vars->changed = 1;
         }
         else

@@ -1,5 +1,6 @@
 #include "ray.h"
 #define EPS 0.0001
+
 t_ray ray(t_point origin, t_vec dir)
 {
 	t_ray ret;
@@ -23,292 +24,257 @@ t_vec reflect(t_vec v, t_vec n)
 	return (vec_sub(v, vec_scalar_mul(n, 2*vdot(v, n))));
 }
 
-
-int front_face(t_ray *r, t_record* rec)
+void generate_cosine_pdf(t_cosine_pdf* pdf, t_record* rec)
 {
-	if (vdot(r->dir, rec->normal) > 0.0)
-	{
-		rec->normal = vec_scalar_mul(rec->normal, -1);
-		return (0);
-	}
-	return (1);
+	t_onb uvw;
+
+	pdf->dir = local(&uvw, random_cosine_direction());
+		
 }
 
-int find_hitpoint(t_ray* ray, t_object *objs, t_record* rec)
+double cosine_pdf_value(const t_vec* dir, const t_vec* w)
 {
-    t_object *tmp;
-    t_record saved;
-    
-    tmp = objs;
-    saved.t = -1.0;
-    while (tmp)
-    {
-        if (tmp->type == 3)
-        {
-            hit_sphere(tmp, ray, rec);
-        }
-        else if (tmp->type == 1)
-        {
-			hit_plane(tmp, ray, rec);
-        }
-        else if (tmp->type == 2)
-        {
-            hit_cylinder(tmp, ray, rec);
-			hit_caps(tmp, ray, rec);
-        }
-		else if (tmp->type == 4)
-			hit_rectangle_xy(tmp, ray, rec);
-		else if (tmp->type == 5)
-			hit_rectangle_yz(tmp, ray, rec);
-		else if (tmp->type == 6)
-			hit_rectangle_xz(tmp, ray, rec);
-        tmp = tmp->next;
-    }
-    return (1);
-}
+	double pdf;
+    double cos;
 
-int hit_caps(t_object *cy, t_ray *ray, t_record *rec)
-{
-	t_object top_cap;
-	t_record hr;
-	t_record hr2;
-
-	top_cap.center.x = cy->dir.x;
-	top_cap.center.y = cy->dir.y;
-	top_cap.center.z = cy->dir.z;
-
-	top_cap.center = unit_vec(top_cap.center);
-
-	top_cap.center.x = cy->height * top_cap.center.x + cy->center.x;
-	top_cap.center.y = cy->height * top_cap.center.y + cy->center.y;
-	top_cap.center.z = cy->height * top_cap.center.z + cy->center.z;
-	
-	top_cap.dir.x = cy->dir.x;
-	top_cap.dir.y = cy->dir.y;
-	top_cap.dir.z = cy->dir.z;
-
-	top_cap.color.x = cy->color.x;
-	top_cap.color.y = cy->color.y;
-	top_cap.color.z = cy->color.z;
-	top_cap.mat = cy->mat;
-
-	hr = *rec;
-	hr2 = *rec;
-	hit_plane(&top_cap, ray, &hr);
-	if (powf(hr.p.x - top_cap.center.x, 2.) + powf(hr.p.y - top_cap.center.y, 2.) + powf(hr.p.z - top_cap.center.z, 2.) <= powf(cy->radius, 2.))
-	{
-		hr2 = hr;
-		return (1);
-	}
-	//hr = *rec;
-	hit_plane(cy, ray, &hr2);
-	if (powf(hr2.p.x - cy->center.x, 2.) + powf(hr2.p.y - cy->center.y, 2.) + powf(hr2.p.z - cy->center.z, 2.) <= powf(cy->radius, 2.))
-	{
-		*rec = hr2;
-		return (1);
-	}
-	return (0);
-}
-
-int hit_sphere(t_object* s, t_ray* r, t_record* rec)
-{
-	t_vec oc = create_vec(r->origin.x - s->center.x
-	,r->origin.y - s->center.y
-	,r->origin.z - s->center.z);
-	double sqrtd;
-	double root;
-	double a = vdot((r->dir), (r->dir));
-	double b = vdot(oc, (r->dir));
-	double c = vdot(oc, oc) - s->radius * s->radius;
-	double discriminant = b * b - a * c;
-	if (discriminant < 0)
-			return (0);
-	sqrtd = sqrt(discriminant);
-	root = (-b - sqrtd) / a;
-	if (root < rec->t_min || rec->t_max < root)
-	{
-		root = (-b + sqrtd) / a;
-		if (root < rec->t_min || rec->t_max < root)
-			return (0);
-	}
-	rec->t = root;
-	rec->p = ray_end(r, root);
-	rec->t_max = root;
-	rec->normal = vec_division(vec_sub(rec->p, s->center), s->radius);
-	rec->color = s->color;
-	rec->mat = s->mat;
-	front_face(r, rec);
-	return (1);
-}
-
-int hit_cylinder(t_object *cy, t_ray *ray, t_record *rec)
-{   
-    t_record hr;
-	double	m;
-	t_vec	oc;
-    double  D; // 판별식
-    t_vec   normalized;
-    double  a;
-    double  b;
-    double  c;
-    double  t1;
-    double  t2;
-    double  h1, h2;
-	double root;
-
-	// hr.t 구하기 //
-    normalized = unit_vec(cy->dir);
-	oc = vec_sub(ray->origin, cy->center);
-	a = vdot(ray->dir, ray->dir) - (vdot(ray->dir, normalized)
-			* vdot(ray->dir, normalized));
-	b = 2 * (vdot(ray->dir, oc) - (vdot(ray->dir, normalized)
-				* vdot(oc, normalized)));
-	c = vdot(oc, oc)
-		- (vdot(oc, normalized) * vdot(oc, normalized))
-		- (cy->radius) * (cy->radius);
-	D = b * b - 4 * a * c;
-	if (D < EPS)
-		return (0);
-	else
-    {
-        t1 = (-b + sqrt(D)) / (2 * a);
-	    t2 = (-b - sqrt(D)) / (2 * a);
-		if (t1 < EPS)
-			return (0);
-		else
-		{
-	    	h1 = vdot(ray->dir, normalized) * t1 + vdot(oc, normalized);
-	    	h2 = vdot(ray->dir, normalized) * t2 + vdot(oc, normalized);
-			if (h2 >= EPS && h2 <= cy->height)
-				root = t2;
-			else if (h1 >= EPS && h1 <= cy->height)
-				root = t1;
-			else
-				return (0);
-		}
-    }
-	if (root < rec->t_min || rec->t_max < root)
-		return (0);
-	rec->t = root;
-	rec->t_max = root;
-	rec->mat = cy->mat;
-	rec->color = cy->color;
-	rec->p = vec_sum(ray->origin, vec_scalar_mul(ray->dir, root));
-	oc = unit_vec(cy->dir);
-	m = vdot(ray->dir, vec_scalar_mul(oc, root))
-		+ vdot(vec_sub(ray->origin, cy->center), oc);
-	rec->normal = unit_vec(vec_sub(vec_sub(rec->p, cy->center),
-		vec_scalar_mul(oc, m)));
-	front_face(ray, rec);
-    return (1);
-}
-
-int hit_plane(t_object *pl, t_ray *ray, t_record* rec)
-{
-	t_record hr;
-    t_vec	x;
-	t_vec	normal;
-	double	b;
-	double	a;
-	double root;
-
-	normal = unit_vec(pl->dir);
-	x = vec_sub(ray->origin, pl->center);
-	b = vdot(ray->dir, normal);
-	if (b != 0)
-	{
-		a = vdot(x, normal);
-		root = -a / b;
-		if (root < EPS)
-            return (0);
-	}
+	cos = vdot(unit_vec(*dir), *w);
+    if (cos < 0)
+        pdf = 0;
     else
-		return (0);
-    if (root < rec->t_min || rec->t_max < root)
-		return (0);
-	rec->t = root;
-	rec->t_max = root;
-	rec->mat = pl->mat;
-	rec->color = pl->color;
-	rec->p = vec_sum(ray->origin, vec_scalar_mul(ray->dir, root));
-	rec->normal = pl->dir;
-	if (vdot(ray->dir, rec->normal) > __DBL_EPSILON__) // 부동 소수점 오차 범위 내에서 비교
-		rec->normal = unit_vec(vec_scalar_mul(pl->dir, -1));
-	front_face(ray, rec);
-    return (1);
+        pdf = cos / 3.1415926535897932385;
+	return (pdf);
 }
 
-void set_face_normal(t_record* rec, t_ray *ray, t_vec outward_normal)
+double light_pdf_value(t_point origin, t_vec v, t_object* light)
 {
-	rec->front_face = vdot(ray->dir, outward_normal) < 0;
-	if (front_face)
-		rec->normal = outward_normal;
-	else
-		vec_scalar_mul(rec->normal = outward_normal, -1);
+	// 일단 xy사각 광원만
+	t_record rec;
+	t_ray r;
+
+	rec.t = 0.0;
+	rec.t_min = 0.001;
+	rec.t_max = INFINITY;
+	r = ray(origin, v);
+	const double length_squared = powf(vec_len(v), 2);
+
+	hit_rectangle_xy(light, &r, &rec);
+	if (rec.t <= 0)
+		return 0;
+	double area = (light->center.y - light->center.x)*(light->dir.y - light->dir.x);
+	double distance_squared = rec.t * rec.t * length_squared;
+	double cosine = fabs(vdot(v, rec.normal) / sqrt(length_squared));
+
+	return distance_squared / (cosine * area);
 }
 
-int hit_rectangle_xy(t_object *rect, t_ray *ray, t_record* rec)
+/*double light_pdf_value(t_ray* ray_path, t_object* light)
 {
-	double t = (rect->radius - ray->origin.z) / ray->dir.z;
-    if (t < rec->t_min || t > rec->t_max)
-        return (0);
-    double x = ray->origin.x + t * ray->dir.x;
-    double y = ray->origin.y + t * ray->dir.y;
-    if (x < rect->center.x || x > rect->center.y
-	|| y < rect->dir.x || y > rect->dir.y)
-        return (0);
-    rec->u = (x - rect->center.x) / (rect->center.y - rect->center.x);
-    rec->v = (y - rect->dir.x) / (rect->dir.y - rect->dir.x);
-    rec->t = t;
-	rec->t_max = t;
-	rec->mat = rect->mat;
-    t_vec outward_normal = create_vec(0, 0, 1);
-    set_face_normal(ray, rec, outward_normal);
-    rec->p = ray_end(ray, t);
-	rec->color = rect->color;
-    return (1);
+	// 일단 xy사각 광원만
+	t_record rec;
+	const double length_squared = powf(vec_len(ray_path->dir), 2);
+
+	if (!hit_rectangle_xy(light, ray_path, &rec))
+		return 0;
+	double area = (light->center.y - light->center.x)*(light->dir.y - light->dir.x);
+	double distance_squared = rec.t * rec.t * length_squared;
+	double cosine = fabs(vdot(ray_path->dir, rec.normal) / sqrt(length_squared));
+
+	return distance_squared / (cosine * area);
+}*/
+
+double scattering_pdf(t_ray* scattered, t_record* rec)
+{
+    double scat_pdf;
+    double cos;
+
+	if (rec->mat != 0)
+		return (1);
+    cos = vdot(rec->normal, unit_vec(scattered->dir));
+    if (cos < 0)
+        scat_pdf = 0;
+    else
+        scat_pdf = cos / 3.1415926535897932385;
+	return (scat_pdf);
 }
 
-int hit_rectangle_yz(t_object *rect, t_ray *ray, t_record* rec)
+double scatter(t_ray* r, t_record* rec, t_ray* scattered, t_object* light)
 {
-	double t = (rect->radius - ray->origin.x) / ray->dir.x;
-    if (t < rec->t_min || t > rec->t_max)
-        return (0);
-    double y = ray->origin.y + t * ray->dir.y;
-    double z = ray->origin.z + t * ray->dir.z;
-    if (y < rect->center.x || y > rect->center.y
-	|| z < rect->dir.x || z > rect->dir.y)
-        return (0);
-    rec->u = (y - rect->center.x) / (rect->center.y - rect->center.x);
-    rec->v = (z - rect->dir.x) / (rect->dir.y - rect->dir.x);
-    rec->t = t;
-	rec->t_max = t;
-	rec->mat = rect->mat;
-    t_vec outward_normal = create_vec(1, 0, 0);
-    set_face_normal(ray, rec, outward_normal);
-    rec->p = ray_end(ray, t);
-	rec->color = rect->color;
-    return (1);
+	t_onb uvw;
+	t_vec dir;
+	//t_cosine_pdf pdf;
+	double pdf;
+	const double pi = 3.1415926535897932385;
+
+	if (rec->mat == 0)
+	{
+		/*uvw = create_onb(rec->normal);
+		dir = local(&uvw, random_cosine_direction()); //generating cosine pdf
+		*scattered = ray(rec->p, unit_vec(dir));
+		//pdf = vdot(uvw.w, scattered->dir) / pi;
+		pdf = cosine_pdf_value(&(rec->normal), &(uvw.w)); // 이부분 진심으로 이해가 안간다*/
+
+
+		//광원을 샘플링. 
+		//ray(rec->p, unit_vec(dir))에서 위에서 생성한 dir대신 
+		//각 광원의 크기에 한정하여 랜덤 생성한 벡터를 집어넣는다.
+		//일단 xy사각형 광원만
+		t_point random_point;
+		t_vec ray_path;
+
+		random_point = create_vec(random_double(light->center.x, light->center.y, 7),
+		random_double(light->center.x, light->center.y, 7), light->radius); // 광원의 크기 안에서 벡터를 랜덤 생성
+		ray_path = vec_sub(random_point, rec->p); // ray를 쏜 곳(시선)으로부터 광원까지의 벡터
+		*scattered = ray(rec->p, ray_path);
+		//pdf = light_pdf_value(scattered, light);
+		pdf = light_pdf_value(rec->p, scattered->dir, light);
+
+		return (pdf);
+	}
+	else if (rec->mat == 1)
+	{
+		*scattered = ray(rec->p, reflect(unit_vec(r->dir), rec->normal));
+		if (vdot(scattered->dir, rec->normal) <= 0)
+			rec->color = create_vec(0, 0, 0);
+		return (1);
+	}
+	else if (rec->mat == -1)
+	{
+
+	}
 }
 
-int hit_rectangle_xz(t_object *rect, t_ray *ray, t_record* rec)
+t_color ray_color_2(t_ray r, t_object* world)
 {
-	double t = (rect->radius - ray->origin.y) / ray->dir.y;
-    if (t < rec->t_min || t > rec->t_max)
-        return (0);
-    double x = ray->origin.x + t * ray->dir.x;
-    double z = ray->origin.z + t * ray->dir.z;
-    if (x < rect->center.x || x > rect->center.y
-	|| z < rect->dir.x || z > rect->dir.y)
-        return (0);
-    rec->u = (x - rect->center.x) / (rect->center.y - rect->center.x);
-    rec->v = (z - rect->dir.x) / (rect->dir.y - rect->dir.x);
-    rec->t = t;
-	rec->t_max = t;
-	rec->mat = rect->mat;
-    t_vec outward_normal = create_vec(0, 1, 0);
-    set_face_normal(ray, rec, outward_normal);
-    rec->p = ray_end(ray, t);
-	rec->color = rect->color;
-    return (1);
+	t_record rec;
+	int i;
+	double t;
+
+	rec.t = 0.0;
+	rec.t_min = 0.001;
+	rec.t_max = INFINITY;
+	i = 0;
+	find_hitpoint(&r, world, &rec);
+	if (rec.t > 0)
+		return (rec.color);
+	t = 0.5 * (unit_vec((r.dir)).y + 1.0);
+	return (vec_scalar_mul(
+		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 1)
+	);
+}
+
+t_color ray_color(t_ray r, t_object* world, t_object* light, int depth)
+{
+	double t;
+	double pdf;
+	t_record rec;
+	t_color color;
+	t_vec target;
+	t_ray scattered;
+
+	rec.t = 0.0;
+	rec.t_min = 0.001;
+	rec.t_max = INFINITY;
+
+	if (depth <= 0)
+        return (create_vec(0,0,0));
+
+	find_hitpoint(&r, world, &rec);
+	if (rec.t > 0)
+	{
+		pdf = scatter(&r, &rec, &scattered, light);
+		if (rec.mat != -1)
+		{
+			color = vec_mul(vec_scalar_mul(rec.color, scattering_pdf(&scattered, &rec)), 
+			vec_division(ray_color(scattered, world, light, depth - 1), pdf));
+		}
+		else
+			color = rec.color;
+		if (0)
+		{
+			/*//target = vec_sum(vec_sum(rec.p, rec.normal), rand_sphere()); //wihtout lambertian
+			target = vec_sum(rec.p, rand_hemi_sphere(rec.normal)); //with lambertian
+			//lambertian 반사 구현할 때, 0으로 나누는 경우가 생김. 원문에서 bullet으로 검색해서 예외 처리 할 것
+			color = vec_mul(color, ray_color(ray(rec.p, vec_sub(target, rec.p)), world, depth - 1));*/
+			/*target = vec_sum(rec.normal, rand_sphere()); 
+			color = vec_mul(color, ray_color(ray(rec.p, target), world, depth - 1)); // material 클래스 추가 이후 부터 갑자기 바뀌었다. 왜 램버시안 반사를 없앴지??*/
+			
+
+			/*target = vec_sum(vec_sum(rec.p, rec.normal), unit_vec(rand_sphere()));
+			t_ray scattered = ray(rec.p, unit_vec(target));
+			double pdf = vdot(rec.normal, scattered.dir) / 3.1415926535897932385;
+			double scat_pdf;
+			double cos;
+			cos = vdot(rec.normal, unit_vec(scattered.dir));
+			if (cos < 0)
+				scat_pdf = 0;
+			else
+				scat_pdf = cos / 3.1415926535897932385;
+			color = vec_mul(vec_scalar_mul(color, scat_pdf), 
+			vec_division(ray_color(ray(rec.p, vec_sub(target, rec.p)), world, depth - 1), pdf));
+			//unit_sphere를 이용한 난반사 구현*/
+			
+
+
+			/*target = rand_hemi_sphere(rec.normal);
+			t_ray scattered = ray(rec.p, unit_vec(target));
+			double pdf = 0.5 / 3.1415926535897932385;
+			double scat_pdf;
+			double cos;
+			cos = vdot(rec.normal, unit_vec(scattered.dir));
+			if (cos < 0)
+				scat_pdf = 0;
+			else
+				scat_pdf = cos / 3.1415926535897932385;
+			color = vec_mul(vec_scalar_mul(color, scat_pdf), 
+			vec_division(ray_color(scattered, world, depth - 1), pdf));
+			//hemisphere를 이용한 난반사 구현(lambertian)*/
+
+			/*double pdf;
+			pdf = scatter(&r, &rec, &scattered);
+			color = vec_mul(vec_scalar_mul(rec.color, scattering_pdf(&scattered, &rec)), 
+			vec_division(ray_color(scattered, world, depth - 1), pdf));*/
+
+			/*t_vec on_light = create_vec(random_double(0,4,7), 8, random_double(-3,-1,7));
+			t_vec to_light = vec_sub(on_light, rec.p);
+			double distance_squared = pow(vec_len(to_light), 2);
+			to_light = unit_vec(to_light);
+
+			if (vdot(to_light, rec.normal) < 0)
+				return (create_vec(0,0,0));
+
+			double light_area = (2)*(2);
+			double light_cosine = fabs(to_light.y);
+			if (light_cosine < 0.000001)
+				return (create_vec(0,0,0));
+
+			double pdf = distance_squared / (light_cosine * light_area);
+			t_ray scattered = ray(rec.p, to_light);
+			double scat_pdf;
+			double cos;
+			cos = vdot(rec.normal, unit_vec(scattered.dir));
+			if (cos < 0)
+				scat_pdf = 0;
+			else
+				scat_pdf = cos / 3.1415926535897932385;
+			color = vec_mul(vec_scalar_mul(color, scat_pdf), 
+			vec_division(ray_color(scattered, world, depth - 1), pdf));
+			//light sampling*/
+		}
+		/*else if (rec.mat == 1) //metal 재질인 경우
+		{
+			scattered = ray(rec.p, reflect(unit_vec(r.dir), rec.normal));
+			if (vdot(scattered.dir, rec.normal) > 0)
+				color = vec_mul(rec.color, ray_color(ray(rec.p, scattered.dir), world, depth - 1));
+			else
+				color = create_vec(0, 0, 0);
+		}
+		else if (rec.mat == -1) //light인 경우
+			return (rec.color);*/
+		return (color);
+	}
+	t = 0.5 * (unit_vec((r.dir)).y + 1.0);
+	return (vec_scalar_mul(
+		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 0)
+	);
+	//return (create_vec(1,1,1));
 }

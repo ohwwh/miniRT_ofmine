@@ -7,6 +7,29 @@ double random_double(double min, double max, int anti)
     return ((max-min) * ((double)rand() / (double)RAND_MAX) + min);
 }
 
+t_vec rand_sphere()
+{
+	t_vec ret;
+
+	while (1)
+	{
+		ret = create_vec(random_double(-1,1,7), random_double(-1,1,7), random_double(-1,1,7));
+		if (vec_len(ret) >= 1.0)
+			continue ;
+		//printf("%lf\n", ret.x);
+		return (ret);
+	}
+}
+
+t_vec rand_hemi_sphere(t_vec normal)
+{
+	t_vec ret;
+	ret = rand_sphere();
+	if (vdot(ret, normal) > 0.0)
+		return (ret);
+	else
+		return (vec_scalar_mul(ret, -1));
+}
 
 t_vec random_cosine_direction()
 {
@@ -27,26 +50,29 @@ t_onb create_onb(t_vec n)
     t_onb ret;
     t_vec a;
 
-    ret.axis[2] = unit_vec(n);
-    if (fabs(ret.axis[2].x) > 0.9)
+    ret.w = unit_vec(n);
+    if (fabs(ret.w.x) > 0.9)
         a = create_vec(0, 1, 0);
     else
         a = create_vec(1, 0, 0);
-    ret.axis[1] = unit_vec(vcross(ret.axis[2], a));
-    ret.axis[0] = vcross(ret.axis[2], ret.axis[1]);
+    ret.v = unit_vec(vcross(ret.w, a));
+    ret.u = vcross(ret.w, ret.v);
+
+    return (ret);
 }
 
-t_vec local(t_onb *onb, t_vec *a)
+t_vec local(t_onb *onb, t_vec a)
 {
     return (
         vec_sum(
-            vec_scalar_mul(onb->axis[0], a->x),
+            vec_scalar_mul(onb->u, a.x),
             vec_sum(
-                vec_scalar_mul(onb->axis[1], a->y),
-                vec_scalar_mul(onb->axis[2], a->z)
+                vec_scalar_mul(onb->v, a.y),
+                vec_scalar_mul(onb->w, a.z)
             )
         )
     );
 }
 
 t_vec cosine_pdf(t_onb uvw);
+
