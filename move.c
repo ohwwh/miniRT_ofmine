@@ -80,7 +80,7 @@ int	keybind(int keycode, t_vars* vars)
         if (vars->is_trace == 0)
         {
             vars->is_trace = 1;
-            vars->anti = 50;
+            vars->anti = 500;
             vars->changed = 1;
         }
         else

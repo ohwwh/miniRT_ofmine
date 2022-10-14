@@ -18,6 +18,8 @@ typedef struct s_record {
 	int front_face;
 	int idx;
 	int mat;
+	double u;
+	double v;
 } t_record;
 
 t_ray 	ray(t_point org, t_vec dir);
@@ -27,6 +29,9 @@ int hit_sphere(t_object* s, t_ray* r, t_record* rec);
 int hit_cylinder(t_object *cy, t_ray *ray, t_record *rec);
 int hit_caps(t_object *cy, t_ray *ray, t_record *rec);
 int hit_plane(t_object *pl, t_ray *ray, t_record* rec);
+int hit_rectangle_xy(t_object *rect, t_ray *ray, t_record* rec);
+int hit_rectangle_yz(t_object *rect, t_ray *ray, t_record* rec);
+int hit_rectangle_xz(t_object *rect, t_ray *ray, t_record* rec);
 int find_hitpoint(t_ray *ray, t_object *objs, t_record* rec);
 
 #endif

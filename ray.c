@@ -49,13 +49,19 @@ int find_hitpoint(t_ray* ray, t_object *objs, t_record* rec)
         }
         else if (tmp->type == 1)
         {
-        	hit_plane(tmp, ray, rec);
+			hit_plane(tmp, ray, rec);
         }
         else if (tmp->type == 2)
         {
             hit_cylinder(tmp, ray, rec);
-	        hit_caps(tmp, ray, rec);
+			hit_caps(tmp, ray, rec);
         }
+		else if (tmp->type == 4)
+			hit_rectangle_xy(tmp, ray, rec);
+		else if (tmp->type == 5)
+			hit_rectangle_yz(tmp, ray, rec);
+		else if (tmp->type == 6)
+			hit_rectangle_xz(tmp, ray, rec);
         tmp = tmp->next;
     }
     return (1);
@@ -65,6 +71,7 @@ int hit_caps(t_object *cy, t_ray *ray, t_record *rec)
 {
 	t_object top_cap;
 	t_record hr;
+	t_record hr2;
 
 	top_cap.center.x = cy->dir.x;
 	top_cap.center.y = cy->dir.y;
@@ -86,17 +93,18 @@ int hit_caps(t_object *cy, t_ray *ray, t_record *rec)
 	top_cap.mat = cy->mat;
 
 	hr = *rec;
+	hr2 = *rec;
 	hit_plane(&top_cap, ray, &hr);
 	if (powf(hr.p.x - top_cap.center.x, 2.) + powf(hr.p.y - top_cap.center.y, 2.) + powf(hr.p.z - top_cap.center.z, 2.) <= powf(cy->radius, 2.))
 	{
-		*rec = hr;
+		hr2 = hr;
 		return (1);
 	}
 	//hr = *rec;
-	hit_plane(cy, ray, &hr);
-	if (powf(hr.p.x - cy->center.x, 2.) + powf(hr.p.y - cy->center.y, 2.) + powf(hr.p.z - cy->center.z, 2.) <= powf(cy->radius, 2.))
+	hit_plane(cy, ray, &hr2);
+	if (powf(hr2.p.x - cy->center.x, 2.) + powf(hr2.p.y - cy->center.y, 2.) + powf(hr2.p.z - cy->center.z, 2.) <= powf(cy->radius, 2.))
 	{
-		*rec = hr;
+		*rec = hr2;
 		return (1);
 	}
 	return (0);
@@ -215,7 +223,7 @@ int hit_plane(t_object *pl, t_ray *ray, t_record* rec)
             return (0);
 	}
     else
-	    return (0);
+		return (0);
     if (root < rec->t_min || rec->t_max < root)
 		return (0);
 	rec->t = root;
@@ -227,5 +235,80 @@ int hit_plane(t_object *pl, t_ray *ray, t_record* rec)
 	if (vdot(ray->dir, rec->normal) > __DBL_EPSILON__) // 부동 소수점 오차 범위 내에서 비교
 		rec->normal = unit_vec(vec_scalar_mul(pl->dir, -1));
 	front_face(ray, rec);
+    return (1);
+}
+
+void set_face_normal(t_record* rec, t_ray *ray, t_vec outward_normal)
+{
+	rec->front_face = vdot(ray->dir, outward_normal) < 0;
+	if (front_face)
+		rec->normal = outward_normal;
+	else
+		vec_scalar_mul(rec->normal = outward_normal, -1);
+}
+
+int hit_rectangle_xy(t_object *rect, t_ray *ray, t_record* rec)
+{
+	double t = (rect->radius - ray->origin.z) / ray->dir.z;
+    if (t < rec->t_min || t > rec->t_max)
+        return (0);
+    double x = ray->origin.x + t * ray->dir.x;
+    double y = ray->origin.y + t * ray->dir.y;
+    if (x < rect->center.x || x > rect->center.y
+	|| y < rect->dir.x || y > rect->dir.y)
+        return (0);
+    rec->u = (x - rect->center.x) / (rect->center.y - rect->center.x);
+    rec->v = (y - rect->dir.x) / (rect->dir.y - rect->dir.x);
+    rec->t = t;
+	rec->t_max = t;
+	rec->mat = rect->mat;
+    t_vec outward_normal = create_vec(0, 0, 1);
+    set_face_normal(ray, rec, outward_normal);
+    rec->p = ray_end(ray, t);
+	rec->color = rect->color;
+    return (1);
+}
+
+int hit_rectangle_yz(t_object *rect, t_ray *ray, t_record* rec)
+{
+	double t = (rect->radius - ray->origin.x) / ray->dir.x;
+    if (t < rec->t_min || t > rec->t_max)
+        return (0);
+    double y = ray->origin.y + t * ray->dir.y;
+    double z = ray->origin.z + t * ray->dir.z;
+    if (y < rect->center.x || y > rect->center.y
+	|| z < rect->dir.x || z > rect->dir.y)
+        return (0);
+    rec->u = (y - rect->center.x) / (rect->center.y - rect->center.x);
+    rec->v = (z - rect->dir.x) / (rect->dir.y - rect->dir.x);
+    rec->t = t;
+	rec->t_max = t;
+	rec->mat = rect->mat;
+    t_vec outward_normal = create_vec(1, 0, 0);
+    set_face_normal(ray, rec, outward_normal);
+    rec->p = ray_end(ray, t);
+	rec->color = rect->color;
+    return (1);
+}
+
+int hit_rectangle_xz(t_object *rect, t_ray *ray, t_record* rec)
+{
+	double t = (rect->radius - ray->origin.y) / ray->dir.y;
+    if (t < rec->t_min || t > rec->t_max)
+        return (0);
+    double x = ray->origin.x + t * ray->dir.x;
+    double z = ray->origin.z + t * ray->dir.z;
+    if (x < rect->center.x || x > rect->center.y
+	|| z < rect->dir.x || z > rect->dir.y)
+        return (0);
+    rec->u = (x - rect->center.x) / (rect->center.y - rect->center.x);
+    rec->v = (z - rect->dir.x) / (rect->dir.y - rect->dir.x);
+    rec->t = t;
+	rec->t_max = t;
+	rec->mat = rect->mat;
+    t_vec outward_normal = create_vec(0, 1, 0);
+    set_face_normal(ray, rec, outward_normal);
+    rec->p = ray_end(ray, t);
+	rec->color = rect->color;
     return (1);
 }

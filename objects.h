@@ -17,5 +17,8 @@ typedef struct s_object {
 t_object create_sphere(t_point c, double r, t_color color, int mat);
 t_object create_cylinder(t_point c, double r, double h, t_vec dir, t_color color, int mat);
 t_object create_plane(t_point c, t_vec dir, t_color color, int mat);
+t_object create_rectangle_xy(t_vec x, t_vec y, double k, t_color color, int mat);
+t_object create_rectangle_yz(t_vec y, t_vec z, double k, t_color color, int mat);
+t_object create_rectangle_xz(t_vec x, t_vec z, double k, t_color color, int mat);
 
 #endif
