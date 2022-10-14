@@ -11,12 +11,11 @@
 /* ************************************************************************** */
 
 #include "miniRT.h"
-#define MAX_DEPTH 50 //재귀의 횟수가 깊어질 수록 그림자의 색깔이 물체의 색깔과 비슷해진다
+#define MAX_DEPTH 50
 t_color color;
 
 void print_init(t_vars vars)
 {
-	//printf("%lf, %lf, %lf\n", vars.camera.origin.x, vars.camera.origin.y, vars.camera.origin.z);
 	double u;
 	double v;
 	t_vec dir;
@@ -43,7 +42,7 @@ void print_init(t_vars vars)
 				vars.camera.lower_left_corner.y + (u * vars.camera.horizontal.y) + (v * vars.camera.vertical.y) - vars.camera.origin.y,
 				vars.camera.lower_left_corner.z + (u * vars.camera.horizontal.z) + (v * vars.camera.vertical.z) - vars.camera.origin.z);
 				ray_tmp = ray(vars.camera.origin, dir);
-				if (i == 312 && j == 227)
+				if (i == 168 && j == 311)
 					i = i;
 				if (vars.is_trace == 1)
 					color = vec_sum(color, ray_color(ray_tmp, vars.world, vars.world, MAX_DEPTH));
@@ -86,16 +85,13 @@ int	main(int argc, char *argv[])
 
 
 
-
-	/*t_object green = create_rectangle_yz(create_vec(0,555,0), create_vec(0,555,0), 555, 
+	/*t_object light = create_rectangle_xz(create_vec(213,343,0), create_vec(227,332,0), 554, 
+	create_vec(15, 15, 15), -1);
+	t_object green = create_rectangle_yz(create_vec(0,555,0), create_vec(0,555,0), 555, 
 	create_vec(0.12, 0.45, 0.15), 0);
 	t_object red = create_rectangle_yz(create_vec(0,555,0), create_vec(0,555,0), 0, 
 	create_vec(0.65, 0.05, 0.05), 0);
-	t_object light = create_rectangle_xz(create_vec(213,343,0), create_vec(227,332,0), 554, 
-	create_vec(15, 15, 15), -1);
-	/*light = create_sphere(create_vec(250,540,210), 90, 
-	create_vec(4, 4, 4), -1);*/
-	/*t_object white1 = create_rectangle_xz(create_vec(0,555,0), create_vec(0,555,0), 555, 
+	t_object white1 = create_rectangle_xz(create_vec(0,555,0), create_vec(0,555,0), 555, 
 	create_vec(0.73, 0.73, 0.73), 0);
 	t_object white2 = create_rectangle_xz(create_vec(0,555,0), create_vec(0,555,0), 0, 
 	create_vec(0.73, 0.73, 0.73), 0);
@@ -104,13 +100,13 @@ int	main(int argc, char *argv[])
 	t_object sphere = create_sphere(create_vec(190,90,190), 90, 
 	create_vec(0.7, 0.3, 0.3), 0);
 
-	sphere.next = &light;
-	light.next = &white2;
-	white2.next = &white3;
-	white3.next = &green;
+	light.next = &green;
 	green.next = &red;
 	red.next = &white1;
-	white1.next = 0;*/
+	white1.next = &white2;
+	white2.next = &white3;
+	white3.next = &sphere;
+	sphere.next = 0;*/
 
 	
 
@@ -118,8 +114,9 @@ int	main(int argc, char *argv[])
 	
 	t_object light = create_rectangle_xy(create_vec(3,5,0), create_vec(1,3,0), 
 	-4, create_vec(15, 15, 15), -1);
-	/*t_object light = create_sphere(create_vec(2, 8, -10), 2, 
-	create_vec(15, 15, 15), -1);*/
+
+	//t_object light = create_sphere(create_vec(2, 8, -10), 2, 
+	//create_vec(15, 15, 15), -1);
 
 	t_object surface = create_sphere(create_vec(0, -1000, 0), 1000, 
 	create_vec(0.8, 0.8, 0), 0);

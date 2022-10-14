@@ -83,6 +83,8 @@ t_vec      unit_vec(t_vec vec)
     double len = vec_len(vec);
     if (len == 0)
     {
+        int *ptr = 0;
+        *ptr = 1;
         printf("Error : the length of vector is 0\n");
         exit(1);
     }

@@ -215,10 +215,10 @@ int hit_plane(t_object *pl, t_ray *ray, t_record* rec)
 void set_face_normal(t_record* rec, t_ray *ray, t_vec outward_normal)
 {
 	rec->front_face = vdot(ray->dir, outward_normal) < 0;
-	if (front_face(ray, rec) != 0)
+	if (rec->front_face != 0)
 		rec->normal = outward_normal;
 	else
-		vec_scalar_mul(rec->normal = outward_normal, -1);
+		rec->normal = vec_scalar_mul(outward_normal, -1);
 }
 
 int hit_rectangle_xy(t_object *rect, t_ray *ray, t_record* rec)
@@ -237,7 +237,7 @@ int hit_rectangle_xy(t_object *rect, t_ray *ray, t_record* rec)
 	rec->t_max = t;
 	rec->mat = rect->mat;
     t_vec outward_normal = create_vec(0, 0, 1);
-    //set_face_normal(ray, rec, outward_normal); -> ㅁㅝ가 문문제제야야~~~
+    set_face_normal(rec, ray, outward_normal);
     rec->p = ray_end(ray, t);
 	rec->color = rect->color;
     return (1);
@@ -259,7 +259,7 @@ int hit_rectangle_yz(t_object *rect, t_ray *ray, t_record* rec)
 	rec->t_max = t;
 	rec->mat = rect->mat;
     t_vec outward_normal = create_vec(1, 0, 0);
-    set_face_normal(ray, rec, outward_normal);
+    set_face_normal(rec, ray, outward_normal);
     rec->p = ray_end(ray, t);
 	rec->color = rect->color;
     return (1);
@@ -281,7 +281,7 @@ int hit_rectangle_xz(t_object *rect, t_ray *ray, t_record* rec)
 	rec->t_max = t;
 	rec->mat = rect->mat;
     t_vec outward_normal = create_vec(0, 1, 0);
-    set_face_normal(ray, rec, outward_normal);
+    set_face_normal(rec, ray, outward_normal);
     rec->p = ray_end(ray, t);
 	rec->color = rect->color;
     return (1);
