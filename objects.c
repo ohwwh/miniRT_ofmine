@@ -1,5 +1,10 @@
 #include "objects.h"
 
+void set_refraction(t_object* obj, double ref)
+{
+	obj->refraction = ref;
+}
+
 t_object create_sphere(t_point c, double r, t_color color, int mat)
 {
 	t_object ret;
@@ -9,6 +14,7 @@ t_object create_sphere(t_point c, double r, t_color color, int mat)
 	ret.radius = r;
 	ret.color = color;
 	ret.mat = mat;
+	ret.refraction = 0;
 	return (ret);
 }
 
@@ -23,6 +29,7 @@ t_object create_cylinder(t_point c, double r, double h, t_vec dir, t_color color
 	ret.dir = dir;
 	ret.color = color;
 	ret.mat = mat;
+	ret.refraction = 0;
 	return (ret);
 }
 
@@ -35,6 +42,7 @@ t_object create_plane(t_point c, t_vec dir, t_color color, int mat)
 	ret.dir = dir;
 	ret.color = color;
 	ret.mat = mat;
+	ret.refraction = 0;
 	return (ret);
 }
 
@@ -48,6 +56,7 @@ t_object create_rectangle_xy(t_vec x, t_vec y, double k, t_color color, int mat)
 	ret.radius = k;
 	ret.color = color;
 	ret.mat = mat;
+	ret.refraction = 0;
 
 	return (ret);
 }
@@ -62,6 +71,7 @@ t_object create_rectangle_yz(t_vec y, t_vec z, double k, t_color color, int mat)
 	ret.radius = k;
 	ret.color = color;
 	ret.mat = mat;
+	ret.refraction = 0;
 
 	return (ret);
 }
@@ -76,6 +86,7 @@ t_object create_rectangle_xz(t_vec x, t_vec z, double k, t_color color, int mat)
 	ret.radius = k;
 	ret.color = color;
 	ret.mat = mat;
+	ret.refraction = 0;
 
 	return (ret);
 }

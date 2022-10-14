@@ -19,6 +19,21 @@ t_point ray_end(t_ray* ray, double t)
 	return (ret);
 }
 
+double reflectance(double cos, double ref_ratio)
+{
+	double r0 = (1 - ref_ratio) / (1 + ref_ratio);
+	r0 = r0 * r0;
+	return (r0 + (1 - r0) * powf((1 - cos), 5));
+}
+
+t_vec refract(t_vec v, t_vec n, double e, double cos)
+{
+	t_vec perp = vec_scalar_mul(vec_sum(v, vec_scalar_mul(n, cos)), e);
+	//e * (v + n * cos_theta)
+	t_vec parallel = vec_scalar_mul(n, -sqrt(fabs(1.0 - powf(vec_len(perp), 2))));
+	return (vec_sum(perp, parallel));
+}
+
 t_vec reflect(t_vec v, t_vec n)
 {
 	return (vec_sub(v, vec_scalar_mul(n, 2*vdot(v, n))));
@@ -46,14 +61,29 @@ double light_pdf_value(t_ray* ray_path, t_object* light)
 	rec.t = 0.0;
 	rec.t_min = 0.001;
 	rec.t_max = INFINITY;
-	hit_rectangle_xy(light, ray_path, &rec);
+	if (light->type == 4)
+		hit_rectangle_xy(light, ray_path, &rec);
+	else if (light->type == 5)
+		hit_rectangle_yz(light, ray_path, &rec);
+	else if (light->type == 6)
+		hit_rectangle_xz(light, ray_path, &rec);
+	else if (light->type == 3)
+		hit_sphere(light, ray_path, &rec);
 	if (rec.t <= 0)
 		return 0;
-	double area = (light->center.y - light->center.x)*(light->dir.y - light->dir.x);
+	double area = (light->center.y - light->center.x) * (light->dir.y - light->dir.x);
 	double distance_squared = rec.t * rec.t * length_squared;
 	double cosine = fabs(vdot(ray_path->dir, rec.normal) / sqrt(length_squared));
 
-	return distance_squared / (cosine * area);
+
+	double cos_max = sqrt(1 - (light->radius * light->radius / 
+	powf(vec_len(vec_sub(light->center, ray_path->origin)), 2)));
+	double angle = 2 * 3.1415926535897932385 * (1 - cos_max);
+
+	if (light->type == 3)
+		return (1 / angle);
+	else
+		return distance_squared / (cosine * area);
 }
 
 double mixture_pdf_value(t_record* rec, t_ray* scattered, t_object* light)
@@ -65,18 +95,38 @@ double mixture_pdf_value(t_record* rec, t_ray* scattered, t_object* light)
 	uvw = create_onb(rec->normal);
 	if (random_double(0,1,7) < 0.5) //광원 샘플링
 	{
-		random_point = create_vec(random_double(light->center.x, light->center.y, 7),
-		random_double(light->dir.x, light->dir.y, 7), light->radius); // 광원의 크기 안에서 벡터를 랜덤 생성
-		ray_path = vec_sub(random_point, rec->p); // ray를 쏜 곳(시선)으로부터 광원 속 랜덤 지점의 벡터.
-		*scattered = ray(rec->p, ray_path);
+		if (light->type == 3)
+		{
+			
+		}
+		else
+		{
+			if (light->type == 4)
+			{
+				random_point = create_vec(random_double(light->center.x, light->center.y, 7),
+				random_double(light->dir.x, light->dir.y, 7), light->radius); // 광원의 크기 안에서 벡터를 랜덤 생성
+			}
+			else if (light->type == 5)
+			{
+				random_point = create_vec(light->radius, random_double(light->center.x, light->center.y, 7),
+				random_double(light->dir.x, light->dir.y, 7)); // 광원의 크기 안에서 벡터를 랜덤 생성
+			}
+			else if (light->type == 6)
+			{
+				random_point = create_vec(random_double(light->center.x, light->center.y, 7),
+				light->radius, random_double(light->dir.x, light->dir.y, 7)); // 광원의 크기 안에서 벡터를 랜덤 생성
+			}
+			ray_path = vec_sub(random_point, rec->p); // ray를 쏜 곳(시선)으로부터 광원 속 랜덤 지점의 벡터.
+			*scattered = ray(rec->p, ray_path);
+		}
 	}
 	else //난반사 샘플링
 	{
 		ray_path = local(&uvw, random_cosine_direction()); //코사인 분포를 따르는 랜덤 벡터를 생성
 		*scattered = ray(rec->p, unit_vec(ray_path));
 	}
-	return (0.5 * light_pdf_value(scattered, light) + 0.5 * cosine_pdf_value(scattered, &uvw));
-
+	
+	return (0.5 * light_pdf_value(scattered, light) + 0.5 * cosine_pdf_value(&(rec->normal), &(uvw.w)));
 }
 
 double scattering_pdf(t_ray* scattered, t_record* rec)
@@ -100,7 +150,6 @@ double scatter(t_ray* r, t_record* rec, t_ray* scattered, t_object* light)
 	t_vec dir;
 	//t_cosine_pdf pdf;
 	double pdf;
-	const double pi = 3.1415926535897932385;
 
 	if (rec->mat == 0)
 	{
@@ -134,9 +183,32 @@ double scatter(t_ray* r, t_record* rec, t_ray* scattered, t_object* light)
 			rec->color = create_vec(0, 0, 0);
 		return (1);
 	}
+	else if (rec->mat == 2)
+	{
+		if (rec->refraction == 0)
+			printf("refraction is not set\n");
+		t_vec attenuation = create_vec(1, 1, 1);
+		t_vec dir;
+		double ref_ratio;
+		double cos = fmin(vdot(vec_scalar_mul(unit_vec(r->dir), -1), rec->normal), 1.0);
+		double sin = sqrt(1.0 - cos * cos);
+		
+		if (rec->front_face)
+			ref_ratio = 1.0 / rec->refraction;
+		else
+			ref_ratio = rec->refraction;
+
+		if (ref_ratio * sin > 1.0 || 
+		reflectance(cos, ref_ratio) > random_double(0,1,7))
+			dir = reflect(unit_vec(r->dir), rec->normal);
+		else
+			dir = refract(unit_vec(r->dir), rec->normal, ref_ratio, cos);
+		*scattered = ray(rec->p, dir);
+		return (1);
+	}
 	else if (rec->mat == -1)
 	{
-
+		return (1);
 	}
 }
 
@@ -271,7 +343,6 @@ t_color ray_color(t_ray r, t_object* world, t_object* light, int depth)
 	}
 	t = 0.5 * (unit_vec((r.dir)).y + 1.0);
 	return (vec_scalar_mul(
-		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 0)
+		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 0.01)
 	);
-	//return (create_vec(1,1,1));
 }

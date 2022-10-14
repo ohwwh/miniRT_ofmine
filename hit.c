@@ -11,6 +11,15 @@ int front_face(t_ray *r, t_record* rec)
 	return (1);
 }
 
+void set_face_normal(t_record* rec, t_ray *ray, t_vec outward_normal)
+{
+	rec->front_face = vdot(ray->dir, outward_normal) < 0;
+	if (rec->front_face != 0)
+		rec->normal = outward_normal;
+	else
+		rec->normal = vec_scalar_mul(outward_normal, -1);
+}
+
 int find_hitpoint(t_ray* ray, t_object *objs, t_record* rec)
 {
     t_object *tmp;
@@ -108,10 +117,10 @@ int hit_sphere(t_object* s, t_ray* r, t_record* rec)
 	rec->t = root;
 	rec->p = ray_end(r, root);
 	rec->t_max = root;
-	rec->normal = vec_division(vec_sub(rec->p, s->center), s->radius);
+	set_face_normal(rec, r, vec_division(vec_sub(rec->p, s->center), s->radius));
 	rec->color = s->color;
 	rec->mat = s->mat;
-	front_face(r, rec);
+	rec->refraction = s->refraction;
 	return (1);
 }
 
@@ -166,14 +175,16 @@ int hit_cylinder(t_object *cy, t_ray *ray, t_record *rec)
 	rec->t = root;
 	rec->t_max = root;
 	rec->mat = cy->mat;
+	rec->refraction = cy->refraction;
 	rec->color = cy->color;
 	rec->p = vec_sum(ray->origin, vec_scalar_mul(ray->dir, root));
 	oc = unit_vec(cy->dir);
 	m = vdot(ray->dir, vec_scalar_mul(oc, root))
 		+ vdot(vec_sub(ray->origin, cy->center), oc);
-	rec->normal = unit_vec(vec_sub(vec_sub(rec->p, cy->center),
-		vec_scalar_mul(oc, m)));
-	front_face(ray, rec);
+	set_face_normal(rec, ray, 
+		unit_vec(vec_sub(vec_sub(rec->p, cy->center),
+		vec_scalar_mul(oc, m)))
+	);
     return (1);
 }
 
@@ -203,22 +214,14 @@ int hit_plane(t_object *pl, t_ray *ray, t_record* rec)
 	rec->t = root;
 	rec->t_max = root;
 	rec->mat = pl->mat;
+	rec->refraction = pl->refraction;
 	rec->color = pl->color;
 	rec->p = vec_sum(ray->origin, vec_scalar_mul(ray->dir, root));
 	rec->normal = pl->dir;
 	if (vdot(ray->dir, rec->normal) > __DBL_EPSILON__) // 부동 소수점 오차 범위 내에서 비교
 		rec->normal = unit_vec(vec_scalar_mul(pl->dir, -1));
-	front_face(ray, rec);
+	rec->front_face = front_face(ray, rec);
     return (1);
-}
-
-void set_face_normal(t_record* rec, t_ray *ray, t_vec outward_normal)
-{
-	rec->front_face = vdot(ray->dir, outward_normal) < 0;
-	if (rec->front_face != 0)
-		rec->normal = outward_normal;
-	else
-		rec->normal = vec_scalar_mul(outward_normal, -1);
 }
 
 int hit_rectangle_xy(t_object *rect, t_ray *ray, t_record* rec)
@@ -236,6 +239,7 @@ int hit_rectangle_xy(t_object *rect, t_ray *ray, t_record* rec)
     rec->t = t;
 	rec->t_max = t;
 	rec->mat = rect->mat;
+	rec->refraction = rect->refraction;
     t_vec outward_normal = create_vec(0, 0, 1);
     set_face_normal(rec, ray, outward_normal);
     rec->p = ray_end(ray, t);
@@ -258,6 +262,7 @@ int hit_rectangle_yz(t_object *rect, t_ray *ray, t_record* rec)
     rec->t = t;
 	rec->t_max = t;
 	rec->mat = rect->mat;
+	rec->refraction = rect->refraction;
     t_vec outward_normal = create_vec(1, 0, 0);
     set_face_normal(rec, ray, outward_normal);
     rec->p = ray_end(ray, t);
@@ -280,6 +285,7 @@ int hit_rectangle_xz(t_object *rect, t_ray *ray, t_record* rec)
     rec->t = t;
 	rec->t_max = t;
 	rec->mat = rect->mat;
+	rec->refraction = rect->refraction;
     t_vec outward_normal = create_vec(0, 1, 0);
     set_face_normal(rec, ray, outward_normal);
     rec->p = ray_end(ray, t);

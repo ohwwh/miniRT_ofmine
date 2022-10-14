@@ -20,6 +20,7 @@ typedef struct s_record {
 	int front_face;
 	int idx;
 	int mat;
+	double refraction;
 	double u;
 	double v;
 } t_record;

@@ -42,7 +42,7 @@ void print_init(t_vars vars)
 				vars.camera.lower_left_corner.y + (u * vars.camera.horizontal.y) + (v * vars.camera.vertical.y) - vars.camera.origin.y,
 				vars.camera.lower_left_corner.z + (u * vars.camera.horizontal.z) + (v * vars.camera.vertical.z) - vars.camera.origin.z);
 				ray_tmp = ray(vars.camera.origin, dir);
-				if (i == 168 && j == 311)
+				if (i == 320 && j == 160)
 					i = i;
 				if (vars.is_trace == 1)
 					color = vec_sum(color, ray_color(ray_tmp, vars.world, vars.world, MAX_DEPTH));
@@ -68,15 +68,15 @@ int	main(int argc, char *argv[])
 	light.next = &surface;
 
 	t_object sphere = create_sphere(create_vec(0,0,-2), 0.5, 
-	create_vec(0.7, 0.3, 0.3), 1);
-	surface.next = &sphere;*/
+	create_vec(0.7, 0.3, 0.3), 0);
+	surface.next = &sphere;
 
-	/*t_object metal = create_sphere(create_vec(1,0, -1), 0.5, 
+	t_object metal = create_sphere(create_vec(1,0, -1), 0.5, 
 	create_vec(0.8, 0.8, 0.8), 1);
 	sphere.next = &metal;
-	metal.next = 0;*/
+	metal.next = 0;
 
-	/*t_object cylinder = create_cylinder(create_vec(0,0,-1), 0, 1, 
+	t_object cylinder = create_cylinder(create_vec(1.5,0,-1), 0, 1, 
 	create_vec(0,0,1), create_vec(0.3,0.3,0.7), 1);
 	sphere.next = &cylinder;
 	cylinder.next = 0;*/
@@ -85,20 +85,21 @@ int	main(int argc, char *argv[])
 
 
 
-	/*t_object light = create_rectangle_xz(create_vec(213,343,0), create_vec(227,332,0), 554, 
+	t_object light = create_rectangle_xz(create_vec(213,343,0), create_vec(227,332,0), 554, 
 	create_vec(15, 15, 15), -1);
 	t_object green = create_rectangle_yz(create_vec(0,555,0), create_vec(0,555,0), 555, 
 	create_vec(0.12, 0.45, 0.15), 0);
 	t_object red = create_rectangle_yz(create_vec(0,555,0), create_vec(0,555,0), 0, 
 	create_vec(0.65, 0.05, 0.05), 0);
 	t_object white1 = create_rectangle_xz(create_vec(0,555,0), create_vec(0,555,0), 555, 
-	create_vec(0.73, 0.73, 0.73), 0);
+	create_vec(0.73, 0.73, 0.73), 0); //윗면
 	t_object white2 = create_rectangle_xz(create_vec(0,555,0), create_vec(0,555,0), 0, 
-	create_vec(0.73, 0.73, 0.73), 0);
+	create_vec(0.73, 0.73, 0.73), 0); //아랫면
 	t_object white3 = create_rectangle_xy(create_vec(0,555,0), create_vec(0,555,0), 555, 
-	create_vec(0.73, 0.73, 0.73), 0);
+	create_vec(0.73, 0.73, 0.73), 0); //뒷면
 	t_object sphere = create_sphere(create_vec(190,90,190), 90, 
-	create_vec(0.7, 0.3, 0.3), 0);
+	create_vec(0.7, 0.3, 0.3), 1);
+	//set_refraction(&sphere, 1.5);
 
 	light.next = &green;
 	green.next = &red;
@@ -106,29 +107,34 @@ int	main(int argc, char *argv[])
 	white1.next = &white2;
 	white2.next = &white3;
 	white3.next = &sphere;
-	sphere.next = 0;*/
+	sphere.next = 0;
 
 	
-
-
+	/*t_object light = create_rectangle_xz(create_vec(4,8,0), create_vec(0,4,0), 
+	6, create_vec(15, 15, 15), -1);
 	
-	t_object light = create_rectangle_xy(create_vec(3,5,0), create_vec(1,3,0), 
-	-4, create_vec(15, 15, 15), -1);
+	//t_object light = create_rectangle_xy(create_vec(3,5,0), create_vec(1,3,0), 
+	//-5, create_vec(0, 45, 45), -1);
 
 	//t_object light = create_sphere(create_vec(2, 8, -10), 2, 
 	//create_vec(15, 15, 15), -1);
 
 	t_object surface = create_sphere(create_vec(0, -1000, 0), 1000, 
-	create_vec(0.8, 0.8, 0), 0);
+	create_vec(0.8, 0.8, 0.5), 0);
 	light.next = &surface;
 
 	t_object sphere = create_sphere(create_vec(0,2,0), 2, 
-	create_vec(0.7, 0.3, 0.3), 0);
+	create_vec(0.8, 0.8, 0.8), 2);
+	set_refraction(&sphere, 1.5);
 	surface.next = &sphere;
+	t_object sphere2 = create_sphere(create_vec(-4,2,2), 2, 
+	create_vec(0.7, 0.3, 0.3), 1);
+	sphere.next = &sphere2;
+	sphere2.next = 0;
 	t_object wall = create_plane(create_vec(0, 50, 0), 
-	vec_sub(create_vec(0,5,0), create_vec(26,3,6)), create_vec(0.5, 0.5, 0.58), 0);
-	sphere.next = 0;
-	wall.next = 0;
+	vec_sub(create_vec(0,5,0), create_vec(26,3,6)), create_vec(0.8, 0.8, 0.8), 0);
+	//sphere.next = 0;
+	wall.next = 0;*/
 
 
 	t_vars	vars;
@@ -137,16 +143,16 @@ int	main(int argc, char *argv[])
 	vars.is_move = -1;
 	vars.changed = 0;
 	vars.world = &light;
-	vars.window_width = 640;
-	vars.window_height = 320;
+	vars.window_width = 600;
+	vars.window_height = 600;
 	int window_width = 640;
 	int window_height = 320;
 	double ratio = (double)vars.window_width / (double)vars.window_height;
 
 	//t_camera camera = create_camera(create_vec(-2,2,1), create_vec(0,0,-1), create_vec(0, 1, 0), 70, ratio);
 	//t_camera camera = create_camera(create_vec(0,1,1), create_vec(0,0,-1), create_vec(0, 1, 0), 90, ratio);
-	//t_camera camera = create_camera(create_vec(278,278,-800), create_vec(278,278,0), create_vec(0, 1, 0), 40, ratio);
-	t_camera camera = create_camera(create_vec(26,3,6), create_vec(0,2,0), create_vec(0, 1, 0), 20, ratio);
+	t_camera camera = create_camera(create_vec(278,278,-800), create_vec(278,278,0), create_vec(0, 1, 0), 40, ratio);
+	//t_camera camera = create_camera(create_vec(26,8,6), create_vec(0,2,0), create_vec(0, 1, 0), 20, ratio);
 
 	vars.camera = camera;
 	ft_mlx_init(&vars);
