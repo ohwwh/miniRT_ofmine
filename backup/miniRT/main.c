@@ -13,6 +13,20 @@
 #include "miniRT.h"
 #define MAX_DEPTH 50
 
+void	init_rt(t_minirt *vars)
+{
+	vars->mlx.mlx = mlx_init();
+	vars->mlx.mlx_win = mlx_new_window(vars->mlx.mlx, WIDTH, HEIGHT, "miniRT");
+	vars->mlx.img = mlx_new_image(vars->mlx.mlx, WIDTH, HEIGHT);
+	vars->mlx.addr = mlx_get_data_addr(vars->mlx.img, &vars->mlx.bits_per_pixel, \
+	&vars->mlx.line_length, &vars->mlx.endian);
+	vars->scene.world = NULL;
+	vars->scene.ambient.count = 0;
+	vars->scene.camera.count = 0;
+	vars->scene.light = NULL;
+	//생성 실패 시 에러처리 해야 함
+}
+
 void print_init(t_minirt vars)
 {
 	double u;
@@ -168,6 +182,8 @@ int	main(int argc, char *argv[])
 
 
 	t_minirt	vars;
+	init_rt(&vars);
+	//init_rt를 한번 하고 나니까 없애도 흰색 화면이 뜲.
 	vars.is_trace = 0;
 	vars.anti = 1;
 	vars.is_move = -1;
@@ -185,7 +201,7 @@ int	main(int argc, char *argv[])
 
 	//srand(time(0));
 	vars.scene.camera = camera;
-	ft_mlx_init(&vars);
+	//ft_mlx_init(&vars);
 	print_init(vars);
 	mlx_hook(vars.mlx.mlx_win, 2, 0, &keybind, &vars);
 	mlx_hook(vars.mlx.mlx_win, 3, 0, &keyrelease, &vars);

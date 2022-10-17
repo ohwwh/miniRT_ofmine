@@ -1,6 +1,9 @@
 #ifndef MINIRT_H
 #define MINIRT_H
 
+#define WIDTH 640
+#define HEIGHT 320
+
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>

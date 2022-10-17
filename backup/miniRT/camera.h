@@ -8,6 +8,7 @@ typedef struct s_camera {
 	t_vec vup;
 	double vfov;
 	double ratio;
+	int count;
 
 	t_point lower_left_corner;
 	t_vec horizontal;
