@@ -42,7 +42,7 @@ void print_init(t_vars vars)
 				vars.camera.lower_left_corner.y + (u * vars.camera.horizontal.y) + (v * vars.camera.vertical.y) - vars.camera.origin.y,
 				vars.camera.lower_left_corner.z + (u * vars.camera.horizontal.z) + (v * vars.camera.vertical.z) - vars.camera.origin.z);
 				ray_tmp = ray(vars.camera.origin, dir);
-				if (i == 320 && j == 160)
+				if (i == 286 && j == 210)
 					i = i;
 				if (vars.is_trace == 1)
 					color = vec_sum(color, ray_color(ray_tmp, vars.world, vars.world, MAX_DEPTH));
@@ -59,7 +59,7 @@ void print_init(t_vars vars)
 
 int	main(int argc, char *argv[])
 {
-	/*t_object light = create_sphere(create_vec(5,8, -1), 4, 
+	t_object light = create_sphere(create_vec(5,8, -1), 4, 
 	create_vec(4, 4, 4), -1);
 
 	t_object surface = create_sphere(create_vec(0, -100.5, -1), 100, 
@@ -76,16 +76,16 @@ int	main(int argc, char *argv[])
 	sphere.next = &metal;
 	metal.next = 0;
 
-	t_object cylinder = create_cylinder(create_vec(1.5,0,-1), 0, 1, 
+	t_object cylinder = create_cylinder(create_vec(0,0,-4), 0.5, 1, 
 	create_vec(0,0,1), create_vec(0.3,0.3,0.7), 1);
 	sphere.next = &cylinder;
-	cylinder.next = 0;*/
+	cylinder.next = 0;
 	
 	
 
 
 
-	t_object light = create_rectangle_xz(create_vec(213,343,0), create_vec(227,332,0), 554, 
+	/*t_object light = create_rectangle_xz(create_vec(213,343,0), create_vec(227,332,0), 554, 
 	create_vec(15, 15, 15), -1);
 	t_object green = create_rectangle_yz(create_vec(0,555,0), create_vec(0,555,0), 555, 
 	create_vec(0.12, 0.45, 0.15), 0);
@@ -107,7 +107,7 @@ int	main(int argc, char *argv[])
 	white1.next = &white2;
 	white2.next = &white3;
 	white3.next = &sphere;
-	sphere.next = 0;
+	sphere.next = 0;*/
 
 	
 	/*t_object light = create_rectangle_xz(create_vec(4,8,0), create_vec(0,4,0), 
@@ -143,15 +143,15 @@ int	main(int argc, char *argv[])
 	vars.is_move = -1;
 	vars.changed = 0;
 	vars.world = &light;
-	vars.window_width = 600;
-	vars.window_height = 600;
+	vars.window_width = 640;
+	vars.window_height = 320;
 	int window_width = 640;
 	int window_height = 320;
 	double ratio = (double)vars.window_width / (double)vars.window_height;
 
 	//t_camera camera = create_camera(create_vec(-2,2,1), create_vec(0,0,-1), create_vec(0, 1, 0), 70, ratio);
-	//t_camera camera = create_camera(create_vec(0,1,1), create_vec(0,0,-1), create_vec(0, 1, 0), 90, ratio);
-	t_camera camera = create_camera(create_vec(278,278,-800), create_vec(278,278,0), create_vec(0, 1, 0), 40, ratio);
+	t_camera camera = create_camera(create_vec(0,1,1), create_vec(0,0,-1), create_vec(0, 1, 0), 90, ratio);
+	//t_camera camera = create_camera(create_vec(278,278,-800), create_vec(278,278,0), create_vec(0, 1, 0), 40, ratio);
 	//t_camera camera = create_camera(create_vec(26,8,6), create_vec(0,2,0), create_vec(0, 1, 0), 20, ratio);
 
 	vars.camera = camera;

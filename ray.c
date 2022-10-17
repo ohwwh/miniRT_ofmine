@@ -95,12 +95,6 @@ double mixture_pdf_value(t_record* rec, t_ray* scattered, t_object* light)
 	uvw = create_onb(rec->normal);
 	if (random_double(0,1,7) < 0.5) //광원 샘플링
 	{
-		if (light->type == 3)
-		{
-			
-		}
-		else
-		{
 			if (light->type == 4)
 			{
 				random_point = create_vec(random_double(light->center.x, light->center.y, 7),
@@ -118,7 +112,6 @@ double mixture_pdf_value(t_record* rec, t_ray* scattered, t_object* light)
 			}
 			ray_path = vec_sub(random_point, rec->p); // ray를 쏜 곳(시선)으로부터 광원 속 랜덤 지점의 벡터.
 			*scattered = ray(rec->p, ray_path);
-		}
 	}
 	else //난반사 샘플링
 	{
@@ -343,6 +336,6 @@ t_color ray_color(t_ray r, t_object* world, t_object* light, int depth)
 	}
 	t = 0.5 * (unit_vec((r.dir)).y + 1.0);
 	return (vec_scalar_mul(
-		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 0.01)
+		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 1)
 	);
 }
