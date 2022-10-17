@@ -7,7 +7,7 @@ typedef struct s_ray t_ray;
 typedef struct s_record t_record;
 
 int front_face(t_ray *r, t_record* rec);
-int find_hitpoint(t_ray *ray, t_object *objs, t_record* rec);
+int find_hitpoint(t_ray* ray, t_object *objs, t_object *light, t_record* rec);
 int hit_sphere(t_object* s, t_ray* r, t_record* rec);
 int hit_cylinder(t_object *cy, t_ray *ray, t_record *rec);
 int hit_caps(t_object *cy, t_ray *ray, t_record *rec);

@@ -8,8 +8,19 @@ double clamp(double x)
         return (0);
     if (x > 1)
         return (1);
+
+	/*float A = 0.15;
+    float B = 0.50;
+    float C = 0.10;
+    float D = 0.20;
+    float E = 0.02;
+    float F = 0.30;
+
+	double ret = (x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F) - E/F;
+    return (ret);*/
     return (x);
 }
+
 
 int rgb_to_int(t_color c)
 {
@@ -26,28 +37,28 @@ int rgb_to_int(t_color c)
 	return ((int)(255.999 * 0) << 24 | (int)(255.999 * c.x) << 16 | (int)(255.999 * c.y) << 8 | (int)(255.999 * c.z));
 }*/
 
-void ft_pixel_put(t_vars *vars, int x, int y, int color)
+void ft_pixel_put(t_minirt *vars, int x, int y, int color)
 {
-	mlx_pixel_put(vars->mlx, vars->win, x, y, color);
+	mlx_pixel_put(vars->mlx.mlx, vars->mlx.mlx_win, x, y, color);
 }
 
-void	ft_mlx_init(t_vars *vars)
+void	ft_mlx_init(t_minirt *vars)
 {	
-	vars->mlx = mlx_init();
-	if (!vars->mlx)
+	vars->mlx.mlx = mlx_init();
+	if (!vars->mlx.mlx)
 		printf("Error\nmlx_init fail\n");
-	vars->win = mlx_new_window(vars->mlx, vars->window_width, vars->window_height, "menu");
-	if (!vars->win)
+	vars->mlx.mlx_win = mlx_new_window(vars->mlx.mlx, vars->mlx.window_width, vars->mlx.window_height, "menu");
+	if (!vars->mlx.mlx_win)
 	{
 		printf("Error\nmlx_new_window fail\n");
 		exit(0);
 	}
 }
 
-void	ft_mlx_new(t_vars *vars, int x, int y, char *name)
+void	ft_mlx_new(t_minirt *vars, int x, int y, char *name)
 {
-	vars->win = mlx_new_window(vars->mlx, x, y, name);
-	if (!vars->win)
+	vars->mlx.mlx_win = mlx_new_window(vars->mlx.mlx, x, y, name);
+	if (!vars->mlx.mlx_win)
 	{
 		printf("Error\nmlx_new_window fail\n");
 		exit(0);

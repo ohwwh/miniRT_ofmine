@@ -13,30 +13,55 @@ int front_face(t_ray *r, t_record* rec)
 
 void set_face_normal(t_record* rec, t_ray *ray, t_vec outward_normal)
 {
-	rec->front_face = vdot(ray->dir, outward_normal) < 0;
+	rec->front_face = vdot(ray->dir, outward_normal) < 0.0;
 	if (rec->front_face != 0)
 		rec->normal = outward_normal;
 	else
 		rec->normal = vec_scalar_mul(outward_normal, -1);
 }
 
-int find_hitpoint(t_ray* ray, t_object *objs, t_record* rec)
+int find_hitpoint(t_ray* ray, t_object *objs, t_object *light, t_record* rec)
 {
     t_object *tmp;
-    t_record saved;
+	int end;
     
     tmp = objs;
-    saved.t = -1.0;
-    while (tmp)
+	/*end = 0;
+    while (1)
+    {
+		if (!tmp)
+		{
+			if (!end)
+			{
+				tmp = light;
+				end = 1;
+			}
+			else
+				return (1) ;
+		}
+        if (tmp->type == 3)
+            hit_sphere(tmp, ray, rec);
+        else if (tmp->type == 1)
+			hit_plane(tmp, ray, rec);
+        else if (tmp->type == 2)
+        {
+            hit_cylinder(tmp, ray, rec);
+			hit_caps(tmp, ray, rec);
+        }
+		else if (tmp->type == 4)
+			hit_rectangle_xy(tmp, ray, rec);
+		else if (tmp->type == 5)
+			hit_rectangle_yz(tmp, ray, rec);
+		else if (tmp->type == 6)
+			hit_rectangle_xz(tmp, ray, rec);
+        tmp = tmp->next;
+    }*/
+	while (tmp)
     {
         if (tmp->type == 3)
-        {
             hit_sphere(tmp, ray, rec);
-        }
         else if (tmp->type == 1)
-        {
 			hit_plane(tmp, ray, rec);
-        }
         else if (tmp->type == 2)
         {
             hit_cylinder(tmp, ray, rec);
@@ -77,6 +102,7 @@ int hit_caps(t_object *cy, t_ray *ray, t_record *rec)
 	top_cap.color.y = cy->color.y;
 	top_cap.color.z = cy->color.z;
 	top_cap.mat = cy->mat;
+	top_cap.refraction = cy->refraction;
 
 	hr = *rec;
 	hr2 = *rec;

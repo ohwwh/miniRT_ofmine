@@ -21,6 +21,7 @@ typedef struct s_record {
 	int idx;
 	int mat;
 	double refraction;
+	double specular;
 	double u;
 	double v;
 } t_record;
@@ -28,7 +29,7 @@ typedef struct s_record {
 t_ray 	ray(t_point org, t_vec dir);
 t_point 	ray_end(t_ray* ray, double t);
 t_vec reflect(t_vec v, t_vec n);
-t_color ray_color_2(t_ray r, t_object* world);
+t_color ray_color_2(t_ray r, t_object* world, t_object* light);
 t_color ray_color(t_ray r, t_object* world, t_object* light, int depth);
 
 #endif
