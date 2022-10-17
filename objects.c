@@ -1,11 +1,11 @@
 #include "objects.h"
 
-void set_refraction(t_object* obj, double ref)
+void set_refraction(t_objs* obj, double ref)
 {
 	obj->refraction = ref;
 }
 
-double get_light_size(t_object object)
+double get_light_size(t_objs object)
 {
 	const double rad = object.radius;
 	const double x = object.center.y - object.center.x;
@@ -22,9 +22,9 @@ double get_light_size(t_object object)
 	}
 }
 
-t_object create_sphere(t_point c, double r, t_color color, int mat)
+t_objs create_sphere(t_point c, double r, t_color color, int mat)
 {
-	t_object ret;
+	t_objs ret;
 
     ret.type = 3;
 	ret.center = c;
@@ -36,9 +36,9 @@ t_object create_sphere(t_point c, double r, t_color color, int mat)
 	return (ret);
 }
 
-t_object create_cylinder(t_point c, double r, double h, t_vec dir, t_color color, int mat)
+t_objs create_cylinder(t_point c, double r, double h, t_vec dir, t_color color, int mat)
 {
-	t_object ret;
+	t_objs ret;
 
 	ret.type = 2;
 	ret.center = c;
@@ -52,9 +52,9 @@ t_object create_cylinder(t_point c, double r, double h, t_vec dir, t_color color
 	return (ret);
 }
 
-t_object create_plane(t_point c, t_vec dir, t_color color, int mat)
+t_objs create_plane(t_point c, t_vec dir, t_color color, int mat)
 {
-	t_object ret;
+	t_objs ret;
 
 	ret.type = 1;
 	ret.center = c;
@@ -66,9 +66,9 @@ t_object create_plane(t_point c, t_vec dir, t_color color, int mat)
 	return (ret);
 }
 
-t_object create_rectangle_xy(t_vec x, t_vec y, double k, t_color color, int mat)
+t_objs create_rectangle_xy(t_vec x, t_vec y, double k, t_color color, int mat)
 {
-	t_object ret;
+	t_objs ret;
 
 	ret.type = 4;
 	ret.center = x;
@@ -82,9 +82,9 @@ t_object create_rectangle_xy(t_vec x, t_vec y, double k, t_color color, int mat)
 	return (ret);
 }
 
-t_object create_rectangle_yz(t_vec y, t_vec z, double k, t_color color, int mat)
+t_objs create_rectangle_yz(t_vec y, t_vec z, double k, t_color color, int mat)
 {
-	t_object ret;
+	t_objs ret;
 
 	ret.type = 5;
 	ret.center = y;
@@ -98,9 +98,9 @@ t_object create_rectangle_yz(t_vec y, t_vec z, double k, t_color color, int mat)
 	return (ret);
 }
 
-t_object create_rectangle_xz(t_vec x, t_vec z, double k, t_color color, int mat)
+t_objs create_rectangle_xz(t_vec x, t_vec z, double k, t_color color, int mat)
 {
-	t_object ret;
+	t_objs ret;
 
 	ret.type = 6;
 	ret.center = x;

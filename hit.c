@@ -1,6 +1,6 @@
 #include "miniRT.h"
 
-int front_face(t_ray *r, t_record* rec)
+int front_face(t_ray *r, t_hit_record* rec)
 {
 	if (vdot(r->dir, rec->normal) > 0.0)
 	{
@@ -10,7 +10,7 @@ int front_face(t_ray *r, t_record* rec)
 	return (1);
 }
 
-void set_face_normal(t_record* rec, t_ray *ray, t_vec outward_normal)
+void set_face_normal(t_hit_record* rec, t_ray *ray, t_vec outward_normal)
 {
 	rec->front_face = vdot(ray->dir, outward_normal) < 0.0;
 	if (rec->front_face != 0)
@@ -19,9 +19,9 @@ void set_face_normal(t_record* rec, t_ray *ray, t_vec outward_normal)
 		rec->normal = vec_scalar_mul(outward_normal, -1);
 }
 
-int find_hitpoint(t_ray* ray, t_object *objs, t_light *light, t_record* rec)
+int find_hitpoint(t_ray* ray, t_objs *objs, t_light *light, t_hit_record* rec)
 {
-    t_object *tmp;
+    t_objs *tmp;
 	int end;
     
     tmp = objs;
@@ -70,11 +70,11 @@ int find_hitpoint(t_ray* ray, t_object *objs, t_light *light, t_record* rec)
     return (1);
 }
 
-int hit_caps(t_object *cy, t_ray *ray, t_record *rec)
+int hit_caps(t_objs *cy, t_ray *ray, t_hit_record *rec)
 {
-	t_object top_cap;
-	t_record hr;
-	t_record hr2;
+	t_objs top_cap;
+	t_hit_record hr;
+	t_hit_record hr2;
 
 	top_cap.center.x = cy->dir.x;
 	top_cap.center.y = cy->dir.y;
@@ -111,9 +111,9 @@ int hit_caps(t_object *cy, t_ray *ray, t_record *rec)
 	return (0);
 }
 
-int hit_sphere(t_object* s, t_ray* r, t_record* rec)
+int hit_sphere(t_objs* s, t_ray* r, t_hit_record* rec)
 {
-	t_record hr;
+	t_hit_record hr;
 	t_vec oc = create_vec(r->origin.x - s->center.x
 	,r->origin.y - s->center.y
 	,r->origin.z - s->center.z);
@@ -127,15 +127,15 @@ int hit_sphere(t_object* s, t_ray* r, t_record* rec)
 			return (0);
 	sqrtd = sqrt(discriminant);
 	root = (-b - sqrtd) / a;
-	if (root < rec->t_min || rec->t_max < root)
+	if (root < rec->tmin || rec->tmax < root)
 	{
 		root = (-b + sqrtd) / a;
-		if (root < rec->t_min || rec->t_max < root)
+		if (root < rec->tmin || rec->tmax < root)
 			return (0);
 	}
 	rec->t = root;
 	rec->p = ray_end(r, root);
-	rec->t_max = root;
+	rec->tmax = root;
 	set_face_normal(rec, r, vec_division(vec_sub(rec->p, s->center), s->radius));
 	rec->color = s->color;
 	rec->mat = s->mat;
@@ -145,9 +145,9 @@ int hit_sphere(t_object* s, t_ray* r, t_record* rec)
 	return (1);
 }
 
-int hit_cylinder(t_object *cy, t_ray *ray, t_record *rec)
+int hit_cylinder(t_objs *cy, t_ray *ray, t_hit_record *rec)
 {   
-    t_record hr;
+    t_hit_record hr;
 	double	m;
 	t_vec	oc;
     double  D; // 판별식
@@ -171,30 +171,30 @@ int hit_cylinder(t_object *cy, t_ray *ray, t_record *rec)
 		- (vdot(oc, normalized) * vdot(oc, normalized))
 		- (cy->radius) * (cy->radius);
 	D = b * b - 4 * a * c;
-	if (D < rec->t_min)
+	if (D < rec->tmin)
 		return (0);
 	else
     {
         t1 = (-b + sqrt(D)) / (2 * a);
 	    t2 = (-b - sqrt(D)) / (2 * a);
-		if (t1 < rec->t_min)
+		if (t1 < rec->tmin)
 			return (0);
 		else
 		{
 	    	h1 = vdot(ray->dir, normalized) * t1 + vdot(oc, normalized);
 	    	h2 = vdot(ray->dir, normalized) * t2 + vdot(oc, normalized);
-			if (h2 >= rec->t_min && h2 <= cy->height)
+			if (h2 >= rec->tmin && h2 <= cy->height)
 				root = t2;
-			else if (h1 >= rec->t_min && h1 <= cy->height)
+			else if (h1 >= rec->tmin && h1 <= cy->height)
 				root = t1;
 			else
 				return (0);
 		}
     }
-	if (root < rec->t_min || rec->t_max < root)
+	if (root < rec->tmin || rec->tmax < root)
 		return (0);
 	rec->t = root;
-	rec->t_max = root;
+	rec->tmax = root;
 	rec->mat = cy->mat;
 	rec->refraction = cy->refraction;
 	rec->specular = cy->specular;
@@ -210,9 +210,9 @@ int hit_cylinder(t_object *cy, t_ray *ray, t_record *rec)
     return (1);
 }
 
-int hit_plane(t_object *pl, t_ray *ray, t_record* rec)
+int hit_plane(t_objs *pl, t_ray *ray, t_hit_record* rec)
 {
-	t_record hr;
+	t_hit_record hr;
     t_vec	x;
 	t_vec	normal;
 	double	b;
@@ -226,15 +226,15 @@ int hit_plane(t_object *pl, t_ray *ray, t_record* rec)
 	{
 		a = vdot(x, normal);
 		root = -a / b;
-		if (root < rec->t_min)
+		if (root < rec->tmin)
             return (0);
 	}
     else
 		return (0);
-    if (root < rec->t_min || rec->t_max < root)
+    if (root < rec->tmin || rec->tmax < root)
 		return (0);
 	rec->t = root;
-	rec->t_max = root;
+	rec->tmax = root;
 	rec->mat = pl->mat;
 	rec->refraction = pl->refraction;
 	rec->specular = pl->specular;
@@ -247,10 +247,10 @@ int hit_plane(t_object *pl, t_ray *ray, t_record* rec)
     return (1);
 }
 
-int hit_rectangle_xy(t_object *rect, t_ray *ray, t_record* rec)
+int hit_rectangle_xy(t_objs *rect, t_ray *ray, t_hit_record* rec)
 {
 	double t = (rect->radius - ray->origin.z) / ray->dir.z;
-    if (t < rec->t_min || t > rec->t_max)
+    if (t < rec->tmin || t > rec->tmax)
         return (0);
     double x = ray->origin.x + t * ray->dir.x;
     double y = ray->origin.y + t * ray->dir.y;
@@ -260,7 +260,7 @@ int hit_rectangle_xy(t_object *rect, t_ray *ray, t_record* rec)
     rec->u = (x - rect->center.x) / (rect->center.y - rect->center.x);
     rec->v = (y - rect->dir.x) / (rect->dir.y - rect->dir.x);
     rec->t = t;
-	rec->t_max = t;
+	rec->tmax = t;
 	rec->mat = rect->mat;
 	rec->refraction = rect->refraction;
 	rec->specular = rect->specular;
@@ -271,10 +271,10 @@ int hit_rectangle_xy(t_object *rect, t_ray *ray, t_record* rec)
     return (1);
 }
 
-int hit_rectangle_yz(t_object *rect, t_ray *ray, t_record* rec)
+int hit_rectangle_yz(t_objs *rect, t_ray *ray, t_hit_record* rec)
 {
 	double t = (rect->radius - ray->origin.x) / ray->dir.x;
-    if (t < rec->t_min || t > rec->t_max)
+    if (t < rec->tmin || t > rec->tmax)
         return (0);
     double y = ray->origin.y + t * ray->dir.y;
     double z = ray->origin.z + t * ray->dir.z;
@@ -284,7 +284,7 @@ int hit_rectangle_yz(t_object *rect, t_ray *ray, t_record* rec)
     rec->u = (y - rect->center.x) / (rect->center.y - rect->center.x);
     rec->v = (z - rect->dir.x) / (rect->dir.y - rect->dir.x);
     rec->t = t;
-	rec->t_max = t;
+	rec->tmax = t;
 	rec->mat = rect->mat;
 	rec->refraction = rect->refraction;
 	rec->specular = rect->specular;
@@ -295,10 +295,10 @@ int hit_rectangle_yz(t_object *rect, t_ray *ray, t_record* rec)
     return (1);
 }
 
-int hit_rectangle_xz(t_object *rect, t_ray *ray, t_record* rec)
+int hit_rectangle_xz(t_objs *rect, t_ray *ray, t_hit_record* rec)
 {
 	double t = (rect->radius - ray->origin.y) / ray->dir.y;
-    if (t < rec->t_min || t > rec->t_max)
+    if (t < rec->tmin || t > rec->tmax)
         return (0);
     double x = ray->origin.x + t * ray->dir.x;
     double z = ray->origin.z + t * ray->dir.z;
@@ -308,7 +308,7 @@ int hit_rectangle_xz(t_object *rect, t_ray *ray, t_record* rec)
     rec->u = (x - rect->center.x) / (rect->center.y - rect->center.x);
     rec->v = (z - rect->dir.x) / (rect->dir.y - rect->dir.x);
     rec->t = t;
-	rec->t_max = t;
+	rec->tmax = t;
 	rec->mat = rect->mat;
 	rec->refraction = rect->refraction;
 	rec->specular = rect->specular;

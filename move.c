@@ -27,7 +27,7 @@ int key_hook_move(t_minirt* vars)
 			t_vec dir = vec_sub(vars->scene.camera.lookat, vars->scene.camera.origin);
 			t_vec new_org = vec_sum(vars->scene.camera.origin, micro_vec(dir));
 			t_vec new_lookat = vec_sum(vars->scene.camera.lookat, micro_vec(dir));
-			vars->scene.camera = create_camera(new_org, new_lookat, vars->scene.camera.vup, vars->scene.camera.vfov, vars->scene.camera.ratio);
+			vars->scene.camera = create_camera(new_org, new_lookat, vars->scene.camera.vup, vars->scene.camera.fov, vars->scene.camera.ratio);
 			path_render(*vars);
 		}
 		else if (vars->is_move == 0){
@@ -39,14 +39,14 @@ int key_hook_move(t_minirt* vars)
 				vec_scalar_mul(a_dir, -1);
 			t_vec new_org = vec_sum(vars->scene.camera.origin, micro_vec(a_dir));
 			t_vec new_lookat = vec_sum(vars->scene.camera.lookat, micro_vec(a_dir));
-			vars->scene.camera = create_camera(new_org, new_lookat, vars->scene.camera.vup, vars->scene.camera.vfov, vars->scene.camera.ratio);
+			vars->scene.camera = create_camera(new_org, new_lookat, vars->scene.camera.vup, vars->scene.camera.fov, vars->scene.camera.ratio);
 			path_render(*vars);
 		}
 		else if (vars->is_move == 1){
 			t_vec dir = vec_sub(vars->scene.camera.origin, vars->scene.camera.lookat);
 			t_vec new_org = vec_sum(vars->scene.camera.origin, micro_vec(dir));
 			t_vec new_lookat = vec_sum(vars->scene.camera.lookat, micro_vec(dir));
-			vars->scene.camera = create_camera(new_org, new_lookat, vars->scene.camera.vup, vars->scene.camera.vfov, vars->scene.camera.ratio);
+			vars->scene.camera = create_camera(new_org, new_lookat, vars->scene.camera.vup, vars->scene.camera.fov, vars->scene.camera.ratio);
 			path_render(*vars);
 		}
 		else if (vars->is_move == 2){
@@ -57,7 +57,7 @@ int key_hook_move(t_minirt* vars)
 				vec_scalar_mul(a_dir, -1);
 			t_vec new_org = vec_sub(vars->scene.camera.origin, micro_vec(a_dir));
 			t_vec new_lookat = vec_sub(vars->scene.camera.lookat, micro_vec(a_dir));
-			vars->scene.camera = create_camera(new_org, new_lookat, vars->scene.camera.vup, vars->scene.camera.vfov, vars->scene.camera.ratio);
+			vars->scene.camera = create_camera(new_org, new_lookat, vars->scene.camera.vup, vars->scene.camera.fov, vars->scene.camera.ratio);
 			path_render(*vars);
 		}
 		else if (vars->is_move == 126)
@@ -66,7 +66,7 @@ int key_hook_move(t_minirt* vars)
 			vars->scene.camera.lookat.y * cos(0.5) - 
 			vars->scene.camera.lookat.z * sin(0.5),
 			vars->scene.camera.lookat.y * sin(0.5) + vars->scene.camera.lookat.z * cos(0.5));
-			vars->scene.camera = create_camera(vars->scene.camera.origin, new_lookat, vars->scene.camera.vup, vars->scene.camera.vfov, vars->scene.camera.ratio);
+			vars->scene.camera = create_camera(vars->scene.camera.origin, new_lookat, vars->scene.camera.vup, vars->scene.camera.fov, vars->scene.camera.ratio);
 			path_render(*vars);
 		}
 		else if (vars->is_move == 123)
@@ -75,7 +75,7 @@ int key_hook_move(t_minirt* vars)
 			vars->scene.camera.lookat.x * cos(0.5), 
 			vars->scene.camera.lookat.y,
 			vars->scene.camera.lookat.z * cos(0.5) - vars->scene.camera.lookat.x * sin(0.5));
-			vars->scene.camera = create_camera(vars->scene.camera.origin, new_lookat, vars->scene.camera.vup, vars->scene.camera.vfov, vars->scene.camera.ratio);
+			vars->scene.camera = create_camera(vars->scene.camera.origin, new_lookat, vars->scene.camera.vup, vars->scene.camera.fov, vars->scene.camera.ratio);
 			path_render(*vars);
 		}
 		else if (vars->is_move == 125)
@@ -84,7 +84,7 @@ int key_hook_move(t_minirt* vars)
 			vars->scene.camera.lookat.y * cos(-0.5) - 
 			vars->scene.camera.lookat.z * sin(-0.5),
 			vars->scene.camera.lookat.y * sin(-0.5) + vars->scene.camera.lookat.z * cos(-0.5));
-			vars->scene.camera = create_camera(vars->scene.camera.origin, new_lookat, vars->scene.camera.vup, vars->scene.camera.vfov, vars->scene.camera.ratio);
+			vars->scene.camera = create_camera(vars->scene.camera.origin, new_lookat, vars->scene.camera.vup, vars->scene.camera.fov, vars->scene.camera.ratio);
 			path_render(*vars);
 		}
 		else if (vars->is_move == 124)
@@ -93,25 +93,25 @@ int key_hook_move(t_minirt* vars)
 			vars->scene.camera.lookat.x * cos(-0.5), 
 			vars->scene.camera.lookat.y,
 			vars->scene.camera.lookat.z * cos(-0.5) - vars->scene.camera.lookat.x * sin(-0.5));
-			vars->scene.camera = create_camera(vars->scene.camera.origin, new_lookat, vars->scene.camera.vup, vars->scene.camera.vfov, vars->scene.camera.ratio);
+			vars->scene.camera = create_camera(vars->scene.camera.origin, new_lookat, vars->scene.camera.vup, vars->scene.camera.fov, vars->scene.camera.ratio);
 			path_render(*vars);
 		}
 		else if (vars->is_move == 4 || vars->is_move == 5)
 		{
-			double new_vfov;
+			double new_fov;
 
-			if (vars->scene.camera.vfov >= 170 || vars->scene.camera.vfov <= 10)
+			if (vars->scene.camera.fov >= 170 || vars->scene.camera.fov <= 10)
 			{
 				printf("cannot zoom more\n");
 				vars->is_move = -1;
 				return (0);
 			}
 			if (vars->is_move == 4)
-				new_vfov = vars->scene.camera.vfov - 10;
+				new_fov = vars->scene.camera.fov - 10;
 			else
-				new_vfov = vars->scene.camera.vfov + 10;
+				new_fov = vars->scene.camera.fov + 10;
 			vars->scene.camera = create_camera(vars->scene.camera.origin, vars->scene.camera.lookat, 
-			vars->scene.camera.vup, new_vfov, vars->scene.camera.ratio);
+			vars->scene.camera.vup, new_fov, vars->scene.camera.ratio);
 			vars->is_move = -1;
 			path_render(*vars);
 			// 무한 로딩 걸리는 이유를 찾아라

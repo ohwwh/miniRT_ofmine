@@ -21,12 +21,12 @@ typedef struct s_ray {
 	t_vec dir;
 } t_ray;
 
-typedef struct s_record {
+typedef struct s_hit_record {
 	t_point p;
 	t_vec normal;
 	t_color color;
-	double t_max;
-	double t_min;
+	double tmax;
+	double tmin;
 	double t;
 	int front_face;
 	int idx;
@@ -36,7 +36,7 @@ typedef struct s_record {
 	double specular;
 	double u;
 	double v;
-} t_record;
+} t_hit_record;
 
 typedef struct s_ambient
 {
@@ -57,14 +57,15 @@ typedef struct s_object {
     int mat;
 	double refraction;
 	double specular;
-} t_object;
+} t_objs;
 
 typedef struct s_light
 {
 	t_vec			src;
 	double			ratio;
-	t_object		*object;
+	t_objs		*object;
 	t_ambient		ambient;
+	int				count;
 	struct s_light	*next;
 }	t_light;
 
@@ -86,7 +87,7 @@ typedef struct s_scene
 {
 	t_camera	camera;
 	t_light		*light;
-	t_object	*world;
+	t_objs	*world;
 	t_ambient	ambient;
 	int anti;
 	int changed;
@@ -112,33 +113,33 @@ void	ft_mlx_init(t_minirt *vars);
 void	ft_mlx_new(t_minirt *vars, int x, int y, char *name);
 
 
-int front_face(t_ray *r, t_record* rec);
-int find_hitpoint(t_ray* ray, t_object *objs, t_light *light, t_record* rec);
-int hit_sphere(t_object* s, t_ray* r, t_record* rec);
-int hit_cylinder(t_object *cy, t_ray *ray, t_record *rec);
-int hit_caps(t_object *cy, t_ray *ray, t_record *rec);
-int hit_plane(t_object *pl, t_ray *ray, t_record* rec);
-int hit_rectangle_xy(t_object *rect, t_ray *ray, t_record* rec);
-int hit_rectangle_yz(t_object *rect, t_ray *ray, t_record* rec);
-int hit_rectangle_xz(t_object *rect, t_ray *ray, t_record* rec);
+int front_face(t_ray *r, t_hit_record* rec);
+int find_hitpoint(t_ray* ray, t_objs *objs, t_light *light, t_hit_record* rec);
+int hit_sphere(t_objs* s, t_ray* r, t_hit_record* rec);
+int hit_cylinder(t_objs *cy, t_ray *ray, t_hit_record *rec);
+int hit_caps(t_objs *cy, t_ray *ray, t_hit_record *rec);
+int hit_plane(t_objs *pl, t_ray *ray, t_hit_record* rec);
+int hit_rectangle_xy(t_objs *rect, t_ray *ray, t_hit_record* rec);
+int hit_rectangle_yz(t_objs *rect, t_ray *ray, t_hit_record* rec);
+int hit_rectangle_xz(t_objs *rect, t_ray *ray, t_hit_record* rec);
 
 
 
-void set_refraction(t_object* obj, double ref);
-double get_light_size(t_object object);
-t_object create_sphere(t_point c, double r, t_color color, int mat);
-t_object create_cylinder(t_point c, double r, double h, t_vec dir, t_color color, int mat);
-t_object create_plane(t_point c, t_vec dir, t_color color, int mat);
-t_object create_rectangle_xy(t_vec x, t_vec y, double k, t_color color, int mat);
-t_object create_rectangle_yz(t_vec y, t_vec z, double k, t_color color, int mat);
-t_object create_rectangle_xz(t_vec x, t_vec z, double k, t_color color, int mat);
+void set_refraction(t_objs* obj, double ref);
+double get_light_size(t_objs object);
+t_objs create_sphere(t_point c, double r, t_color color, int mat);
+t_objs create_cylinder(t_point c, double r, double h, t_vec dir, t_color color, int mat);
+t_objs create_plane(t_point c, t_vec dir, t_color color, int mat);
+t_objs create_rectangle_xy(t_vec x, t_vec y, double k, t_color color, int mat);
+t_objs create_rectangle_yz(t_vec y, t_vec z, double k, t_color color, int mat);
+t_objs create_rectangle_xz(t_vec x, t_vec z, double k, t_color color, int mat);
 
 
 t_ray 	ray(t_point org, t_vec dir);
 t_point 	ray_end(t_ray* ray, double t);
 t_vec reflect(t_vec v, t_vec n);
-t_color ray_color_2(t_ray r, t_object* world, t_light* light);
-t_color ray_color(t_ray r, t_object* world, t_light* light, int depth);
+t_color ray_color_2(t_ray r, t_objs* world, t_light* light);
+t_color ray_color(t_ray r, t_objs* world, t_light* light, int depth);
 
 
 int	keybind(int keycode, t_minirt* vars);

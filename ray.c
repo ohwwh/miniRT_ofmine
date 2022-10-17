@@ -65,7 +65,7 @@ double cosine_pdf_value(const t_vec* dir, const t_vec* w)
 	return (pdf);
 }
 
-void generate_scattered(t_record *rec, t_ray *scattered, t_onb *uvw)
+void generate_scattered(t_hit_record *rec, t_ray *scattered, t_onb *uvw)
 {
 	t_vec ray_path;
 
@@ -73,7 +73,7 @@ void generate_scattered(t_record *rec, t_ray *scattered, t_onb *uvw)
 	*scattered = ray(rec->p, ray_path);
 }
 
-void generate_light_sample_rect(t_record *rec, t_ray *scattered, t_object *light)
+void generate_light_sample_rect(t_hit_record *rec, t_ray *scattered, t_objs *light)
 {
 	t_point random_point;
 	t_vec ray_path;
@@ -97,7 +97,7 @@ void generate_light_sample_rect(t_record *rec, t_ray *scattered, t_object *light
 	*scattered = ray(rec->p, ray_path);
 }
 
-void generate_light_sample_sphere(t_record *rec, t_ray *scattered, t_object *light)
+void generate_light_sample_sphere(t_hit_record *rec, t_ray *scattered, t_objs *light)
 {
 	t_onb uvw;
 	t_point random_point;
@@ -112,9 +112,9 @@ void generate_light_sample_sphere(t_record *rec, t_ray *scattered, t_object *lig
 	//반사 지점부터 광원의 랜덤지점까지의 벡터 생성
 }
 
-double sphere_light_pdf_value(t_record* rec, t_ray* scattered, t_object* light)
+double sphere_light_pdf_value(t_hit_record* rec, t_ray* scattered, t_objs* light)
 {
-	t_record rec_new;
+	t_hit_record rec_new;
 	const double length_squared = powf(vec_len(scattered->dir), 2);
 	double cos_max;
 	double angle;
@@ -122,8 +122,8 @@ double sphere_light_pdf_value(t_record* rec, t_ray* scattered, t_object* light)
 	if (!light)
 		return (0);
 	rec_new.t = -1.0;
-	rec_new.t_min = 0.001;
-	rec_new.t_max = INFINITY;
+	rec_new.tmin = 0.001;
+	rec_new.tmax = INFINITY;
 	hit_sphere(light, scattered, &rec_new);
 	if (rec_new.t < 0.001)
 		return 0;
@@ -134,9 +134,9 @@ double sphere_light_pdf_value(t_record* rec, t_ray* scattered, t_object* light)
 	return (1 / angle);
 }
 
-double rectangle_light_pdf_value(t_record *rec, t_ray* scattered, t_object* light)
+double rectangle_light_pdf_value(t_hit_record *rec, t_ray* scattered, t_objs* light)
 {
-	t_record rec_new;
+	t_hit_record rec_new;
 	const double length_squared = powf(vec_len(scattered->dir), 2);
 	double area;
 	double distance_squared;
@@ -145,8 +145,8 @@ double rectangle_light_pdf_value(t_record *rec, t_ray* scattered, t_object* ligh
 	if (!light)
 		return (0);
 	rec_new.t = -1.0;
-	rec_new.t_min = 0.001;
-	rec_new.t_max = INFINITY;
+	rec_new.tmin = 0.001;
+	rec_new.tmax = INFINITY;
 	if (light->type == 4)
 		hit_rectangle_xy(light, scattered, &rec_new);
 	else if (light->type == 5)
@@ -162,17 +162,17 @@ double rectangle_light_pdf_value(t_record *rec, t_ray* scattered, t_object* ligh
 	return distance_squared / (cosine * area);
 }
 
-double light_pdf_value(t_ray* ray_path, t_object* light)
+double light_pdf_value(t_ray* ray_path, t_objs* light)
 {
 	// 일단 xy사각 광원만
-	t_record rec;
+	t_hit_record rec;
 	const double length_squared = powf(vec_len(ray_path->dir), 2);
 
 	if (!light)
 		return (0);
 	rec.t = -1.0;
-	rec.t_min = 0.001;
-	rec.t_max = INFINITY;
+	rec.tmin = 0.001;
+	rec.tmax = INFINITY;
 
 	if (light->type == 4)
 		hit_rectangle_xy(light, ray_path, &rec);
@@ -199,7 +199,7 @@ double light_pdf_value(t_ray* ray_path, t_object* light)
 		return distance_squared / (cosine * area);
 }
 
-double mixture_pdf_value_before(t_record* rec, t_ray* scattered, t_object* light)
+double mixture_pdf_value_before(t_hit_record* rec, t_ray* scattered, t_objs* light)
 {
 	t_onb uvw;
 	t_onb uvw_sphere;
@@ -255,7 +255,7 @@ double mixture_pdf_value_before(t_record* rec, t_ray* scattered, t_object* light
 	return (t * light_pdf_value(scattered, light) + (1 - t) * cosine_pdf_value(&(rec->normal), &(uvw.w)));
 }
 
-double mixture_pdf_value(t_record* rec, t_ray* scattered, t_light* light)
+double mixture_pdf_value(t_hit_record* rec, t_ray* scattered, t_light* light)
 {
 	double t;
 	double light_pdf_val;
@@ -265,8 +265,10 @@ double mixture_pdf_value(t_record* rec, t_ray* scattered, t_light* light)
 	double size;
 	double pdf;
 	t_light *temp;
+	int idx;
 
 	pdf = 0.0;
+	light_pdf_val = 0.0;
 	w_sum = 0.0;
 	temp = light;
 	uvw = create_onb(rec->normal);
@@ -278,29 +280,33 @@ double mixture_pdf_value(t_record* rec, t_ray* scattered, t_light* light)
 	else
 		t = 0.5;
 
+	idx = rand() % light->count; //2로 가정. 광원 하나 일시 segfault 주의
+	while (idx --)
+		temp = temp->next;
+	//size = get_light_size(*(temp->object));
+	size = 1;
+	w_sum += size;
+	if (random_double(0,1,7) < t) //광원 샘플링
+	{
+		if (temp->object->type == 3)
+			generate_light_sample_sphere(rec, scattered, temp->object);
+		else
+			generate_light_sample_rect(rec, scattered, temp->object);
+	}
+	else //난반사 샘플링
+		generate_scattered(rec, scattered, &uvw);
 
+	temp = light;
 	while (temp)
 	{
-		//size = get_light_size(*(temp->object));
-		size = 1;
-		w_sum += size;
-		if (random_double(0,1,7) < t) //광원 샘플링
-		{
-			if (temp->object->type == 3)
-				generate_light_sample_sphere(rec, scattered, temp->object);
-			else
-				generate_light_sample_rect(rec, scattered, temp->object);
-		}
-		else //난반사 샘플링
-			generate_scattered(rec, scattered, &uvw);
 		if (temp->object->type == 3)
-			light_pdf_val = sphere_light_pdf_value(rec, scattered, temp->object);
+			light_pdf_val += sphere_light_pdf_value(rec, scattered, temp->object);
 		else
-			light_pdf_val = rectangle_light_pdf_value(rec, scattered, temp->object);
-		pdf += size * (t * light_pdf_val + (1 - t) * cosine_pdf_value(&(rec->normal), &(uvw.w)));
+			light_pdf_val += rectangle_light_pdf_value(rec, scattered, temp->object);
 		temp = temp->next;
 	}
-
+	pdf = (t * light_pdf_val / light->count + (1 - t) * cosine_pdf_value(&(rec->normal), &(uvw.w)));
+	//굉원의 수 2개로 가정.
 	
 	/*size = get_light_size(*(temp->object));
 	w_sum += size;
@@ -313,28 +319,32 @@ double mixture_pdf_value(t_record* rec, t_ray* scattered, t_light* light)
 			else
 				generate_light_sample_rect(rec, scattered, temp->object);
 			if (temp->object->type == 3)
-				light_pdf_val = sphere_light_pdf_value(rec, scattered, temp->object);
+				light_pdf_val += sphere_light_pdf_value(rec, scattered, temp->object);
 			else
-				light_pdf_val = rectangle_light_pdf_value(rec, scattered, temp->object);
+				light_pdf_val += rectangle_light_pdf_value(rec, scattered, temp->object);
+			temp = temp->next;
 		}
+		return (t * light_pdf_val + (1 - t) * cosine_pdf_value(&(rec->normal), &(uvw.w)));
 	}
 	else
 	{
-
-	} //난반사 샘플링
 		generate_scattered(rec, scattered, &uvw);
-	if (temp->object->type == 3)
-		light_pdf_val = sphere_light_pdf_value(rec, scattered, temp->object);
-	else
-		light_pdf_val = rectangle_light_pdf_value(rec, scattered, temp->object);
-	pdf += size * (t * light_pdf_val + (1 - t) * cosine_pdf_value(&(rec->normal), &(uvw.w)));
-	temp = temp->next;*/
-	
+		while (temp)
+		{
+			if (temp->object->type == 3)
+				light_pdf_val += sphere_light_pdf_value(rec, scattered, temp->object);
+			else
+				light_pdf_val += rectangle_light_pdf_value(rec, scattered, temp->object);
+			temp->next = temp;
+		}
+		return (t * light_pdf_val + (1 - t) * cosine_pdf_value(&(rec->normal), &(uvw.w)));
+		
+	} //난반사 샘플링*/
 
-	return (pdf / w_sum);
+	return (pdf);
 }
 
-double scattering_pdf(t_ray* scattered, t_record* rec)
+double scattering_pdf(t_ray* scattered, t_hit_record* rec)
 {
     double scat_pdf;
     double cos;
@@ -349,7 +359,7 @@ double scattering_pdf(t_ray* scattered, t_record* rec)
 	return (scat_pdf);
 }
 
-double scatter(t_ray* r, t_record* rec, t_ray* scattered, t_light* light)
+double scatter(t_ray* r, t_hit_record* rec, t_ray* scattered, t_light* light)
 {
 	t_onb uvw;
 	t_vec dir;
@@ -427,14 +437,14 @@ double scatter(t_ray* r, t_record* rec, t_ray* scattered, t_light* light)
 	}
 }
 
-t_color ray_color_2(t_ray r, t_object* world, t_light* light)
+t_color ray_color_2(t_ray r, t_objs* world, t_light* light)
 {
-	t_record rec;
+	t_hit_record rec;
 	double t;
 
 	rec.t = 0.0;
-	rec.t_min = 0.001;
-	rec.t_max = INFINITY;
+	rec.tmin = 0.001;
+	rec.tmax = INFINITY;
 	find_hitpoint(&r, world, light, &rec);
 	if (rec.t != -1)
 		return (rec.color);
@@ -444,18 +454,18 @@ t_color ray_color_2(t_ray r, t_object* world, t_light* light)
 	);
 }
 
-t_color ray_color(t_ray r, t_object* world, t_light* light, int depth)
+t_color ray_color(t_ray r, t_objs* world, t_light* light, int depth)
 {
 	double t;
 	double pdf;
-	t_record rec;
+	t_hit_record rec;
 	t_color color;
 	t_vec target;
 	t_ray scattered;
 
 	rec.t = -1.0;
-	rec.t_min = 0.001;
-	rec.t_max = INFINITY;
+	rec.tmin = 0.001;
+	rec.tmax = INFINITY;
 
 	if (depth <= 0)
         return (create_vec(0,0,0));
@@ -555,6 +565,6 @@ t_color ray_color(t_ray r, t_object* world, t_light* light, int depth)
 	}
 	t = 0.5 * (unit_vec((r.dir)).y + 1.0);
 	return (vec_scalar_mul(
-		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 0.5)
+		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 0)
 	);
 }
