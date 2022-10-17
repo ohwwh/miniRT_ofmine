@@ -13,6 +13,7 @@ typedef struct s_object {
 	struct s_object	*next;
     int mat;
 	double refraction;
+	double specular;
 } t_object;
 
 void set_refraction(t_object* obj, double ref);

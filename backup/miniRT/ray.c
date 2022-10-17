@@ -268,7 +268,7 @@ double mixture_pdf_value(t_record* rec, t_ray* scattered, t_object* light)
 		return (cosine_pdf_value(&(rec->normal), &(uvw.w)));
 	}
 	else
-		t = 1;
+		t = 0.5;
 	if (random_double(0,1,7) < t) //광원 샘플링
 	{
 		if (light->type == 3)

@@ -21,6 +21,7 @@ typedef struct s_record {
 	int idx;
 	int mat;
 	double refraction;
+	double specular;
 	double u;
 	double v;
 } t_record;
