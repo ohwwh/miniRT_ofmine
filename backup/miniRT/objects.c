@@ -5,6 +5,23 @@ void set_refraction(t_object* obj, double ref)
 	obj->refraction = ref;
 }
 
+double get_light_size(t_object object)
+{
+	const double rad = object.radius;
+	const double x = object.center.y - object.center.x;
+	const double y = object.dir.y - object.dir.x;
+	
+	if (object.type == 3)
+		return (rad * rad * 3.1415926535897932385);
+	else if (object.type == 4 || object.type == 5 || object.type == 6)
+		return (x * y);
+	else
+	{
+		printf("unsupported\n");
+		return (-1);
+	}
+}
+
 t_object create_sphere(t_point c, double r, t_color color, int mat)
 {
 	t_object ret;

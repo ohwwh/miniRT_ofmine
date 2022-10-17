@@ -93,7 +93,7 @@ double mixture_pdf_value(t_record* rec, t_ray* scattered, t_object* light)
 	t_vec ray_path; //원본 코드의 generate가 최종적으로 만드는 것
 
 	uvw = create_onb(rec->normal);
-	if (random_double(0,1,7) < 0.5) //광원 샘플링
+	if (random_double(0,1,7) < 0) //광원 샘플링
 	{
 			if (light->type == 4)
 			{
@@ -119,7 +119,7 @@ double mixture_pdf_value(t_record* rec, t_ray* scattered, t_object* light)
 		*scattered = ray(rec->p, unit_vec(ray_path));
 	}
 	
-	return (0.5 * light_pdf_value(scattered, light) + 0.5 * cosine_pdf_value(&(rec->normal), &(uvw.w)));
+	return (0 * light_pdf_value(scattered, light) + 1 * cosine_pdf_value(&(rec->normal), &(uvw.w)));
 }
 
 double scattering_pdf(t_ray* scattered, t_record* rec)

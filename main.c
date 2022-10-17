@@ -59,7 +59,7 @@ void print_init(t_vars vars)
 
 int	main(int argc, char *argv[])
 {
-	t_object light = create_sphere(create_vec(5,8, -1), 4, 
+	t_object light = create_sphere(create_vec(5,8, -1), 0, 
 	create_vec(4, 4, 4), -1);
 
 	t_object surface = create_sphere(create_vec(0, -100.5, -1), 100, 

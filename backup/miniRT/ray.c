@@ -45,7 +45,7 @@ t_vec random_to_sphere(double radius, double distance_squared)
 	double r2 = random_double(0,1,7);
 	double z = 1 + r2 * (sqrt(1 - radius*radius/distance_squared)-1);
 
-	double phi = 2*3.1415926535897932385*r1;
+	double phi = 2 * 3.1415926535897932385*r1;
 	double x = cos(phi)*sqrt(1-z*z);
 	double y = sin(phi)*sqrt(1-z*z);
 
@@ -199,7 +199,7 @@ double light_pdf_value(t_ray* ray_path, t_object* light)
 		return distance_squared / (cosine * area);
 }
 
-double mixture_pdf_value(t_record* rec, t_ray* scattered, t_object* light)
+double mixture_pdf_value_before(t_record* rec, t_ray* scattered, t_object* light)
 {
 	t_onb uvw;
 	t_onb uvw_sphere;
@@ -213,7 +213,7 @@ double mixture_pdf_value(t_record* rec, t_ray* scattered, t_object* light)
 	else
 		t = 0.5;
 	uvw = create_onb(rec->normal);
-	if (random_double(0,1,7) < t - 0.001) //광원 샘플링, 부동소수점 오차 보정
+	if (random_double(0,1,7) < t) //광원 샘플링, 부동소수점 오차 보정
 	{
 		if (light->type == 3)
 		{
@@ -255,21 +255,21 @@ double mixture_pdf_value(t_record* rec, t_ray* scattered, t_object* light)
 	return (t * light_pdf_value(scattered, light) + (1 - t) * cosine_pdf_value(&(rec->normal), &(uvw.w)));
 }
 
-double mixture_pdf_value_after(t_record* rec, t_ray* scattered, t_object* light)
+double mixture_pdf_value(t_record* rec, t_ray* scattered, t_object* light)
 {
 	double t;
 	double light_pdf_val;
 	t_onb uvw;
 
 	uvw = create_onb(rec->normal);
-	if (!light)
+	if (!light || !get_light_size(*light))
 	{
 		generate_scattered(rec, scattered, &uvw);
 		return (cosine_pdf_value(&(rec->normal), &(uvw.w)));
 	}
 	else
-		t = 0.5;
-	if (random_double(0,1,7) < t - 0.001) //광원 샘플링, 부동소수점 오차 보정
+		t = 1;
+	if (random_double(0,1,7) < t) //광원 샘플링
 	{
 		if (light->type == 3)
 			generate_light_sample_sphere(rec, scattered, light);
@@ -320,15 +320,17 @@ double scatter(t_ray* r, t_record* rec, t_ray* scattered, t_object* light)
 		//광원을 샘플링. 
 		//ray(rec->p, unit_vec(dir))에서 위에서 생성한 dir대신 
 		//각 광원의 크기에 한정하여 랜덤 생성한 벡터를 집어넣는다.
-		//일단 xy사각형 광원만
+		//일단 xz사각형 광원만
 		/*t_point random_point;
 		t_vec ray_path;
 
-		random_point = create_vec(random_double(light->center.x, light->center.y, 7),
-		random_double(light->dir.x, light->dir.y, 7), light->radius); // 광원의 크기 안에서 벡터를 랜덤 생성
+		random_point = create_vec(random_double(light->center.x, light->center.y, 7), light->radius,
+		random_double(light->dir.x, light->dir.y, 7)); // 광원의 크기 안에서 벡터를 랜덤 생성
 		ray_path = vec_sub(random_point, rec->p); // ray를 쏜 곳(시선)으로부터 광원 속 랜덤 지점의 벡터
 		*scattered = ray(rec->p, ray_path);
 		pdf = light_pdf_value(scattered, light);*/
+
+
 		/*if (random_double(0,1,7) < 1) //specular 계수
 			pdf = mixture_pdf_value(rec, scattered, light);
 		else
@@ -505,6 +507,6 @@ t_color ray_color(t_ray r, t_object* world, t_object* light, int depth)
 	}
 	t = 0.5 * (unit_vec((r.dir)).y + 1.0);
 	return (vec_scalar_mul(
-		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 1)
+		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 0.3)
 	);
 }

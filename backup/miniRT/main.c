@@ -59,7 +59,7 @@ void print_init(t_vars vars)
 
 int	main(int argc, char *argv[])
 {
-	t_object light = create_sphere(create_vec(5,8, -1), 0, 
+	t_object light = create_sphere(create_vec(5,8, -1), 2, 
 	create_vec(15, 15, 15), -1);
 
 	t_object surface = create_sphere(create_vec(0, -100.5, -1), 100, 
@@ -145,14 +145,14 @@ int	main(int argc, char *argv[])
 	//t_object light2 = create_sphere(create_vec(2, 14, -10), 4, 
 	//create_vec(15, 15, 15), -1);
 	//light.next = &light2;
-	light.next = 0;
+	//light.next = 0;
 
-	t_object surface = create_sphere(create_vec(0, -1000, 0), 1000, 
+	/*t_object surface = create_sphere(create_vec(0, -1000, 0), 1000, 
 	create_vec(0.4, 0.4, 0.4), 0);
-	//light.next = &light2;
+	light.next = &surface;
 
 	t_object sphere = create_sphere(create_vec(4,2,-2), 2, 
-	create_vec(0.8, 0.8, 0.8), 0);
+	create_vec(0.8, 0.8, 0.8), 2);
 	set_refraction(&sphere, 1.5);
 	surface.next = &sphere;
 	t_object sphere2 = create_sphere(create_vec(-4,2,2), 2, 
@@ -172,8 +172,8 @@ int	main(int argc, char *argv[])
 	vars.anti = 1;
 	vars.is_move = -1;
 	vars.changed = 0;
-	vars.world = &surface;
-	vars.light = &surface;
+	vars.world = &light;
+	vars.light = &light;
 	vars.window_width = 640;
 	vars.window_height = 320;
 	int window_width = 640;
@@ -181,7 +181,7 @@ int	main(int argc, char *argv[])
 	double ratio = (double)vars.window_width / (double)vars.window_height;
 
 	//t_camera camera = create_camera(create_vec(-2,2,1), create_vec(0,0,-1), create_vec(0, 1, 0), 70, ratio);
-	t_camera camera = create_camera(create_vec(0,1,1), create_vec(0,0,-1), create_vec(0, 1, 0), 90, ratio);
+	t_camera camera = create_camera(create_vec(0,1,1), create_vec(0,0,-1), create_vec(0, 1, 0), 70, ratio);
 	//t_camera camera = create_camera(create_vec(278,278,-800), create_vec(278,278,0), create_vec(0, 1, 0), 40, ratio);
 	//t_camera camera = create_camera(create_vec(26,8,6), create_vec(0,2,0), create_vec(0, 1, 0), 20, ratio);
 
