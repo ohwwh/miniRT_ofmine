@@ -1,6 +1,4 @@
-#include "ft_mlx.h"
-#include "vector.h"
-#include "random.h"
+#include "miniRT.h"
 
 double clamp(double x)
 {

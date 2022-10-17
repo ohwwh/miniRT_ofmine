@@ -55,7 +55,7 @@ void print_init(t_minirt vars)
 				vars.scene.camera.lower_left_corner.y + (u * vars.scene.camera.horizontal.y) + (v * vars.scene.camera.vertical.y) - vars.scene.camera.origin.y,
 				vars.scene.camera.lower_left_corner.z + (u * vars.scene.camera.horizontal.z) + (v * vars.scene.camera.vertical.z) - vars.scene.camera.origin.z);
 				ray_tmp = ray(vars.scene.camera.origin, dir);
-				if (i == 440 && j == 160)
+				if (i == 0 && j == 319)
 					i = i;
 				if (vars.is_trace == 1)
 					color = vec_sum(color, ray_color(ray_tmp, vars.scene.world, vars.scene.light, MAX_DEPTH));
@@ -151,8 +151,8 @@ int	main(int argc, char *argv[])
 	sphere.next = 0;*/
 
 	
-	//t_object light = create_rectangle_xz(create_vec(4,8,0), create_vec(0,4,0), 
-	//8, create_vec(15, 15, 15), -1);
+	t_object light2 = create_rectangle_xz(create_vec(4,8,0), create_vec(0,4,0), 
+	8, create_vec(15, 15, 15), -1);
 	
 	//t_object light = create_rectangle_xy(create_vec(3,5,0), create_vec(1,3,0), 
 	//-5, create_vec(15, 15, 15), -1);
@@ -163,8 +163,11 @@ int	main(int argc, char *argv[])
 	//light.next = 0;
 
 	t_light light;
+	t_light light_next;
 	light.object = &light1;
-	light.next = 0;
+	light_next.object = &light2;
+	light.next = &light_next;
+	light_next.next = 0;
 
 	t_object surface = create_sphere(create_vec(0, -1000, 0), 1000, 
 	create_vec(0.4, 0.4, 0.4), 0);

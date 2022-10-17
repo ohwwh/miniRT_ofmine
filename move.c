@@ -1,4 +1,4 @@
-#include "move.h"
+#include "miniRT.h"
 
 t_vec   micro_vec(t_vec vec)
 {
@@ -143,7 +143,7 @@ int	keybind(int keycode, t_minirt* vars)
 		if (vars->is_trace == 0)
 		{
 			vars->is_trace = 1;
-			vars->scene.anti = 1;
+			vars->scene.anti = 100;
 			vars->scene.changed = 1;
 		}
 		else

@@ -1,7 +1,6 @@
 #ifndef RANDOM_H
 #define RANDOM_H
 #include <math.h>
-#include <stdlib.h>
 #include "vector.h"
 
 typedef struct s_onb {

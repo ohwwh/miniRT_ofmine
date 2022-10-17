@@ -1,5 +1,4 @@
-#include "hit.h"
-#include "ray.h"
+#include "miniRT.h"
 
 int front_face(t_ray *r, t_record* rec)
 {
@@ -20,42 +19,12 @@ void set_face_normal(t_record* rec, t_ray *ray, t_vec outward_normal)
 		rec->normal = vec_scalar_mul(outward_normal, -1);
 }
 
-int find_hitpoint(t_ray* ray, t_object *objs, t_object *light, t_record* rec)
+int find_hitpoint(t_ray* ray, t_object *objs, t_light *light, t_record* rec)
 {
     t_object *tmp;
 	int end;
     
     tmp = objs;
-	/*end = 0;
-    while (1)
-    {
-		if (!tmp)
-		{
-			if (!end)
-			{
-				tmp = light;
-				end = 1;
-			}
-			else
-				return (1) ;
-		}
-        if (tmp->type == 3)
-            hit_sphere(tmp, ray, rec);
-        else if (tmp->type == 1)
-			hit_plane(tmp, ray, rec);
-        else if (tmp->type == 2)
-        {
-            hit_cylinder(tmp, ray, rec);
-			hit_caps(tmp, ray, rec);
-        }
-		else if (tmp->type == 4)
-			hit_rectangle_xy(tmp, ray, rec);
-		else if (tmp->type == 5)
-			hit_rectangle_yz(tmp, ray, rec);
-		else if (tmp->type == 6)
-			hit_rectangle_xz(tmp, ray, rec);
-        tmp = tmp->next;
-    }*/
 	while (tmp)
     {
         if (tmp->type == 3)
@@ -74,6 +43,29 @@ int find_hitpoint(t_ray* ray, t_object *objs, t_object *light, t_record* rec)
 		else if (tmp->type == 6)
 			hit_rectangle_xz(tmp, ray, rec);
         tmp = tmp->next;
+    }
+
+	t_light *temp;
+
+	temp = light;
+	while (temp)
+    {
+        if (temp->object->type == 3)
+            hit_sphere(temp->object, ray, rec);
+        else if (temp->object->type == 1)
+			hit_plane(temp->object, ray, rec);
+        else if (temp->object->type == 2)
+        {
+            hit_cylinder(temp->object, ray, rec);
+			hit_caps(temp->object, ray, rec);
+        }
+		else if (temp->object->type == 4)
+			hit_rectangle_xy(temp->object, ray, rec);
+		else if (temp->object->type == 5)
+			hit_rectangle_yz(temp->object, ray, rec);
+		else if (temp->object->type == 6)
+			hit_rectangle_xz(temp->object, ray, rec);
+        temp = temp->next;
     }
     return (1);
 }

@@ -1,4 +1,4 @@
-#include "ray.h"
+#include "miniRT.h"
 #define EPS 0.0001
 
 t_ray ray(t_point origin, t_vec dir)
@@ -255,34 +255,82 @@ double mixture_pdf_value_before(t_record* rec, t_ray* scattered, t_object* light
 	return (t * light_pdf_value(scattered, light) + (1 - t) * cosine_pdf_value(&(rec->normal), &(uvw.w)));
 }
 
-double mixture_pdf_value(t_record* rec, t_ray* scattered, t_object* light)
+double mixture_pdf_value(t_record* rec, t_ray* scattered, t_light* light)
 {
 	double t;
 	double light_pdf_val;
 	t_onb uvw;
+	double weight;
+	double w_sum;
+	double size;
+	double pdf;
+	t_light *temp;
 
+	pdf = 0.0;
+	w_sum = 0.0;
+	temp = light;
 	uvw = create_onb(rec->normal);
-	if (!light || !get_light_size(*light))
+	if (!light || !get_light_size(*(light->object)))
 	{
 		generate_scattered(rec, scattered, &uvw);
 		return (cosine_pdf_value(&(rec->normal), &(uvw.w)));
 	}
 	else
 		t = 0.5;
+
+
+	/*while (temp)
+	{
+		size = get_light_size(*(temp->object));
+		w_sum += size;
+		if (random_double(0,1,7) < t) //광원 샘플링
+		{
+			if (temp->object->type == 3)
+				generate_light_sample_sphere(rec, scattered, temp->object);
+			else
+				generate_light_sample_rect(rec, scattered, temp->object);
+		}
+		else //난반사 샘플링
+			generate_scattered(rec, scattered, &uvw);
+		if (temp->object->type == 3)
+			light_pdf_val = sphere_light_pdf_value(rec, scattered, temp->object);
+		else
+			light_pdf_val = rectangle_light_pdf_value(rec, scattered, temp->object);
+		pdf += size * (t * light_pdf_val + (1 - t) * cosine_pdf_value(&(rec->normal), &(uvw.w)));
+		temp = temp->next;
+	}*/
+
+	
+	/*size = get_light_size(*(temp->object));
+	w_sum += size;
 	if (random_double(0,1,7) < t) //광원 샘플링
 	{
-		if (light->type == 3)
-			generate_light_sample_sphere(rec, scattered, light);
-		else
-			generate_light_sample_rect(rec, scattered, light);
+		while (temp)
+		{
+			if (temp->object->type == 3)
+				generate_light_sample_sphere(rec, scattered, temp->object);
+			else
+				generate_light_sample_rect(rec, scattered, temp->object);
+			if (temp->object->type == 3)
+				light_pdf_val = sphere_light_pdf_value(rec, scattered, temp->object);
+			else
+				light_pdf_val = rectangle_light_pdf_value(rec, scattered, temp->object);
+		}
 	}
-	else //난반사 샘플링
-		generate_scattered(rec, scattered, &uvw);
-	if (light->type == 3)
-		light_pdf_val = sphere_light_pdf_value(rec, scattered, light);
 	else
-		light_pdf_val = rectangle_light_pdf_value(rec, scattered, light);
-	return (t * light_pdf_val + (1 - t) * cosine_pdf_value(&(rec->normal), &(uvw.w)));
+	{
+
+	} //난반사 샘플링
+		generate_scattered(rec, scattered, &uvw);
+	if (temp->object->type == 3)
+		light_pdf_val = sphere_light_pdf_value(rec, scattered, temp->object);
+	else
+		light_pdf_val = rectangle_light_pdf_value(rec, scattered, temp->object);
+	pdf += size * (t * light_pdf_val + (1 - t) * cosine_pdf_value(&(rec->normal), &(uvw.w)));
+	temp = temp->next;*/
+	
+
+	return (pdf / w_sum);
 }
 
 double scattering_pdf(t_ray* scattered, t_record* rec)
@@ -300,7 +348,7 @@ double scattering_pdf(t_ray* scattered, t_record* rec)
 	return (scat_pdf);
 }
 
-double scatter(t_ray* r, t_record* rec, t_ray* scattered, t_object* light)
+double scatter(t_ray* r, t_record* rec, t_ray* scattered, t_light* light)
 {
 	t_onb uvw;
 	t_vec dir;
@@ -330,20 +378,6 @@ double scatter(t_ray* r, t_record* rec, t_ray* scattered, t_object* light)
 		*scattered = ray(rec->p, ray_path);
 		pdf = light_pdf_value(scattered, light);*/
 
-
-		//if (random_double(0,1,7) > rec->specular) //specular 계수
-		/*if (rec->mat == 0 && rec->type == 3)
-		{
-			if (random_double(0,1,7) > 0.5)
-				pdf = mixture_pdf_value(rec, scattered, light);
-			else
-			{
-				*scattered = ray(rec->p, reflect(unit_vec(r->dir), rec->normal));
-				if (vdot(scattered->dir, rec->normal) <= 0) //이 조건식은 무슨 의미인가??
-					rec->color = create_vec(0, 0, 0);
-				return (1);
-			}
-		}*/
 		if (random_double(0,1,7) > rec->specular)
 			pdf = mixture_pdf_value(rec, scattered, light);
 		else
@@ -353,7 +387,7 @@ double scatter(t_ray* r, t_record* rec, t_ray* scattered, t_object* light)
 				rec->color = create_vec(0, 0, 0);
 			return (1);
 		}
-		pdf = mixture_pdf_value(rec, scattered, light);
+		//pdf = mixture_pdf_value(rec, scattered, light);
 		return (pdf);
 	}
 	else if (rec->mat == 1)
@@ -392,7 +426,7 @@ double scatter(t_ray* r, t_record* rec, t_ray* scattered, t_object* light)
 	}
 }
 
-t_color ray_color_2(t_ray r, t_object* world, t_object* light)
+t_color ray_color_2(t_ray r, t_object* world, t_light* light)
 {
 	t_record rec;
 	double t;
@@ -409,7 +443,7 @@ t_color ray_color_2(t_ray r, t_object* world, t_object* light)
 	);
 }
 
-t_color ray_color(t_ray r, t_object* world, t_object* light, int depth)
+t_color ray_color(t_ray r, t_object* world, t_light* light, int depth)
 {
 	double t;
 	double pdf;
