@@ -279,9 +279,10 @@ double mixture_pdf_value(t_record* rec, t_ray* scattered, t_light* light)
 		t = 0.5;
 
 
-	/*while (temp)
+	while (temp)
 	{
-		size = get_light_size(*(temp->object));
+		//size = get_light_size(*(temp->object));
+		size = 1;
 		w_sum += size;
 		if (random_double(0,1,7) < t) //광원 샘플링
 		{
@@ -298,7 +299,7 @@ double mixture_pdf_value(t_record* rec, t_ray* scattered, t_light* light)
 			light_pdf_val = rectangle_light_pdf_value(rec, scattered, temp->object);
 		pdf += size * (t * light_pdf_val + (1 - t) * cosine_pdf_value(&(rec->normal), &(uvw.w)));
 		temp = temp->next;
-	}*/
+	}
 
 	
 	/*size = get_light_size(*(temp->object));

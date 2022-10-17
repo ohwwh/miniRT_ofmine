@@ -6,7 +6,7 @@ typedef struct s_camera {
 	t_point origin;
 	t_point lookat;
 	t_vec vup;
-	double vfov;
+	double fov;
 	double ratio;
 	int count;
 

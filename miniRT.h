@@ -102,7 +102,7 @@ typedef struct s_minirt {
 	
 } t_minirt;
 
-void print_init(t_minirt vars);
+void path_render(t_minirt vars);
 
 
 int 	rgb_to_int(t_color c);

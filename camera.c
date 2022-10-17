@@ -16,14 +16,14 @@ t_camera create_camera(t_point lookfrom, t_point lookat, t_vec vup, double vfov,
 	double viewport_height = 2.0 * h;
 	double viewport_width = aspect_ratio * viewport_height;
 
-	t_vec w = unit_vec(vec_sub(lookfrom, lookat));
-	t_vec u = unit_vec(vcross(vup, w));
-	t_vec v = vcross(w, u);
+	t_vec w = unit_vec(vec_sub(lookfrom, lookat)); //ㅋㅏ메라 뒤통수
+	t_vec u = unit_vec(vcross(vup, w));  //right
+	t_vec v = vcross(w, u); //up
 
 	ret.origin = lookfrom;
 	ret.lookat = lookat;
 	ret.vup = vup;
-	ret.vfov = vfov;
+	ret.fov = vfov;
 	ret.ratio = aspect_ratio;
 
 	ret.horizontal = vec_scalar_mul(u, viewport_width);

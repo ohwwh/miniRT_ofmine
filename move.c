@@ -18,7 +18,7 @@ int key_hook_move(t_minirt* vars)
 {
 	if (vars->scene.changed == 1)
 	{
-		print_init(*vars);
+		path_render(*vars);
 		vars->scene.changed = 0;
 	}
 	if (vars->is_trace == 0)
@@ -28,7 +28,7 @@ int key_hook_move(t_minirt* vars)
 			t_vec new_org = vec_sum(vars->scene.camera.origin, micro_vec(dir));
 			t_vec new_lookat = vec_sum(vars->scene.camera.lookat, micro_vec(dir));
 			vars->scene.camera = create_camera(new_org, new_lookat, vars->scene.camera.vup, vars->scene.camera.vfov, vars->scene.camera.ratio);
-			print_init(*vars);
+			path_render(*vars);
 		}
 		else if (vars->is_move == 0){
 			t_vec dir = vec_sub(vars->scene.camera.lookat, vars->scene.camera.origin);
@@ -40,14 +40,14 @@ int key_hook_move(t_minirt* vars)
 			t_vec new_org = vec_sum(vars->scene.camera.origin, micro_vec(a_dir));
 			t_vec new_lookat = vec_sum(vars->scene.camera.lookat, micro_vec(a_dir));
 			vars->scene.camera = create_camera(new_org, new_lookat, vars->scene.camera.vup, vars->scene.camera.vfov, vars->scene.camera.ratio);
-			print_init(*vars);
+			path_render(*vars);
 		}
 		else if (vars->is_move == 1){
 			t_vec dir = vec_sub(vars->scene.camera.origin, vars->scene.camera.lookat);
 			t_vec new_org = vec_sum(vars->scene.camera.origin, micro_vec(dir));
 			t_vec new_lookat = vec_sum(vars->scene.camera.lookat, micro_vec(dir));
 			vars->scene.camera = create_camera(new_org, new_lookat, vars->scene.camera.vup, vars->scene.camera.vfov, vars->scene.camera.ratio);
-			print_init(*vars);
+			path_render(*vars);
 		}
 		else if (vars->is_move == 2){
 			t_vec dir = vec_sub(vars->scene.camera.lookat, vars->scene.camera.origin);
@@ -58,7 +58,7 @@ int key_hook_move(t_minirt* vars)
 			t_vec new_org = vec_sub(vars->scene.camera.origin, micro_vec(a_dir));
 			t_vec new_lookat = vec_sub(vars->scene.camera.lookat, micro_vec(a_dir));
 			vars->scene.camera = create_camera(new_org, new_lookat, vars->scene.camera.vup, vars->scene.camera.vfov, vars->scene.camera.ratio);
-			print_init(*vars);
+			path_render(*vars);
 		}
 		else if (vars->is_move == 126)
 		{
@@ -67,7 +67,7 @@ int key_hook_move(t_minirt* vars)
 			vars->scene.camera.lookat.z * sin(0.5),
 			vars->scene.camera.lookat.y * sin(0.5) + vars->scene.camera.lookat.z * cos(0.5));
 			vars->scene.camera = create_camera(vars->scene.camera.origin, new_lookat, vars->scene.camera.vup, vars->scene.camera.vfov, vars->scene.camera.ratio);
-			print_init(*vars);
+			path_render(*vars);
 		}
 		else if (vars->is_move == 123)
 		{
@@ -76,7 +76,7 @@ int key_hook_move(t_minirt* vars)
 			vars->scene.camera.lookat.y,
 			vars->scene.camera.lookat.z * cos(0.5) - vars->scene.camera.lookat.x * sin(0.5));
 			vars->scene.camera = create_camera(vars->scene.camera.origin, new_lookat, vars->scene.camera.vup, vars->scene.camera.vfov, vars->scene.camera.ratio);
-			print_init(*vars);
+			path_render(*vars);
 		}
 		else if (vars->is_move == 125)
 		{
@@ -85,7 +85,7 @@ int key_hook_move(t_minirt* vars)
 			vars->scene.camera.lookat.z * sin(-0.5),
 			vars->scene.camera.lookat.y * sin(-0.5) + vars->scene.camera.lookat.z * cos(-0.5));
 			vars->scene.camera = create_camera(vars->scene.camera.origin, new_lookat, vars->scene.camera.vup, vars->scene.camera.vfov, vars->scene.camera.ratio);
-			print_init(*vars);
+			path_render(*vars);
 		}
 		else if (vars->is_move == 124)
 		{
@@ -94,9 +94,9 @@ int key_hook_move(t_minirt* vars)
 			vars->scene.camera.lookat.y,
 			vars->scene.camera.lookat.z * cos(-0.5) - vars->scene.camera.lookat.x * sin(-0.5));
 			vars->scene.camera = create_camera(vars->scene.camera.origin, new_lookat, vars->scene.camera.vup, vars->scene.camera.vfov, vars->scene.camera.ratio);
-			print_init(*vars);
+			path_render(*vars);
 		}
-		/*else if (vars->is_move == 4 || vars->is_move == 5)
+		else if (vars->is_move == 4 || vars->is_move == 5)
 		{
 			double new_vfov;
 
@@ -113,8 +113,9 @@ int key_hook_move(t_minirt* vars)
 			vars->scene.camera = create_camera(vars->scene.camera.origin, vars->scene.camera.lookat, 
 			vars->scene.camera.vup, new_vfov, vars->scene.camera.ratio);
 			vars->is_move = -1;
-			print_init(*vars);
-		}*/ // 무한 로딩 걸리는 이유를 찾아라
+			path_render(*vars);
+			// 무한 로딩 걸리는 이유를 찾아라
+		}
 	}
 	return (1);
 }

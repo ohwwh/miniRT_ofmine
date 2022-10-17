@@ -27,7 +27,7 @@ void	init_rt(t_minirt *vars)
 	//생성 실패 시 에러처리 해야 함
 }
 
-void print_init(t_minirt vars)
+void path_render(t_minirt vars)
 {
 	double u;
 	double v;
@@ -65,7 +65,7 @@ void print_init(t_minirt vars)
 					color = vec_sum(color, ray_color_2(ray_tmp, vars.scene.world, vars.scene.light));
 			}
 			color = vec_division(color, vars.scene.anti);
-			put_color(&vars.mlx, i, HEIGHT - 1 - j, rgb_to_int(color)); //왜 않되?
+			put_color(&vars.mlx, i, HEIGHT - 1 - j, rgb_to_int(color));
 			//ft_pixel_put(&vars, i, vars.mlx.window_height - 1 - j, rgb_to_int(color));
 		}
 	}
@@ -166,14 +166,14 @@ int	main(int argc, char *argv[])
 	t_light light_next;
 	light.object = &light1;
 	light_next.object = &light2;
-	light.next = &light_next;
+	light.next = 0;
 	light_next.next = 0;
 
 	t_object surface = create_sphere(create_vec(0, -1000, 0), 1000, 
 	create_vec(0.4, 0.4, 0.4), 0);
 
 	t_object sphere = create_sphere(create_vec(4,2,-2), 2, 
-	create_vec(0.8, 0.8, 0.8), 0);
+	create_vec(0.8, 0.8, 0.8), 2);
 	set_refraction(&sphere, 1.5);
 	surface.next = &sphere;
 	t_object sphere2 = create_sphere(create_vec(-4,2,2), 2, 
@@ -210,7 +210,7 @@ int	main(int argc, char *argv[])
 	//srand(time(0));
 	vars.scene.camera = camera;
 	//ft_mlx_init(&vars);
-	print_init(vars);
+	path_render(vars);
 	mlx_hook(vars.mlx.mlx_win, 2, 0, &keybind, &vars);
 	mlx_hook(vars.mlx.mlx_win, 3, 0, &keyrelease, &vars);
 	mlx_hook(vars.mlx.mlx_win, 4, 0, &scroll, &vars);
