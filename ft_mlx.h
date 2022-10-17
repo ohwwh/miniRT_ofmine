@@ -5,6 +5,7 @@
 #include "camera.h"
 #include "vector.h"
 #include "objects.h"
+#include "ray.h"
 
 typedef struct	s_mlx
 {
@@ -23,6 +24,8 @@ typedef struct s_light
 {
 	t_vec			src;
 	double			ratio;
+	t_object		*object;
+	t_ambient		amb;
 	struct s_light	*next;
 }	t_light;
 
@@ -48,12 +51,14 @@ typedef struct s_scene
 typedef struct s_minirt {
 	t_mlx mlx;
 	t_scene scene;
+	t_ray ray;
 	int is_move;
 	int is_trace;
 	
 } t_minirt;
 
 int 	rgb_to_int(t_color c);
+void	put_color(t_mlx *data, int x, int y, int color);
 void 	ft_pixel_put(t_minirt *vars, int x, int y, int color);
 void	ft_mlx_init(t_minirt *vars);
 void	ft_mlx_new(t_minirt *vars, int x, int y, char *name);

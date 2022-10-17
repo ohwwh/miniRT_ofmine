@@ -103,6 +103,7 @@ int hit_caps(t_object *cy, t_ray *ray, t_record *rec)
 	top_cap.color.z = cy->color.z;
 	top_cap.mat = cy->mat;
 	top_cap.refraction = cy->refraction;
+	top_cap.specular = cy->specular;
 
 	hr = *rec;
 	hr2 = *rec;
@@ -147,6 +148,8 @@ int hit_sphere(t_object* s, t_ray* r, t_record* rec)
 	rec->color = s->color;
 	rec->mat = s->mat;
 	rec->refraction = s->refraction;
+	rec->specular = s->specular;
+	rec->type = s->type;
 	return (1);
 }
 
@@ -202,6 +205,7 @@ int hit_cylinder(t_object *cy, t_ray *ray, t_record *rec)
 	rec->t_max = root;
 	rec->mat = cy->mat;
 	rec->refraction = cy->refraction;
+	rec->specular = cy->specular;
 	rec->color = cy->color;
 	rec->p = vec_sum(ray->origin, vec_scalar_mul(ray->dir, root));
 	oc = unit_vec(cy->dir);
@@ -241,6 +245,7 @@ int hit_plane(t_object *pl, t_ray *ray, t_record* rec)
 	rec->t_max = root;
 	rec->mat = pl->mat;
 	rec->refraction = pl->refraction;
+	rec->specular = pl->specular;
 	rec->color = pl->color;
 	rec->p = vec_sum(ray->origin, vec_scalar_mul(ray->dir, root));
 	rec->normal = pl->dir;
@@ -266,6 +271,7 @@ int hit_rectangle_xy(t_object *rect, t_ray *ray, t_record* rec)
 	rec->t_max = t;
 	rec->mat = rect->mat;
 	rec->refraction = rect->refraction;
+	rec->specular = rect->specular;
     t_vec outward_normal = create_vec(0, 0, 1);
     set_face_normal(rec, ray, outward_normal);
     rec->p = ray_end(ray, t);
@@ -289,6 +295,7 @@ int hit_rectangle_yz(t_object *rect, t_ray *ray, t_record* rec)
 	rec->t_max = t;
 	rec->mat = rect->mat;
 	rec->refraction = rect->refraction;
+	rec->specular = rect->specular;
     t_vec outward_normal = create_vec(1, 0, 0);
     set_face_normal(rec, ray, outward_normal);
     rec->p = ray_end(ray, t);
@@ -312,6 +319,7 @@ int hit_rectangle_xz(t_object *rect, t_ray *ray, t_record* rec)
 	rec->t_max = t;
 	rec->mat = rect->mat;
 	rec->refraction = rect->refraction;
+	rec->specular = rect->specular;
     t_vec outward_normal = create_vec(0, 1, 0);
     set_face_normal(rec, ray, outward_normal);
     rec->p = ray_end(ray, t);

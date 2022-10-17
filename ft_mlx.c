@@ -37,6 +37,14 @@ int rgb_to_int(t_color c)
 	return ((int)(255.999 * 0) << 24 | (int)(255.999 * c.x) << 16 | (int)(255.999 * c.y) << 8 | (int)(255.999 * c.z));
 }*/
 
+void	put_color(t_mlx *data, int x, int y, int color)
+{
+	char	*dst;
+
+	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
+	*(unsigned int *)dst = color;
+}
+
 void ft_pixel_put(t_minirt *vars, int x, int y, int color)
 {
 	mlx_pixel_put(vars->mlx.mlx, vars->mlx.mlx_win, x, y, color);

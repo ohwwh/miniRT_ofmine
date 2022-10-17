@@ -143,7 +143,7 @@ int	keybind(int keycode, t_minirt* vars)
 		if (vars->is_trace == 0)
 		{
 			vars->is_trace = 1;
-			vars->scene.anti = 100;
+			vars->scene.anti = 1;
 			vars->scene.changed = 1;
 		}
 		else

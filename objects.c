@@ -32,7 +32,7 @@ t_object create_sphere(t_point c, double r, t_color color, int mat)
 	ret.color = color;
 	ret.mat = mat;
 	ret.refraction = 1.5;
-	ret.specular = 0.8;
+	ret.specular = 0.65;
 	return (ret);
 }
 
@@ -48,7 +48,7 @@ t_object create_cylinder(t_point c, double r, double h, t_vec dir, t_color color
 	ret.color = color;
 	ret.mat = mat;
 	ret.refraction = 1.5;
-	ret.specular = 0.8;
+	ret.specular = 0;
 	return (ret);
 }
 

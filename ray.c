@@ -331,7 +331,20 @@ double scatter(t_ray* r, t_record* rec, t_ray* scattered, t_object* light)
 		pdf = light_pdf_value(scattered, light);*/
 
 
-		/*if (random_double(0,1,7) < 1) //specular 계수
+		//if (random_double(0,1,7) > rec->specular) //specular 계수
+		/*if (rec->mat == 0 && rec->type == 3)
+		{
+			if (random_double(0,1,7) > 0.5)
+				pdf = mixture_pdf_value(rec, scattered, light);
+			else
+			{
+				*scattered = ray(rec->p, reflect(unit_vec(r->dir), rec->normal));
+				if (vdot(scattered->dir, rec->normal) <= 0) //이 조건식은 무슨 의미인가??
+					rec->color = create_vec(0, 0, 0);
+				return (1);
+			}
+		}*/
+		if (random_double(0,1,7) > rec->specular)
 			pdf = mixture_pdf_value(rec, scattered, light);
 		else
 		{
@@ -339,7 +352,7 @@ double scatter(t_ray* r, t_record* rec, t_ray* scattered, t_object* light)
 			if (vdot(scattered->dir, rec->normal) <= 0) //이 조건식은 무슨 의미인가??
 				rec->color = create_vec(0, 0, 0);
 			return (1);
-		}*/
+		}
 		pdf = mixture_pdf_value(rec, scattered, light);
 		return (pdf);
 	}
@@ -507,6 +520,6 @@ t_color ray_color(t_ray r, t_object* world, t_object* light, int depth)
 	}
 	t = 0.5 * (unit_vec((r.dir)).y + 1.0);
 	return (vec_scalar_mul(
-		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 0.3)
+		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 0.5)
 	);
 }

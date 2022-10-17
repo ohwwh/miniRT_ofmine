@@ -34,7 +34,7 @@ void print_init(t_minirt vars)
 	t_vec dir;
 	t_ray ray_tmp;
 	t_color color;
-	int k = 0;
+	
 	for (int j = vars.mlx.window_height - 1; j >= 0; --j)
 	{
 		if (vars.is_trace == 1)
@@ -46,7 +46,6 @@ void print_init(t_minirt vars)
 		{
 			//기본 색상을 어떻게 지정할까? 원하는 색의 rgb값 / 256 * anti 
 			//물체마다 따로 지정하려면 어떻C게 하나?
-			//t_color color = create_vec(0, 0, 0);
 			color = create_vec(0, 0, 0);
 			for (int s = 0; s < vars.scene.anti; s ++)
 			{
@@ -56,7 +55,7 @@ void print_init(t_minirt vars)
 				vars.scene.camera.lower_left_corner.y + (u * vars.scene.camera.horizontal.y) + (v * vars.scene.camera.vertical.y) - vars.scene.camera.origin.y,
 				vars.scene.camera.lower_left_corner.z + (u * vars.scene.camera.horizontal.z) + (v * vars.scene.camera.vertical.z) - vars.scene.camera.origin.z);
 				ray_tmp = ray(vars.scene.camera.origin, dir);
-				if (i == 286 && j == 210)
+				if (i == 440 && j == 160)
 					i = i;
 				if (vars.is_trace == 1)
 					color = vec_sum(color, ray_color(ray_tmp, vars.scene.world, vars.scene.light, MAX_DEPTH));
@@ -66,9 +65,11 @@ void print_init(t_minirt vars)
 					color = vec_sum(color, ray_color_2(ray_tmp, vars.scene.world, vars.scene.light));
 			}
 			color = vec_division(color, vars.scene.anti);
-			ft_pixel_put(&vars, i, vars.mlx.window_height - 1 - j, rgb_to_int(color));
+			put_color(&vars.mlx, i, HEIGHT - 1 - j, rgb_to_int(color)); //왜 않되?
+			//ft_pixel_put(&vars, i, vars.mlx.window_height - 1 - j, rgb_to_int(color));
 		}
 	}
+	mlx_put_image_to_window(vars.mlx.mlx, vars.mlx.mlx_win, vars.mlx.img, 0, 0); // 무슨 차이지....
 }
 
 int	main(int argc, char *argv[])
@@ -156,17 +157,20 @@ int	main(int argc, char *argv[])
 	//t_object light = create_rectangle_xy(create_vec(3,5,0), create_vec(1,3,0), 
 	//-5, create_vec(15, 15, 15), -1);
 
-	t_object light = create_sphere(create_vec(2, 14, -10), 4, 
-	create_vec(15, 15, 15), -1);
+	t_object light1 = create_sphere(create_vec(2, 14, -10), 4, 
+	create_vec(25, 25, 25), -1);
 	//light.next = &light2;
 	//light.next = 0;
+
+	t_light light;
+	light.object = &light1;
 
 	t_object surface = create_sphere(create_vec(0, -1000, 0), 1000, 
 	create_vec(0.4, 0.4, 0.4), 0);
 	light.next = &surface;
 
 	t_object sphere = create_sphere(create_vec(4,2,-2), 2, 
-	create_vec(0.8, 0.8, 0.8), 2);
+	create_vec(0.8, 0.8, 0.8), 0);
 	set_refraction(&sphere, 1.5);
 	surface.next = &sphere;
 	t_object sphere2 = create_sphere(create_vec(-4,2,2), 2, 
@@ -186,6 +190,7 @@ int	main(int argc, char *argv[])
 	//init_rt를 한번 하고 나니까 없애도 흰색 화면이 뜲.
 	vars.is_trace = 0;
 	vars.scene.anti = 1;
+	vars.scene.ambient.col = create_vec(0, 0, 0);
 	vars.is_move = -1;
 	vars.scene.changed = 0;
 	vars.scene.world = &light;
