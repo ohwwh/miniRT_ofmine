@@ -20,15 +20,6 @@ typedef struct	s_mlx
 	int		endian;
 }	t_mlx;
 
-typedef struct s_light
-{
-	t_vec			src;
-	double			ratio;
-	t_object		*object;
-	t_ambient		amb;
-	struct s_light	*next;
-}	t_light;
-
 typedef struct s_ambient
 {
 	t_vec	col;
@@ -36,10 +27,18 @@ typedef struct s_ambient
 	int 	count;
 }	t_ambient;
 
+typedef struct s_light
+{
+	t_vec			src;
+	double			ratio;
+	t_object		*object;
+	t_ambient		ambient;
+	struct s_light	*next;
+}	t_light;
+
 typedef struct s_scene
 {
 	t_camera	camera;
-	//t_light		*light;
 	t_object 	*light;
 	t_object	*world;
 	t_ambient	ambient;

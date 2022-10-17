@@ -164,10 +164,10 @@ int	main(int argc, char *argv[])
 
 	t_light light;
 	light.object = &light1;
+	light.next = 0;
 
 	t_object surface = create_sphere(create_vec(0, -1000, 0), 1000, 
 	create_vec(0.4, 0.4, 0.4), 0);
-	light.next = &surface;
 
 	t_object sphere = create_sphere(create_vec(4,2,-2), 2, 
 	create_vec(0.8, 0.8, 0.8), 0);
@@ -193,7 +193,7 @@ int	main(int argc, char *argv[])
 	vars.scene.ambient.col = create_vec(0, 0, 0);
 	vars.is_move = -1;
 	vars.scene.changed = 0;
-	vars.scene.world = &light;
+	vars.scene.world = &surface;
 	vars.scene.light = &light;
 	vars.mlx.window_width = 640;
 	vars.mlx.window_height = 320;
