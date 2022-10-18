@@ -127,10 +127,10 @@ int hit_sphere(t_objs* s, t_ray* r, t_hit_record* rec)
 			return (0);
 	sqrtd = sqrt(discriminant);
 	root = (-b - sqrtd) / a;
-	if (root < rec->tmin || rec->tmax < root)
+	if (root < rec->EPS || rec->tmax < root)
 	{
 		root = (-b + sqrtd) / a;
-		if (root < rec->tmin || rec->tmax < root)
+		if (root < rec->EPS || rec->tmax < root)
 			return (0);
 	}
 	rec->t = root;
@@ -171,27 +171,27 @@ int hit_cylinder(t_objs *cy, t_ray *ray, t_hit_record *rec)
 		- (vdot(oc, normalized) * vdot(oc, normalized))
 		- (cy->radius) * (cy->radius);
 	D = b * b - 4 * a * c;
-	if (D < rec->tmin)
+	if (D < rec->EPS)
 		return (0);
 	else
     {
         t1 = (-b + sqrt(D)) / (2 * a);
 	    t2 = (-b - sqrt(D)) / (2 * a);
-		if (t1 < rec->tmin)
+		if (t1 < rec->EPS)
 			return (0);
 		else
 		{
 	    	h1 = vdot(ray->dir, normalized) * t1 + vdot(oc, normalized);
 	    	h2 = vdot(ray->dir, normalized) * t2 + vdot(oc, normalized);
-			if (h2 >= rec->tmin && h2 <= cy->height)
+			if (h2 >= rec->EPS && h2 <= cy->height)
 				root = t2;
-			else if (h1 >= rec->tmin && h1 <= cy->height)
+			else if (h1 >= rec->EPS && h1 <= cy->height)
 				root = t1;
 			else
 				return (0);
 		}
     }
-	if (root < rec->tmin || rec->tmax < root)
+	if (root < rec->EPS || rec->tmax < root)
 		return (0);
 	rec->t = root;
 	rec->tmax = root;
@@ -226,12 +226,12 @@ int hit_plane(t_objs *pl, t_ray *ray, t_hit_record* rec)
 	{
 		a = vdot(x, normal);
 		root = -a / b;
-		if (root < rec->tmin)
+		if (root < rec->EPS)
             return (0);
 	}
     else
 		return (0);
-    if (root < rec->tmin || rec->tmax < root)
+    if (root < rec->EPS || rec->tmax < root)
 		return (0);
 	rec->t = root;
 	rec->tmax = root;
@@ -250,7 +250,7 @@ int hit_plane(t_objs *pl, t_ray *ray, t_hit_record* rec)
 int hit_rectangle_xy(t_objs *rect, t_ray *ray, t_hit_record* rec)
 {
 	double t = (rect->radius - ray->origin.z) / ray->dir.z;
-    if (t < rec->tmin || t > rec->tmax)
+    if (t < rec->EPS || t > rec->tmax)
         return (0);
     double x = ray->origin.x + t * ray->dir.x;
     double y = ray->origin.y + t * ray->dir.y;
@@ -274,7 +274,7 @@ int hit_rectangle_xy(t_objs *rect, t_ray *ray, t_hit_record* rec)
 int hit_rectangle_yz(t_objs *rect, t_ray *ray, t_hit_record* rec)
 {
 	double t = (rect->radius - ray->origin.x) / ray->dir.x;
-    if (t < rec->tmin || t > rec->tmax)
+    if (t < rec->EPS || t > rec->tmax)
         return (0);
     double y = ray->origin.y + t * ray->dir.y;
     double z = ray->origin.z + t * ray->dir.z;
@@ -298,7 +298,7 @@ int hit_rectangle_yz(t_objs *rect, t_ray *ray, t_hit_record* rec)
 int hit_rectangle_xz(t_objs *rect, t_ray *ray, t_hit_record* rec)
 {
 	double t = (rect->radius - ray->origin.y) / ray->dir.y;
-    if (t < rec->tmin || t > rec->tmax)
+    if (t < rec->EPS || t > rec->tmax)
         return (0);
     double x = ray->origin.x + t * ray->dir.x;
     double z = ray->origin.z + t * ray->dir.z;

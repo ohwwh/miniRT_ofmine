@@ -14,6 +14,7 @@
 #include "libohw/includes/libft.h"
 #include "./mlx/mlx.h"
 #define MAX_DEPTH 50
+#define EPS 0.001
 //#define ANTI 100
 
 typedef struct s_ray {
