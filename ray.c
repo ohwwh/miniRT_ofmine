@@ -1,5 +1,4 @@
 #include "miniRT.h"
-#define EPS 0.0001
 
 t_ray ray(t_point origin, t_vec dir)
 {
@@ -565,6 +564,6 @@ t_color ray_color(t_ray r, t_objs* world, t_light* light, int depth)
 	}
 	t = 0.5 * (unit_vec((r.dir)).y + 1.0);
 	return (vec_scalar_mul(
-		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 0)
+		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 0.01)
 	);
 }

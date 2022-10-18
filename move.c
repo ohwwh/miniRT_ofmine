@@ -1,6 +1,6 @@
 #include "miniRT.h"
 
-t_vec   micro_vec(t_vec vec)
+/*t_vec   micro_vec(t_vec vec)
 {
 	double len = vec_len(vec);
 	if (len == 0)
@@ -12,6 +12,27 @@ t_vec   micro_vec(t_vec vec)
 	vec.y /= 5;
 	vec.z /= 5;
 	return (vec);
+}*/
+
+t_vec rotate(t_vec axis, t_minirt* vars, int dir)
+{
+	double c = (1 - cos(dir * 0.1));
+	double s = sin(dir * 0.1);
+	double x = axis.x;
+	double y = axis.y;
+	double z = axis.z;
+
+	double i = vars->scene.camera.forward.x;
+	double j = vars->scene.camera.forward.y;
+	double k = vars->scene.camera.forward.z;
+
+	t_vec new_dir;
+
+	new_dir.x = -i*c*y*y-k*s*y+c*j*x*y-i*c*z*z+j*s*z+c*k*x*z+i;
+	new_dir.y = j-c*j*x*x+k*s*x+i*c*x*y-c*j*z*z-i*s*z+c*k*y*z;
+	new_dir.z = k-c*k*x*x-j*s*x-c*k*y*y+i*s*y+i*c*x*z+c*j*y*z;
+
+	return (new_dir);
 }
 
 int key_hook_move(t_minirt* vars)
@@ -24,83 +45,83 @@ int key_hook_move(t_minirt* vars)
 	if (vars->is_trace == 0)
 	{
 		if (vars->is_move == 13){
-			t_vec dir = vec_sub(vars->scene.camera.lookat, vars->scene.camera.origin);
-			t_vec new_org = vec_sum(vars->scene.camera.origin, micro_vec(dir));
-			t_vec new_lookat = vec_sum(vars->scene.camera.lookat, micro_vec(dir));
-			vars->scene.camera = create_camera(new_org, new_lookat, vars->scene.camera.vup, vars->scene.camera.fov, vars->scene.camera.ratio);
+			t_vec dir = vars->scene.camera.forward;
+			t_vec d = vec_division(dir, 1);
+			t_vec new_org = vec_sum(vars->scene.camera.origin, d);
+			vars->scene.camera.origin = new_org;
+			set_camera(&vars->scene.camera);
 			path_render(*vars);
 		}
 		else if (vars->is_move == 0){
-			t_vec dir = vec_sub(vars->scene.camera.lookat, vars->scene.camera.origin);
-			//t_vec a_dir = create_vec(1, vars->scene.camera.origin.y, (-(dir.x + (dir.y * vars->scene.camera.origin.y)) / dir.z));
-			t_vec a_dir = vcross(vars->scene.camera.vup, dir);
-			t_vec cross = vcross(a_dir, dir);
-			if (vdot(cross, create_vec(0,1,0)) > 0)
-				vec_scalar_mul(a_dir, -1);
-			t_vec new_org = vec_sum(vars->scene.camera.origin, micro_vec(a_dir));
-			t_vec new_lookat = vec_sum(vars->scene.camera.lookat, micro_vec(a_dir));
-			vars->scene.camera = create_camera(new_org, new_lookat, vars->scene.camera.vup, vars->scene.camera.fov, vars->scene.camera.ratio);
+			t_vec dir = vec_scalar_mul(vars->scene.camera.right, -1);
+			t_vec d = vec_division(dir, 1);
+			t_vec new_org = vec_sum(vars->scene.camera.origin, d);
+			vars->scene.camera.origin = new_org;
+			set_camera(&vars->scene.camera);
 			path_render(*vars);
 		}
 		else if (vars->is_move == 1){
-			t_vec dir = vec_sub(vars->scene.camera.origin, vars->scene.camera.lookat);
-			t_vec new_org = vec_sum(vars->scene.camera.origin, micro_vec(dir));
-			t_vec new_lookat = vec_sum(vars->scene.camera.lookat, micro_vec(dir));
-			vars->scene.camera = create_camera(new_org, new_lookat, vars->scene.camera.vup, vars->scene.camera.fov, vars->scene.camera.ratio);
+			t_vec dir = vars->scene.camera.forward;
+			t_vec d = vec_division(dir, 1);
+			t_vec new_org = vec_sub(vars->scene.camera.origin, d);
+			vars->scene.camera.origin = new_org;
+			set_camera(&vars->scene.camera);
 			path_render(*vars);
 		}
 		else if (vars->is_move == 2){
-			t_vec dir = vec_sub(vars->scene.camera.lookat, vars->scene.camera.origin);
-			t_vec a_dir = vcross(vars->scene.camera.vup, dir);
-			t_vec cross = vcross(a_dir, dir);
-			if (vdot(cross, create_vec(0,1,0)) < 0)
-				vec_scalar_mul(a_dir, -1);
-			t_vec new_org = vec_sub(vars->scene.camera.origin, micro_vec(a_dir));
-			t_vec new_lookat = vec_sub(vars->scene.camera.lookat, micro_vec(a_dir));
-			vars->scene.camera = create_camera(new_org, new_lookat, vars->scene.camera.vup, vars->scene.camera.fov, vars->scene.camera.ratio);
+			t_vec dir = vars->scene.camera.right;
+			t_vec d = vec_division(dir, 1);
+			t_vec new_org = vec_sum(vars->scene.camera.origin, d);
+			vars->scene.camera.origin = new_org;
+			set_camera(&vars->scene.camera);
 			path_render(*vars);
 		}
 		else if (vars->is_move == 126)
 		{
-			t_vec new_lookat = create_vec(vars->scene.camera.lookat.x,
-			vars->scene.camera.lookat.y * cos(0.5) - 
-			vars->scene.camera.lookat.z * sin(0.5),
-			vars->scene.camera.lookat.y * sin(0.5) + vars->scene.camera.lookat.z * cos(0.5));
-			vars->scene.camera = create_camera(vars->scene.camera.origin, new_lookat, vars->scene.camera.vup, vars->scene.camera.fov, vars->scene.camera.ratio);
+			t_vec new_dir;
+
+			new_dir = rotate(vars->scene.camera.right, vars, -1);
+			vars->scene.camera.forward = new_dir;
+			vars->scene.camera.dir = new_dir;
+			set_camera(&vars->scene.camera);
 			path_render(*vars);
 		}
 		else if (vars->is_move == 123)
 		{
-			t_vec new_lookat = create_vec(vars->scene.camera.lookat.z * sin(0.5) + 
-			vars->scene.camera.lookat.x * cos(0.5), 
-			vars->scene.camera.lookat.y,
-			vars->scene.camera.lookat.z * cos(0.5) - vars->scene.camera.lookat.x * sin(0.5));
-			vars->scene.camera = create_camera(vars->scene.camera.origin, new_lookat, vars->scene.camera.vup, vars->scene.camera.fov, vars->scene.camera.ratio);
+			t_vec new_dir;
+
+			new_dir = rotate(vars->scene.camera.up, vars, -1);
+			vars->scene.camera.forward = new_dir;
+			vars->scene.camera.dir = new_dir;
+			set_camera(&vars->scene.camera);
 			path_render(*vars);
 		}
 		else if (vars->is_move == 125)
 		{
-			t_vec new_lookat = create_vec(vars->scene.camera.lookat.x,
-			vars->scene.camera.lookat.y * cos(-0.5) - 
-			vars->scene.camera.lookat.z * sin(-0.5),
-			vars->scene.camera.lookat.y * sin(-0.5) + vars->scene.camera.lookat.z * cos(-0.5));
-			vars->scene.camera = create_camera(vars->scene.camera.origin, new_lookat, vars->scene.camera.vup, vars->scene.camera.fov, vars->scene.camera.ratio);
+			t_vec new_dir;
+
+			new_dir = rotate(vars->scene.camera.right, vars, 1);
+			vars->scene.camera.forward = new_dir;
+			vars->scene.camera.dir = new_dir;
+			set_camera(&vars->scene.camera);
 			path_render(*vars);
 		}
 		else if (vars->is_move == 124)
 		{
-			t_vec new_lookat = create_vec(vars->scene.camera.lookat.z * sin(-0.5) + 
-			vars->scene.camera.lookat.x * cos(-0.5), 
-			vars->scene.camera.lookat.y,
-			vars->scene.camera.lookat.z * cos(-0.5) - vars->scene.camera.lookat.x * sin(-0.5));
-			vars->scene.camera = create_camera(vars->scene.camera.origin, new_lookat, vars->scene.camera.vup, vars->scene.camera.fov, vars->scene.camera.ratio);
+			t_vec new_dir;
+
+			new_dir = rotate(vars->scene.camera.up, vars, 1);
+			vars->scene.camera.forward = new_dir;
+			vars->scene.camera.dir = new_dir;
+			set_camera(&vars->scene.camera);
 			path_render(*vars);
 		}
 		else if (vars->is_move == 4 || vars->is_move == 5)
 		{
 			double new_fov;
 
-			if (vars->scene.camera.fov >= 170 || vars->scene.camera.fov <= 10)
+			if ((vars->is_move == 4 && vars->scene.camera.fov <= 10)
+				|| (vars->is_move == 5 && vars->scene.camera.fov >= 170))
 			{
 				printf("cannot zoom more\n");
 				vars->is_move = -1;
@@ -110,11 +131,10 @@ int key_hook_move(t_minirt* vars)
 				new_fov = vars->scene.camera.fov - 10;
 			else
 				new_fov = vars->scene.camera.fov + 10;
-			vars->scene.camera = create_camera(vars->scene.camera.origin, vars->scene.camera.lookat, 
-			vars->scene.camera.vup, new_fov, vars->scene.camera.ratio);
+			vars->scene.camera.fov = new_fov;
 			vars->is_move = -1;
+			set_camera(&vars->scene.camera);
 			path_render(*vars);
-			// 무한 로딩 걸리는 이유를 찾아라
 		}
 	}
 	return (1);

@@ -13,6 +13,17 @@
 #include "miniRT.h"
 #define MAX_DEPTH 50
 
+t_ray       ray_primary(t_camera *cam, double u, double v)
+{
+    t_ray   ray;
+
+    ray.origin = cam->origin;
+    ray.dir = vec_sum(vec_sum(vec_scalar_mul(cam->up, v * cam->viewport_height),
+				vec_scalar_mul(cam->right, u *  cam->viewport_width)), cam->forward);
+    ray.dir = unit_vec(ray.dir);
+    return (ray);
+}
+
 void	init_rt(t_minirt *vars)
 {
 	vars->mlx.mlx = mlx_init();
@@ -32,40 +43,48 @@ void path_render(t_minirt vars)
 	double u;
 	double v;
 	t_vec dir;
-	t_ray ray_tmp;
+	t_ray init_ray;
 	t_color color;
 	
-	for (int j = vars.mlx.window_height - 1; j >= 0; --j)
+	//for (int y = vars.mlx.window_height - 1; y >= 0; --y)
+	for (int y = HEIGHT - 1; y >= 0; --y)
 	{
 		if (vars.is_trace == 1)
 		{
-			printf("\rScanlines remaining: %d", j);
+			printf("\rScanlines remaining: %d", y);
 			fflush(stdout);
 		}
-		for (int i = 0; i < vars.mlx.window_width; ++i)
+		//for (int x = 0; x < vars.mlx.window_width; ++x)
+		for (int x = 0; x < WIDTH; ++x)
 		{
 			//기본 색상을 어떻게 지정할까? 원하는 색의 rgb값 / 256 * anti 
 			//물체마다 따로 지정하려면 어떻C게 하나?
 			color = create_vec(0, 0, 0);
 			for (int s = 0; s < vars.scene.anti; s ++)
 			{
-				u = ((double)i + random_double(-1,1,vars.scene.anti)) / (vars.mlx.window_width-1);
-				v = ((double)j + random_double(-1,1,vars.scene.anti)) / (vars.mlx.window_height-1);
+				/*u = ((double)x + random_double(-1,1,vars.scene.anti)) / (WIDTH - 1);
+				v = ((double)y + random_double(-1,1,vars.scene.anti)) / (HEIGHT - 1);
+				//u = ((double)x) / (vars.mlx.window_width-1);
+				//v = ((double)y) / (vars.mlx.window_height-1);
 				dir = create_vec(vars.scene.camera.lower_left_corner.x + (u * vars.scene.camera.horizontal.x) + (v * vars.scene.camera.vertical.x) - vars.scene.camera.origin.x,
 				vars.scene.camera.lower_left_corner.y + (u * vars.scene.camera.horizontal.y) + (v * vars.scene.camera.vertical.y) - vars.scene.camera.origin.y,
 				vars.scene.camera.lower_left_corner.z + (u * vars.scene.camera.horizontal.z) + (v * vars.scene.camera.vertical.z) - vars.scene.camera.origin.z);
-				ray_tmp = ray(vars.scene.camera.origin, dir);
-				if (i == 0 && j == 319)
-					i = i;
+				init_ray = ray(vars.scene.camera.origin, dir);
+				//lower_left_corner*/
+				u = (((double)x + random_double(0, 0.5, vars.scene.anti)) * 2 / WIDTH) - 1;
+				v = (((double)y + random_double(0, 0.5, vars.scene.anti)) * 2 / HEIGHT) - 1;
+				init_ray = ray_primary(&(vars.scene.camera), u, v);
+				if (x == 0 && y == 0)
+						x = x;
 				if (vars.is_trace == 1)
-					color = vec_sum(color, ray_color(ray_tmp, vars.scene.world, vars.scene.light, MAX_DEPTH));
+					color = vec_sum(color, ray_color(init_ray, vars.scene.world, vars.scene.light, MAX_DEPTH));
 					//여러 개의 광원이 있을 때는?
 					//광원을 어떻게 구분해서 인자로 넣을 건지?
 				else
-					color = vec_sum(color, ray_color_2(ray_tmp, vars.scene.world, vars.scene.light));
+					color = vec_sum(color, ray_color_2(init_ray, vars.scene.world, vars.scene.light));
 			}
 			color = vec_division(color, vars.scene.anti);
-			put_color(&vars.mlx, i, HEIGHT - 1 - j, rgb_to_int(color));
+			put_color(&vars.mlx, x, HEIGHT - 1 - y, rgb_to_int(color));
 			//ft_pixel_put(&vars, i, vars.mlx.window_height - 1 - j, rgb_to_int(color));
 		}
 	}
@@ -75,7 +94,7 @@ void path_render(t_minirt vars)
 int	main(int argc, char *argv[])
 {
 	/*t_objs light = create_sphere(create_vec(5,8, -1), 2, 
-	create_vec(15, 15, 15), -1);
+	create_vec(15, 15, 15), 0);
 
 	t_objs surface = create_sphere(create_vec(0, -100.5, -1), 100, 
 	//create_vec(1, 0.75, 0.8));
@@ -139,7 +158,7 @@ int	main(int argc, char *argv[])
 	t_objs white3 = create_rectangle_xy(create_vec(0,555,0), create_vec(0,555,0), 555, 
 	create_vec(0.73, 0.73, 0.73), 0); //뒷면
 	t_objs sphere = create_sphere(create_vec(190,90,190), -90, 
-	create_vec(0.2, 0.4, 0.9), 0);
+	create_vec(0.2, 0.4, 0.9), 2);
 	set_refraction(&sphere, 0.5);
 
 	light.next = &green;
@@ -176,7 +195,7 @@ int	main(int argc, char *argv[])
 	create_vec(0.4, 0.4, 0.4), 0);
 
 	t_objs sphere = create_sphere(create_vec(4,2,-2), 2, 
-	create_vec(0.8, 0.8, 0.8), 0);
+	create_vec(0.8, 0.8, 0.8), 2);
 	set_refraction(&sphere, 1.5);
 	surface.next = &sphere;
 	t_objs sphere2 = create_sphere(create_vec(-4,2,2), 2, 
@@ -201,14 +220,15 @@ int	main(int argc, char *argv[])
 	vars.scene.changed = 0;
 	vars.scene.world = &surface;
 	vars.scene.light = &light;
-	vars.mlx.window_width = 640;
-	vars.mlx.window_height = 320;
-	double ratio = (double)vars.mlx.window_width / (double)vars.mlx.window_height;
+	//vars.mlx.window_width = 640;
+	//vars.mlx.window_height = 320;
+	double ratio = (double)WIDTH / (double)HEIGHT;
 
 	//t_camera camera = create_camera(create_vec(-2,2,1), create_vec(0,0,-1), create_vec(0, 1, 0), 70, ratio);
-	//t_camera camera = create_camera(create_vec(0,1,1), create_vec(0,0,-1), create_vec(0, 1, 0), 70, ratio);
+	//t_camera camera = create_camera(create_vec(0,0,0), create_vec(0,0,-1), create_vec(0, 1, 0), 70, ratio);
 	//t_camera camera = create_camera(create_vec(278,278,-800), create_vec(278,278,0), create_vec(0, 1, 0), 40, ratio);
 	t_camera camera = create_camera(create_vec(26,8,6), create_vec(0,2,0), create_vec(0, 1, 0), 20, ratio);
+	set_camera(&camera);
 
 	//srand(time(0));
 	vars.scene.camera = camera;
