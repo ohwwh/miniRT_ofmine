@@ -121,8 +121,8 @@ double sphere_light_pdf_value(t_hit_record* rec, t_ray* scattered, t_objs* light
 	if (!light)
 		return (0);
 	rec_new.t = -1.0;
-	rec_new.tmin = 0.001;
-	rec_new.tmax = INFINITY;
+	//rec_new.tmin = 0.001;
+	//rec_new.tmax = INFINITY;
 	hit_sphere(light, scattered, &rec_new);
 	if (rec_new.t < 0.001)
 		return 0;
@@ -144,8 +144,8 @@ double rectangle_light_pdf_value(t_hit_record *rec, t_ray* scattered, t_objs* li
 	if (!light)
 		return (0);
 	rec_new.t = -1.0;
-	rec_new.tmin = 0.001;
-	rec_new.tmax = INFINITY;
+	//rec_new.tmin = 0.001;
+	//rec_new.tmax = INFINITY;
 	if (light->type == 4)
 		hit_rectangle_xy(light, scattered, &rec_new);
 	else if (light->type == 5)
@@ -170,8 +170,8 @@ double light_pdf_value(t_ray* ray_path, t_objs* light)
 	if (!light)
 		return (0);
 	rec.t = -1.0;
-	rec.tmin = 0.001;
-	rec.tmax = INFINITY;
+	//rec.tmin = 0.001;
+	//rec.tmax = INFINITY;
 
 	if (light->type == 4)
 		hit_rectangle_xy(light, ray_path, &rec);
@@ -282,6 +282,11 @@ double mixture_pdf_value(t_hit_record* rec, t_ray* scattered, t_light* light)
 	idx = rand() % light->count;
 	while (idx --)
 		temp = temp->next;
+	if (temp->object->mat != -1 || !get_light_size(*(temp->object)))
+	{
+		generate_scattered(rec, scattered, &uvw);
+		return (cosine_pdf_value(&(rec->normal), &(uvw.w)));
+	}
 	//size = get_light_size(*(temp->object));
 	size = 1;
 	w_sum += size;
@@ -407,9 +412,9 @@ t_color ray_color_2(t_ray r, t_objs* world, t_light* light)
 	t_hit_record rec;
 	double t;
 
-	rec.t = 0.0;
+	rec.t = -1.0;
 	rec.tmin = 0.001;
-	rec.tmax = INFINITY;
+	//rec.tmax = INFINITY;
 	find_hitpoint(&r, world, light, &rec);
 	if (rec.t != -1)
 		return (rec.color);
@@ -429,7 +434,7 @@ t_color ray_color(t_ray r, t_objs* world, t_light* light, int depth)
 
 	rec.t = -1.0;
 	rec.tmin = 0.001;
-	rec.tmax = INFINITY;
+	//rec.tmax = INFINITY;
 
 	if (depth <= 0)
         return (create_vec(0,0,0));
@@ -448,6 +453,6 @@ t_color ray_color(t_ray r, t_objs* world, t_light* light, int depth)
 	}
 	t = 0.5 * (unit_vec((r.dir)).y + 1.0);
 	return (vec_scalar_mul(
-		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 0.01)
+		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 0.001)
 	);
 }

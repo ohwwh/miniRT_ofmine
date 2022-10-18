@@ -2,9 +2,7 @@
 
 double degrees_to_radians(double degrees)
 {
-	double pi = 3.1415926535897932385;
-
-	return (degrees * pi / 180.0);
+	return (degrees * PI / 180.0);
 }
 
 void set_camera(t_camera *cam)
@@ -27,14 +25,14 @@ t_camera create_camera(t_point lookfrom, t_point dir, t_vec vup, double vfov, do
 {
 	t_camera ret;
 
-	double theta = degrees_to_radians(vfov);
+	/*double theta = degrees_to_radians(vfov);
 	double h = tan(theta/2);
 	double viewport_height = 2.0 * h;
 	double viewport_width = aspect_ratio * viewport_height;
 
 	t_vec w = unit_vec(vec_sub(lookfrom, dir)); //ㅋㅏ메라 뒤통수
 	t_vec u = unit_vec(vcross(vup, w));  //right
-	t_vec v = vcross(w, u); //up
+	t_vec v = vcross(w, u); //up*/
 
 	ret.origin = lookfrom;
 	//ret.dir = dir; -> 바라보는 "지점"

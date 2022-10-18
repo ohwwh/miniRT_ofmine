@@ -79,13 +79,13 @@ void path_render(t_minirt vars)
 
 int	main(int argc, char *argv[])
 {
-	/*t_objs light = create_sphere(create_vec(5,8, -1), 2, 
-	create_vec(15, 15, 15), 0);
+	t_objs light1 = create_sphere(create_vec(5,8, -1), 2, 
+	create_vec(15, 15, 15), -1);
 
 	t_objs surface = create_sphere(create_vec(0, -100.5, -1), 100, 
 	//create_vec(1, 0.75, 0.8));
 	create_vec(0.8, 0.8, 0), 0);
-	light.next = &surface;
+	set_specular(&surface, 0.1);
 
 	t_objs sphere = create_sphere(create_vec(0,0,-2), 0.5, 
 	create_vec(0.7, 0.3, 0.3), 1);
@@ -99,7 +99,12 @@ int	main(int argc, char *argv[])
 	t_objs cylinder = create_cylinder(create_vec(0,0,-5), 0.5, 1, 
 	create_vec(0,0,-1), create_vec(0.3,0.3,0.7), 1);
 	sphere.next = &cylinder;
-	cylinder.next = 0;*/
+	cylinder.next = 0;
+
+	t_light light;
+	light.object = &light1;
+	light.next = 0;
+	light.count = 1;
 	
 	
 
@@ -131,7 +136,7 @@ int	main(int argc, char *argv[])
 
 
 
-	t_objs light1 = create_rectangle_xz(create_vec(213,343,0), create_vec(227,332,0), 554, 
+	/*t_objs light1 = create_rectangle_xz(create_vec(213,343,0), create_vec(227,332,0), 554, 
 	create_vec(15, 15, 15), -1);
 	t_objs green = create_rectangle_yz(create_vec(0,555,0), create_vec(0,555,0), 555, 
 	create_vec(0.12, 0.45, 0.15), 0);
@@ -144,14 +149,14 @@ int	main(int argc, char *argv[])
 	t_objs white3 = create_rectangle_xy(create_vec(0,555,0), create_vec(0,555,0), 555, 
 	create_vec(0.73, 0.73, 0.73), 0); //뒷면
 	t_objs sphere = create_sphere(create_vec(190,90,360), 90, 
-	create_vec(0.2, 0.4, 0.9), 0);
+	create_vec(0.8, 0.8, 0.9), 0);
 	set_specular(&sphere, 0);
 	t_objs sphere2 = create_sphere(create_vec(190,270,360), 90, 
-	create_vec(0.2, 0.4, 0.9), 0);
-	set_specular(&sphere2, 0.4);
+	create_vec(0.8, 0.8, 0.8), 0);
+	set_specular(&sphere2, 0.5);
 	t_objs sphere3 = create_sphere(create_vec(190,450,360), 90, 
-	create_vec(0.2, 0.4, 0.9), 0);
-	set_specular(&sphere3, 0.6);
+	create_vec(0.8, 0.8, 0.8), 0);
+	set_specular(&sphere3, 1);
 
 	t_light light;
 	light.object = &light1;
@@ -166,7 +171,7 @@ int	main(int argc, char *argv[])
 	white3.next = &sphere;
 	sphere.next = &sphere2;
 	sphere2.next = &sphere3;
-	sphere3.next = 0;
+	sphere3.next = 0;*/
 
 	
 	//t_objs light2 = create_rectangle_xz(create_vec(4,8,0), create_vec(0,4,0), 
@@ -216,13 +221,13 @@ int	main(int argc, char *argv[])
 	vars.scene.ambient.col = create_vec(0, 0, 0);
 	vars.is_move = -1;
 	vars.scene.changed = 0;
-	vars.scene.world = &light1;
+	vars.scene.world = &surface;
 	vars.scene.light = &light;
 	double ratio = (double)WIDTH / (double)HEIGHT;
 
 	//t_camera camera = create_camera(create_vec(-2,2,1), create_vec(0,0,-1), create_vec(0, 1, 0), 70, ratio);
-	//t_camera camera = create_camera(create_vec(0,0,0), create_vec(0,0,-1), create_vec(0, 1, 0), 70, ratio);
-	t_camera camera = create_camera(create_vec(278,278,-800), create_vec(278,278,0), create_vec(0, 1, 0), 40, ratio);
+	t_camera camera = create_camera(create_vec(0,0,0), create_vec(0,0,-1), create_vec(0, 1, 0), 70, ratio);
+	//t_camera camera = create_camera(create_vec(278,278,-800), create_vec(278,278,0), create_vec(0, 1, 0), 40, ratio);
 	//t_camera camera = create_camera(create_vec(26,8,6), create_vec(0,2,0), create_vec(0, 1, 0), 20, ratio);
 	set_camera(&camera);
 

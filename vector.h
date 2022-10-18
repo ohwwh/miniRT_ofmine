@@ -6,8 +6,8 @@
 
 #define PI 3.1415926535897932385
 #define EPS 0.001
-#define WIDTH 600
-#define HEIGHT 600
+#define WIDTH 640
+#define HEIGHT 320
 
 typedef struct s_vec {
 	double x;

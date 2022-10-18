@@ -157,7 +157,7 @@ int scroll(int mousecode, int x, int y, t_minirt* vars)
 {
 	if (vars->is_trace == 1)
 		printf("cannot zoom here\n");
-	else
+	else if (mousecode == 4 || mousecode == 5)
 		vars->is_move = mousecode;
 }
 
@@ -182,7 +182,7 @@ void key_press_mode_change(t_minirt* vars, int keycode)
 	if (vars->is_trace == 0)
 	{
 		vars->is_trace = 1;
-		vars->scene.anti = 100;
+		vars->scene.anti = 10;
 		vars->scene.changed = 1;
 	}
 	else

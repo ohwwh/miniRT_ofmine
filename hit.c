@@ -20,32 +20,8 @@ void set_face_normal(t_hit_record* rec, t_ray *ray, t_vec outward_normal)
 		rec->normal = vec_scalar_mul(outward_normal, -1);
 }
 
-int find_hitpoint(t_ray* ray, t_objs *objs, t_light *light, t_hit_record* rec)
+int find_hitpoint_light(t_ray* ray, t_light *light, t_hit_record* rec)
 {
-    t_objs *tmp;
-	int end;
-    
-    tmp = objs;
-	while (tmp)
-    {
-        if (tmp->type == 3)
-            hit_sphere(tmp, ray, rec);
-        else if (tmp->type == 1)
-			hit_plane(tmp, ray, rec);
-        else if (tmp->type == 2)
-        {
-            hit_cylinder(tmp, ray, rec);
-			hit_caps(tmp, ray, rec);
-        }
-		else if (tmp->type == 4)
-			hit_rectangle_xy(tmp, ray, rec);
-		else if (tmp->type == 5)
-			hit_rectangle_yz(tmp, ray, rec);
-		else if (tmp->type == 6)
-			hit_rectangle_xz(tmp, ray, rec);
-        tmp = tmp->next;
-    }
-
 	t_light *temp;
 
 	temp = light;
@@ -68,6 +44,37 @@ int find_hitpoint(t_ray* ray, t_objs *objs, t_light *light, t_hit_record* rec)
 			hit_rectangle_xz(temp->object, ray, rec);
         temp = temp->next;
     }
+	return (1);
+}
+
+int find_hitpoint(t_ray* ray, t_objs *objs, t_light *light, t_hit_record* rec)
+{
+    t_objs *tmp;
+	int end;
+    
+    tmp = objs;
+	while (tmp)
+    {
+		if (tmp->mat == -1)
+			continue ;
+        if (tmp->type == 3)
+            hit_sphere(tmp, ray, rec);
+        else if (tmp->type == 1)
+			hit_plane(tmp, ray, rec);
+        else if (tmp->type == 2)
+        {
+            hit_cylinder(tmp, ray, rec);
+			hit_caps(tmp, ray, rec);
+        }
+		else if (tmp->type == 4)
+			hit_rectangle_xy(tmp, ray, rec);
+		else if (tmp->type == 5)
+			hit_rectangle_yz(tmp, ray, rec);
+		else if (tmp->type == 6)
+			hit_rectangle_xz(tmp, ray, rec);
+        tmp = tmp->next;
+    }
+	find_hitpoint_light(ray, light, rec);
     return (1);
 }
 
@@ -128,10 +135,10 @@ int hit_sphere(t_objs* s, t_ray* r, t_hit_record* rec)
 			return (0);
 	sqrtd = sqrt(discriminant);
 	root = (-b - sqrtd) / a;
-	if (root < EPS || rec->tmax < root)
+	if (root < EPS || (rec->t != -1 && rec->t < root))
 	{
 		root = (-b + sqrtd) / a;
-		if (root < EPS || rec->tmax < root)
+		if (root < EPS || (rec->t != -1 && rec->t < root))
 			return (0);
 	}
 	rec->t = root;
@@ -192,7 +199,7 @@ int hit_cylinder(t_objs *cy, t_ray *ray, t_hit_record *rec)
 				return (0);
 		}
     }
-	if (root < EPS || rec->tmax < root)
+	if (root < EPS || (rec->t != -1 && rec->t < root))
 		return (0);
 	rec->t = root;
 	rec->tmax = root;
@@ -232,7 +239,7 @@ int hit_plane(t_objs *pl, t_ray *ray, t_hit_record* rec)
 	}
     else
 		return (0);
-    if (root < EPS || rec->tmax < root)
+    if (root < EPS || (rec->t != -1 && rec->t < root))
 		return (0);
 	rec->t = root;
 	rec->tmax = root;
@@ -251,7 +258,7 @@ int hit_plane(t_objs *pl, t_ray *ray, t_hit_record* rec)
 int hit_rectangle_xy(t_objs *rect, t_ray *ray, t_hit_record* rec)
 {
 	double t = (rect->radius - ray->origin.z) / ray->dir.z;
-    if (t < EPS || t > rec->tmax)
+    if (t < EPS || (rec->t != -1 && rec->t < t))
         return (0);
     double x = ray->origin.x + t * ray->dir.x;
     double y = ray->origin.y + t * ray->dir.y;
@@ -275,7 +282,7 @@ int hit_rectangle_xy(t_objs *rect, t_ray *ray, t_hit_record* rec)
 int hit_rectangle_yz(t_objs *rect, t_ray *ray, t_hit_record* rec)
 {
 	double t = (rect->radius - ray->origin.x) / ray->dir.x;
-    if (t < EPS || t > rec->tmax)
+    if (t < EPS || (rec->t != -1 && rec->t < t))
         return (0);
     double y = ray->origin.y + t * ray->dir.y;
     double z = ray->origin.z + t * ray->dir.z;
@@ -299,7 +306,7 @@ int hit_rectangle_yz(t_objs *rect, t_ray *ray, t_hit_record* rec)
 int hit_rectangle_xz(t_objs *rect, t_ray *ray, t_hit_record* rec)
 {
 	double t = (rect->radius - ray->origin.y) / ray->dir.y;
-    if (t < EPS || t > rec->tmax)
+    if (t < EPS || (rec->t != -1 && rec->t < t))
         return (0);
     double x = ray->origin.x + t * ray->dir.x;
     double z = ray->origin.z + t * ray->dir.z;
