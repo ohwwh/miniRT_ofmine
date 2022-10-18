@@ -37,8 +37,8 @@ t_camera create_camera(t_point lookfrom, t_point dir, t_vec vup, double vfov, do
 	t_vec v = vcross(w, u); //up
 
 	ret.origin = lookfrom;
-	//ret.dir = dir;
-	ret.dir = unit_vec(vec_sub(dir, lookfrom));
+	//ret.dir = dir; -> 바라보는 "지점"
+	ret.dir = unit_vec(vec_sub(dir, lookfrom)); // -> 바라보는 "방향"
 	ret.vup = vup;
 	ret.fov = vfov;
 	ret.ratio = aspect_ratio;
