@@ -48,7 +48,7 @@ void ft_pixel_put(t_minirt *vars, int x, int y, int color)
 	mlx_pixel_put(vars->mlx.mlx, vars->mlx.mlx_win, x, y, color);
 }
 
-void	ft_mlx_init(t_minirt *vars)
+/*void	ft_mlx_init(t_minirt *vars)
 {	
 	vars->mlx.mlx = mlx_init();
 	if (!vars->mlx.mlx)
@@ -69,4 +69,4 @@ void	ft_mlx_new(t_minirt *vars, int x, int y, char *name)
 		printf("Error\nmlx_new_window fail\n");
 		exit(0);
 	}
-}
+}*/

@@ -16,11 +16,6 @@ typedef struct s_camera {
 	double viewport_width;
 	double viewport_height;
 
-	t_point lower_left_corner;
-	t_vec horizontal;
-	t_vec vertical;
-	
-
 } t_camera;
 
 t_camera create_camera(t_point lookfrom, t_point , t_vec vup, double vfov, double aspect_ratio);

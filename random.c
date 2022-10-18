@@ -75,5 +75,4 @@ t_vec local(t_onb *onb, t_vec a)
 	);
 }
 
-t_vec cosine_pdf(t_onb uvw);
 

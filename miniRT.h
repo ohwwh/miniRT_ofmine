@@ -72,8 +72,6 @@ typedef struct	s_mlx
 {
 	void	*mlx;
 	void	*mlx_win;
-	int 	window_height;
-	int 	window_width;
 	void	*img;
 	char	*addr;
 	int		bits_per_pixel;
@@ -145,13 +143,8 @@ int	keybind(int keycode, t_minirt* vars);
 int	keyrelease(int keycode, t_minirt* vars);
 int scroll(int mousecode, int x, int y, t_minirt* vars);
 int key_hook_move(t_minirt* vars);
-void key_press_w(t_minirt* vars);
-void key_press_a(t_minirt* vars);
-void key_press_s(t_minirt* vars);
-void key_press_d(t_minirt* vars);
-void key_press_up(t_minirt* vars);
-void key_press_left(t_minirt* vars);
-void key_press_down(t_minirt* vars);
-void key_press_right(t_minirt* vars);
+void key_press_move(t_minirt* vars, int keycode);
+void key_press_rotate(t_minirt* vars, int keycode);
+void key_press_mode_change(t_minirt* vars, int keycode);
 
 #endif
