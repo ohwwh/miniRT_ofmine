@@ -123,6 +123,7 @@ int hit_rectangle_xz(t_objs *rect, t_ray *ray, t_hit_record* rec);
 
 
 void set_refraction(t_objs* obj, double ref);
+void set_specular(t_objs* obj, double spec);
 double get_light_size(t_objs object);
 t_objs create_sphere(t_point c, double r, t_color color, int mat);
 t_objs create_cylinder(t_point c, double r, double h, t_vec dir, t_color color, int mat);

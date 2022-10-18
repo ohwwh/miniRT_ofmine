@@ -132,7 +132,7 @@ int	main(int argc, char *argv[])
 
 
 	t_objs light1 = create_rectangle_xz(create_vec(213,343,0), create_vec(227,332,0), 554, 
-	create_vec(0.1, 45, 0.1), -1);
+	create_vec(15, 15, 15), -1);
 	t_objs green = create_rectangle_yz(create_vec(0,555,0), create_vec(0,555,0), 555, 
 	create_vec(0.12, 0.45, 0.15), 0);
 	t_objs red = create_rectangle_yz(create_vec(0,555,0), create_vec(0,555,0), 0, 
@@ -143,9 +143,15 @@ int	main(int argc, char *argv[])
 	create_vec(0.73, 0.73, 0.73), 0); //아랫면
 	t_objs white3 = create_rectangle_xy(create_vec(0,555,0), create_vec(0,555,0), 555, 
 	create_vec(0.73, 0.73, 0.73), 0); //뒷면
-	t_objs sphere = create_sphere(create_vec(190,90,190), -90, 
-	create_vec(0.2, 0.4, 0.9), 2);
-	set_refraction(&sphere, 0.5);
+	t_objs sphere = create_sphere(create_vec(190,90,360), 90, 
+	create_vec(0.2, 0.4, 0.9), 0);
+	set_specular(&sphere, 0);
+	t_objs sphere2 = create_sphere(create_vec(190,270,360), 90, 
+	create_vec(0.2, 0.4, 0.9), 0);
+	set_specular(&sphere2, 0.4);
+	t_objs sphere3 = create_sphere(create_vec(190,450,360), 90, 
+	create_vec(0.2, 0.4, 0.9), 0);
+	set_specular(&sphere3, 0.6);
 
 	t_light light;
 	light.object = &light1;
@@ -158,7 +164,9 @@ int	main(int argc, char *argv[])
 	white1.next = &white2;
 	white2.next = &white3;
 	white3.next = &sphere;
-	sphere.next = 0;
+	sphere.next = &sphere2;
+	sphere2.next = &sphere3;
+	sphere3.next = 0;
 
 	
 	//t_objs light2 = create_rectangle_xz(create_vec(4,8,0), create_vec(0,4,0), 

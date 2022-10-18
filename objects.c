@@ -5,6 +5,11 @@ void set_refraction(t_objs* obj, double ref)
 	obj->refraction = ref;
 }
 
+void set_specular(t_objs* obj, double spec)
+{
+	obj->specular = spec;
+}
+
 double get_light_size(t_objs object)
 {
 	const double rad = object.radius;
