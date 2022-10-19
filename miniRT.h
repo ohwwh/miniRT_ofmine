@@ -140,7 +140,7 @@ t_color ray_color_2(t_ray r, t_objs* world, t_light* light);
 t_color ray_color(t_ray r, t_objs* world, t_light* light, int depth);
 
 
-int	keybind(int keycode, t_minirt* vars);
+int	keypress(int keycode, t_minirt* vars);
 int	keyrelease(int keycode, t_minirt* vars);
 int scroll(int mousecode, int x, int y, t_minirt* vars);
 int key_hook_move(t_minirt* vars);

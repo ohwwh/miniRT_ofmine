@@ -119,7 +119,7 @@ int key_hook_move(t_minirt* vars)
 	return (1);
 }
 
-int	keybind(int keycode, t_minirt* vars)
+int	keypress(int keycode, t_minirt* vars)
 {
 	//printf("keycode=%d\n", keycode);
 	if (keycode == 13 || keycode == 0 || keycode == 1 || keycode == 2)

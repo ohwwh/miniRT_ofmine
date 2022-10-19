@@ -235,7 +235,7 @@ int	main(int argc, char *argv[])
 	vars.scene.camera = camera;
 	//ft_mlx_init(&vars);
 	path_render(vars);
-	mlx_hook(vars.mlx.mlx_win, 2, 0, &keybind, &vars);
+	mlx_hook(vars.mlx.mlx_win, 2, 0, &keypress, &vars);
 	mlx_hook(vars.mlx.mlx_win, 3, 0, &keyrelease, &vars);
 	mlx_hook(vars.mlx.mlx_win, 4, 0, &scroll, &vars);
 	mlx_loop_hook(vars.mlx.mlx, &key_hook_move, &vars);
