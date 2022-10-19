@@ -15,6 +15,16 @@
 //#define EPS 0.001
 //#define ANTI 100
 
+typedef struct s_discriminant
+{
+	double  Dsc;
+	double  a;
+    double  b;
+    double  c;
+    double  t1;
+    double  t2;
+}	t_discriminant;
+
 typedef struct s_ray {
 	t_point origin;
 	t_vec dir;
@@ -112,7 +122,7 @@ void	ft_mlx_new(t_minirt *vars, int x, int y, char *name);
 
 int front_face(t_ray *r, t_hit_record* rec);
 int find_hitpoint(t_ray* ray, t_objs *objs, t_light *light, t_hit_record* rec);
-int hit_sphere(t_objs* s, t_ray* r, t_hit_record* rec);
+void hit_sphere(t_objs* s, t_ray* r, t_hit_record* rec);
 int hit_cylinder(t_objs *cy, t_ray *ray, t_hit_record *rec);
 int hit_caps(t_objs *cy, t_ray *ray, t_hit_record *rec);
 int hit_plane(t_objs *pl, t_ray *ray, t_hit_record* rec);

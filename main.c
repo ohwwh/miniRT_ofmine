@@ -58,8 +58,8 @@ void path_render(t_minirt vars)
 			color = create_vec(0, 0, 0);
 			for (int s = 0; s < vars.scene.anti; s ++)
 			{
-				u = (((double)x + random_double(0, 0.5, vars.scene.anti)) * 2 / WIDTH) - 1;
-				v = (((double)y + random_double(0, 0.5, vars.scene.anti)) * 2 / HEIGHT) - 1;
+				u = (((double)x + random_double(0, 1, vars.scene.anti)) * 2 / WIDTH) - 1;
+				v = (((double)y + random_double(0, 1, vars.scene.anti)) * 2 / HEIGHT) - 1;
 				init_ray = ray_primary(&(vars.scene.camera), u, v);
 				if (x == 0 && y == 0)
 						x = x;
