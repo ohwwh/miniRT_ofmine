@@ -113,6 +113,7 @@ typedef struct s_minirt {
 void path_render(t_minirt vars);
 
 
+int		convert_rgb(int r, int g, int b);
 int 	rgb_to_int(t_color c);
 void	put_color(t_mlx *data, int x, int y, int color);
 void 	ft_pixel_put(t_minirt *vars, int x, int y, int color);
@@ -121,14 +122,14 @@ void	ft_mlx_new(t_minirt *vars, int x, int y, char *name);
 
 
 int front_face(t_ray *r, t_hit_record* rec);
-int find_hitpoint(t_ray* ray, t_objs *objs, t_light *light, t_hit_record* rec);
+int find_hitpoint_path(t_ray* ray, t_objs *objs, t_light *light, t_hit_record* rec);
 void hit_sphere(t_objs* s, t_ray* r, t_hit_record* rec);
-int hit_cylinder(t_objs *cy, t_ray *ray, t_hit_record *rec);
-int hit_caps(t_objs *cy, t_ray *ray, t_hit_record *rec);
-int hit_plane(t_objs *pl, t_ray *ray, t_hit_record* rec);
-int hit_rectangle_xy(t_objs *rect, t_ray *ray, t_hit_record* rec);
-int hit_rectangle_yz(t_objs *rect, t_ray *ray, t_hit_record* rec);
-int hit_rectangle_xz(t_objs *rect, t_ray *ray, t_hit_record* rec);
+void hit_cylinder(t_objs *cy, t_ray *ray, t_hit_record *rec);
+void hit_caps(t_objs *cy, t_ray *ray, t_hit_record *rec);
+void hit_plane(t_objs *pl, t_ray *ray, t_hit_record* rec);
+void hit_rectangle_xy(t_objs *rect, t_ray *ray, t_hit_record* rec);
+void hit_rectangle_yz(t_objs *rect, t_ray *ray, t_hit_record* rec);
+void hit_rectangle_xz(t_objs *rect, t_ray *ray, t_hit_record* rec);
 
 
 

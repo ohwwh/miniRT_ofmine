@@ -1,16 +1,6 @@
 #include "miniRT.h"
 #define EPS 0.001
 
-int front_face(t_ray *r, t_hit_record* rec)
-{
-	if (vdot(r->dir, rec->normal) > 0.0)
-	{
-		rec->normal = vec_scalar_mul(rec->normal, -1);
-		return (0);
-	}
-	return (1);
-}
-
 void set_face_normal(t_hit_record* rec, t_ray *ray, t_vec outward_normal)
 {
 	rec->front_face = vdot(ray->dir, outward_normal) < 0.0;
@@ -47,7 +37,7 @@ int find_hitpoint_light(t_ray* ray, t_light *light, t_hit_record* rec)
 	return (1);
 }
 
-int find_hitpoint(t_ray* ray, t_objs *objs, t_light *light, t_hit_record* rec)
+int find_hitpoint_path(t_ray* ray, t_objs *objs, t_light *light, t_hit_record* rec)
 {
     t_objs *tmp;
 	int end;
@@ -74,11 +64,12 @@ int find_hitpoint(t_ray* ray, t_objs *objs, t_light *light, t_hit_record* rec)
 			hit_rectangle_xz(tmp, ray, rec);
         tmp = tmp->next;
     }
-	find_hitpoint_light(ray, light, rec);
+	if (light && light->count != 0)
+		find_hitpoint_light(ray, light, rec);
     return (1);
 }
 
-int hit_caps(t_objs *cy, t_ray *ray, t_hit_record *rec)
+void hit_caps(t_objs *cy, t_ray *ray, t_hit_record *rec)
 {
 	t_objs top_cap;
 	t_hit_record hr;
@@ -104,7 +95,6 @@ int hit_caps(t_objs *cy, t_ray *ray, t_hit_record *rec)
 	hit_plane(cy, ray, &hr2);
 	if (powf(hr2.p.x - cy->center.x, 2) + powf(hr2.p.y - cy->center.y, 2) + powf(hr2.p.z - cy->center.z, 2) <= powf(cy->radius, 2))
 		*rec = hr2;
-	return (0);
 }
 
 void hit_sphere(t_objs* s, t_ray* r, t_hit_record* rec)
@@ -139,7 +129,7 @@ void hit_sphere(t_objs* s, t_ray* r, t_hit_record* rec)
 	rec->type = s->type;
 }
 
-int hit_cylinder(t_objs *cy, t_ray *ray, t_hit_record *rec)
+void hit_cylinder(t_objs *cy, t_ray *ray, t_hit_record *rec)
 {   
 	double	m;
 	t_vec	oc;
@@ -160,13 +150,13 @@ int hit_cylinder(t_objs *cy, t_ray *ray, t_hit_record *rec)
 		- (cy->radius) * (cy->radius);
 	d.Dsc = d.b * d.b - 4 * d.a * d.c;
 	if (d.Dsc < EPS)
-		return (0);
+		return ;
 	else
     {
         d.t1 = (-d.b + sqrt(d.Dsc)) / (2 * d.a);
 	    d.t2 = (-d.b - sqrt(d.Dsc)) / (2 * d.a);
 		if (d.t1 < EPS)
-			return (0);
+			return ;
 		else
 		{
 	    	h1 = vdot(ray->dir, normalized) * d.t1 + vdot(oc, normalized);
@@ -176,11 +166,11 @@ int hit_cylinder(t_objs *cy, t_ray *ray, t_hit_record *rec)
 			else if (h1 >= EPS && h1 <= cy->height)
 				root = d.t1;
 			else
-				return (0);
+				return ;
 		}
     }
 	if (root < EPS || (rec->t != -1 && rec->t < root))
-		return (0);
+		return ;
 	rec->t = root;
 	rec->tmax = root;
 	rec->mat = cy->mat;
@@ -195,10 +185,9 @@ int hit_cylinder(t_objs *cy, t_ray *ray, t_hit_record *rec)
 		unit_vec(vec_sub(vec_sub(rec->p, cy->center),
 		vec_scalar_mul(oc, m)))
 	);
-    return (1);
 }
 
-int hit_plane(t_objs *pl, t_ray *ray, t_hit_record* rec)
+void hit_plane(t_objs *pl, t_ray *ray, t_hit_record* rec)
 {
     t_vec	x;
 	t_vec	normal;
@@ -214,37 +203,37 @@ int hit_plane(t_objs *pl, t_ray *ray, t_hit_record* rec)
 		a = vdot(x, normal);
 		root = -a / b;
 		if (root < EPS)
-            return (0);
+            return ;
 	}
     else
-		return (0);
+		return ;
     if (root < EPS || (rec->t != -1 && rec->t < root))
-		return (0);
+		return ;
 	rec->t = root;
 	rec->mat = pl->mat;
 	rec->refraction = pl->refraction;
 	rec->specular = pl->specular;
 	rec->color = pl->color;
 	rec->p = vec_sum(ray->origin, vec_scalar_mul(ray->dir, root));
-	rec->normal = pl->dir;
-	if (vdot(ray->dir, rec->normal) > __DBL_EPSILON__) // 부동 소수점 오차 범위 내에서 비교
-		rec->normal = unit_vec(vec_scalar_mul(pl->dir, -1));
-	rec->front_face = front_face(ray, rec);
-    return (1);
+	//rec->normal = pl->dir;
+	/*if (vdot(ray->dir, rec->normal) > __DBL_EPSILON__) // 부동 소수점 오차 범위 내에서 비교
+		rec->normal = unit_vec(vec_scalar_mul(pl->dir, -1));*/
+	//rec->front_face = front_face(ray, rec);
+	set_face_normal(rec, ray, pl->dir);
 }
 
-int hit_rectangle_xy(t_objs *rect, t_ray *ray, t_hit_record* rec)
+void hit_rectangle_xy(t_objs *rect, t_ray *ray, t_hit_record* rec)
 {
 	double t = (rect->radius - ray->origin.z) / ray->dir.z;
     if (t < EPS || (rec->t != -1 && rec->t < t))
-        return (0);
+        return ;
     double x = ray->origin.x + t * ray->dir.x;
     double y = ray->origin.y + t * ray->dir.y;
     if (x < rect->center.x || x > rect->center.y
 	|| y < rect->dir.x || y > rect->dir.y)
-        return (0);
-    rec->u = (x - rect->center.x) / (rect->center.y - rect->center.x);
-    rec->v = (y - rect->dir.x) / (rect->dir.y - rect->dir.x);
+        return ;
+   // rec->u = (x - rect->center.x) / (rect->center.y - rect->center.x);
+    //rec->v = (y - rect->dir.x) / (rect->dir.y - rect->dir.x);
     rec->t = t;
 	rec->tmax = t;
 	rec->mat = rect->mat;
@@ -253,21 +242,20 @@ int hit_rectangle_xy(t_objs *rect, t_ray *ray, t_hit_record* rec)
     set_face_normal(rec, ray, create_vec(0, 0, 1));
     rec->p = ray_end(ray, t);
 	rec->color = rect->color;
-    return (1);
 }
 
-int hit_rectangle_yz(t_objs *rect, t_ray *ray, t_hit_record* rec)
+void hit_rectangle_yz(t_objs *rect, t_ray *ray, t_hit_record* rec)
 {
 	double t = (rect->radius - ray->origin.x) / ray->dir.x;
     if (t < EPS || (rec->t != -1 && rec->t < t))
-        return (0);
+        return ;
     double y = ray->origin.y + t * ray->dir.y;
     double z = ray->origin.z + t * ray->dir.z;
     if (y < rect->center.x || y > rect->center.y
 	|| z < rect->dir.x || z > rect->dir.y)
-        return (0);
-    rec->u = (y - rect->center.x) / (rect->center.y - rect->center.x);
-    rec->v = (z - rect->dir.x) / (rect->dir.y - rect->dir.x);
+        return ;
+    //rec->u = (y - rect->center.x) / (rect->center.y - rect->center.x);
+    //rec->v = (z - rect->dir.x) / (rect->dir.y - rect->dir.x);
     rec->t = t;
 	rec->tmax = t;
 	rec->mat = rect->mat;
@@ -276,21 +264,20 @@ int hit_rectangle_yz(t_objs *rect, t_ray *ray, t_hit_record* rec)
     set_face_normal(rec, ray, create_vec(1, 0, 0));
     rec->p = ray_end(ray, t);
 	rec->color = rect->color;
-    return (1);
 }
 
-int hit_rectangle_xz(t_objs *rect, t_ray *ray, t_hit_record* rec)
+void hit_rectangle_xz(t_objs *rect, t_ray *ray, t_hit_record* rec)
 {
 	double t = (rect->radius - ray->origin.y) / ray->dir.y;
     if (t < EPS || (rec->t != -1 && rec->t < t))
-        return (0);
+        return ;
     double x = ray->origin.x + t * ray->dir.x;
     double z = ray->origin.z + t * ray->dir.z;
     if (x < rect->center.x || x > rect->center.y
 	|| z < rect->dir.x || z > rect->dir.y)
-        return (0);
-    rec->u = (x - rect->center.x) / (rect->center.y - rect->center.x);
-    rec->v = (z - rect->dir.x) / (rect->dir.y - rect->dir.x);
+        return ;
+    //rec->u = (x - rect->center.x) / (rect->center.y - rect->center.x);
+    //rec->v = (z - rect->dir.x) / (rect->dir.y - rect->dir.x);
     rec->t = t;
 	rec->tmax = t;
 	rec->mat = rect->mat;
@@ -299,5 +286,4 @@ int hit_rectangle_xz(t_objs *rect, t_ray *ray, t_hit_record* rec)
     set_face_normal(rec, ray, create_vec(0, 1, 0));
     rec->p = ray_end(ray, t);
 	rec->color = rect->color;
-    return (1);
 }
