@@ -415,7 +415,7 @@ t_color ray_color_2(t_ray r, t_objs* world, t_light* light)
 	rec.t = -1.0;
 	rec.tmin = 0.001;
 	//rec.tmax = INFINITY;
-	find_hitpoint(&r, world, light, &rec);
+	find_hitpoint_path(&r, world, light, &rec);
 	if (rec.t != -1)
 		return (rec.color);
 	t = 0.5 * (unit_vec((r.dir)).y + 1.0);
@@ -438,7 +438,7 @@ t_color ray_color(t_ray r, t_objs* world, t_light* light, int depth)
 
 	if (depth <= 0)
         return (create_vec(0,0,0));
-	find_hitpoint(&r, world, light, &rec);
+	find_hitpoint_path(&r, world, light, &rec);
 	if (rec.t >= 0.0)
 	{
 		pdf = scatter(&r, &rec, &scattered, light);

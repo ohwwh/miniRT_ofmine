@@ -15,6 +15,16 @@
 //#define EPS 0.001
 //#define ANTI 100
 
+typedef struct s_discriminant
+{
+	double  Dsc;
+	double  a;
+    double  b;
+    double  c;
+    double  t1;
+    double  t2;
+}	t_discriminant;
+
 typedef struct s_ray {
 	t_point origin;
 	t_vec dir;
@@ -103,6 +113,7 @@ typedef struct s_minirt {
 void path_render(t_minirt vars);
 
 
+int		convert_rgb(int r, int g, int b);
 int 	rgb_to_int(t_color c);
 void	put_color(t_mlx *data, int x, int y, int color);
 void 	ft_pixel_put(t_minirt *vars, int x, int y, int color);
@@ -111,14 +122,14 @@ void	ft_mlx_new(t_minirt *vars, int x, int y, char *name);
 
 
 int front_face(t_ray *r, t_hit_record* rec);
-int find_hitpoint(t_ray* ray, t_objs *objs, t_light *light, t_hit_record* rec);
-int hit_sphere(t_objs* s, t_ray* r, t_hit_record* rec);
-int hit_cylinder(t_objs *cy, t_ray *ray, t_hit_record *rec);
-int hit_caps(t_objs *cy, t_ray *ray, t_hit_record *rec);
-int hit_plane(t_objs *pl, t_ray *ray, t_hit_record* rec);
-int hit_rectangle_xy(t_objs *rect, t_ray *ray, t_hit_record* rec);
-int hit_rectangle_yz(t_objs *rect, t_ray *ray, t_hit_record* rec);
-int hit_rectangle_xz(t_objs *rect, t_ray *ray, t_hit_record* rec);
+int find_hitpoint_path(t_ray* ray, t_objs *objs, t_light *light, t_hit_record* rec);
+void hit_sphere(t_objs* s, t_ray* r, t_hit_record* rec);
+void hit_cylinder(t_objs *cy, t_ray *ray, t_hit_record *rec);
+void hit_caps(t_objs *cy, t_ray *ray, t_hit_record *rec);
+void hit_plane(t_objs *pl, t_ray *ray, t_hit_record* rec);
+void hit_rectangle_xy(t_objs *rect, t_ray *ray, t_hit_record* rec);
+void hit_rectangle_yz(t_objs *rect, t_ray *ray, t_hit_record* rec);
+void hit_rectangle_xz(t_objs *rect, t_ray *ray, t_hit_record* rec);
 
 
 
@@ -140,7 +151,7 @@ t_color ray_color_2(t_ray r, t_objs* world, t_light* light);
 t_color ray_color(t_ray r, t_objs* world, t_light* light, int depth);
 
 
-int	keybind(int keycode, t_minirt* vars);
+int	keypress(int keycode, t_minirt* vars);
 int	keyrelease(int keycode, t_minirt* vars);
 int scroll(int mousecode, int x, int y, t_minirt* vars);
 int key_hook_move(t_minirt* vars);

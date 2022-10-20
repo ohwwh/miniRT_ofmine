@@ -17,7 +17,6 @@ t_vec rand_sphere()
 			random_double(-1,1,7), random_double(-1, 1, 7));
 		if (vec_len(ret) >= 1.0)
 			continue ;
-		//printf("%lf\n", ret.x);
 		return (ret);
 	}
 }
