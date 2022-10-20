@@ -139,7 +139,7 @@ int	main(int argc, char *argv[])
 
 
 
-	t_objs light1 = create_rectangle_xz(create_vec(213,343,0), create_vec(227,332,0), 554, 
+	/*t_objs light1 = create_rectangle_xz(create_vec(213,343,0), create_vec(227,332,0), 554, 
 	create_vec(15, 15, 15), -1);
 	t_objs green = create_rectangle_yz(create_vec(0,555,0), create_vec(0,555,0), 555, 
 	create_vec(0.12, 0.45, 0.15), 0);
@@ -174,7 +174,7 @@ int	main(int argc, char *argv[])
 	white3.next = &sphere;
 	sphere.next = &sphere2;
 	sphere2.next = &sphere3;
-	sphere3.next = 0;
+	sphere3.next = 0;*/
 
 	
 	//t_objs light2 = create_rectangle_xz(create_vec(4,8,0), create_vec(0,4,0), 
@@ -224,13 +224,13 @@ int	main(int argc, char *argv[])
 	vars.scene.ambient.col = create_vec(0, 0, 0);
 	vars.is_move = -1;
 	vars.scene.changed = 0;
-	vars.scene.world = &green;
+	vars.scene.world = &surface;
 	vars.scene.light = &light;
 	double ratio = (double)WIDTH / (double)HEIGHT;
 
 	//t_camera camera = create_camera(create_vec(-2,2,1), create_vec(0,0,-1), create_vec(0, 1, 0), 70, ratio);
-	//t_camera camera = create_camera(create_vec(0,0,0), create_vec(0,0,-1), create_vec(0, 1, 0), 70, ratio);
-	t_camera camera = create_camera(create_vec(278,278,-800), create_vec(278,278,0), create_vec(0, 1, 0), 40, ratio);
+	t_camera camera = create_camera(create_vec(0,0,0), create_vec(0,0,-1), create_vec(0, 1, 0), 70, ratio);
+	//t_camera camera = create_camera(create_vec(278,278,-800), create_vec(278,278,0), create_vec(0, 1, 0), 40, ratio);
 	//t_camera camera = create_camera(create_vec(26,8,6), create_vec(0,2,0), create_vec(0, 1, 0), 20, ratio);
 	set_camera(&camera);
 
