@@ -58,8 +58,8 @@ void path_render(t_minirt vars)
 			color = create_vec(0, 0, 0);
 			for (int s = 0; s < vars.scene.anti; s ++)
 			{
-				u = (((double)x + random_double(0, 0.5, vars.scene.anti)) * 2 / WIDTH) - 1;
-				v = (((double)y + random_double(0, 0.5, vars.scene.anti)) * 2 / HEIGHT) - 1;
+				u = (((double)x + random_double(0, 1, vars.scene.anti)) * 2 / WIDTH) - 1;
+				v = (((double)y + random_double(0, 1, vars.scene.anti)) * 2 / HEIGHT) - 1;
 				init_ray = ray_primary(&(vars.scene.camera), u, v);
 				if (x == 0 && y == 0)
 						x = x;
@@ -79,17 +79,18 @@ void path_render(t_minirt vars)
 
 int	main(int argc, char *argv[])
 {
-	t_objs light1 = create_sphere(create_vec(5,8, -1), 2, 
+	t_objs light1 = create_sphere(create_vec(5,8, -1), 3, 
 	create_vec(15, 15, 15), -1);
 
 	t_objs surface = create_sphere(create_vec(0, -100.5, -1), 100, 
-	//create_vec(1, 0.75, 0.8));
+	//create_vec(1, 1, 1), 0);
 	create_vec(0.8, 0.8, 0), 0);
-	set_specular(&surface, 0.1);
+	set_specular(&surface, 0);
 
 	t_objs sphere = create_sphere(create_vec(0,0,-2), 0.5, 
-	create_vec(0.7, 0.3, 0.3), 1);
+	create_vec(0.7, 0.3, 0.3), 0);
 	surface.next = &sphere;
+	set_specular(&sphere, 0);
 
 	t_objs metal = create_sphere(create_vec(1,0, -1), 0.5, 
 	create_vec(0.8, 0.8, 0.8), 1);
@@ -105,6 +106,7 @@ int	main(int argc, char *argv[])
 	light.object = &light1;
 	light.next = 0;
 	light.count = 1;
+	//light.count = 0 일 때 segfault??
 	
 	
 

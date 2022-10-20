@@ -277,7 +277,7 @@ double mixture_pdf_value(t_hit_record* rec, t_ray* scattered, t_light* light)
 		return (cosine_pdf_value(&(rec->normal), &(uvw.w)));
 	}
 	else
-		t = 0.5;
+		t = 0.6;
 
 	idx = rand() % light->count;
 	while (idx --)
@@ -453,6 +453,6 @@ t_color ray_color(t_ray r, t_objs* world, t_light* light, int depth)
 	}
 	t = 0.5 * (unit_vec((r.dir)).y + 1.0);
 	return (vec_scalar_mul(
-		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 0.001)
+		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 0.5)
 	);
 }

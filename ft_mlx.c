@@ -22,7 +22,7 @@ double clamp(double x)
 
 int rgb_to_int(t_color c)
 {
-	return ((int)(255.999 * 0) << 24 | (int)(255.999 * sqrt(clamp(c.x))) << 16 | (int)(255.999 * sqrt(clamp(c.y))) << 8 | (int)(255.999 * sqrt(clamp(c.z))));
+	return ((int)(255.999 * sqrt(clamp(c.x))) << 16 | (int)(255.999 * sqrt(clamp(c.y))) << 8 | (int)(255.999 * sqrt(clamp(c.z))));
 } //감마보정?
 
 /*int rgb_to_int(t_color c)
