@@ -80,7 +80,7 @@ void path_render(t_minirt vars)
 
 int	main(int argc, char *argv[])
 {
-	/*t_objs light1 = create_sphere(create_vec(5,8, -1), 1, 
+	t_objs light1 = create_sphere(create_vec(5,8, -1), 1, 
 	create_vec(45, 45, 45), -1);
 
 	t_objs surface = create_sphere(create_vec(0, -100.5, -1), 100, 
@@ -91,7 +91,7 @@ int	main(int argc, char *argv[])
 	t_objs sphere = create_sphere(create_vec(0,0,-2), 0.5, 
 	create_vec(0.7, 0.3, 0.3), 0);
 	surface.next = &sphere;
-	set_specular(&sphere, 0.5);
+	set_specular(&sphere, 0.6);
 
 	t_objs metal = create_sphere(create_vec(1,0, -1), 0.5, 
 	create_vec(0.8, 0.8, 0.8), 1);
@@ -107,10 +107,10 @@ int	main(int argc, char *argv[])
 	light.object = light1;
 	light.next = 0;
 	light.count = 1;
-	//light.count = 0 일 때 segfault??*/
+	//light.count = 0 일 때 segfault??
 	
 
-	t_objs light1 = create_sphere(create_vec(-40,0, 30), 10, 
+	/*t_objs light1 = create_sphere(create_vec(-40,0, 30), 10, 
 	create_vec(45, 45, 45), -1);
 
 	t_objs surface = create_plane(create_vec(0, -20, 0), create_vec(0, 1, 0), 
@@ -136,7 +136,7 @@ int	main(int argc, char *argv[])
 	t_light light;
 	light.object = light1;
 	light.next = 0;
-	light.count = 1;
+	light.count = 1;*/
 
 	/*double r = 0.25;
 	int m = 0;
@@ -355,8 +355,8 @@ int	main(int argc, char *argv[])
 
 	//t_camera camera = create_camera(create_vec(0,3,-2), create_vec(0,0,0), create_vec(0, 1, 0), 70, ratio);
 	//t_camera camera = create_camera(create_vec(-2,2,1), create_vec(0,0,-1), create_vec(0, 1, 0), 70, ratio);
-	//t_camera camera = create_camera(create_vec(0,0,0), create_vec(0,0,-1), create_vec(0, 1, 0), 70, ratio);
-	t_camera camera = create_camera(create_vec(-50,-1,-20), create_vec(1,0,0), create_vec(0, 1, 0), 70, ratio);
+	t_camera camera = create_camera(create_vec(0,0,0), create_vec(0,0,-1), create_vec(0, 1, 0), 70, ratio);
+	//t_camera camera = create_camera(create_vec(-50,-1,-20), create_vec(1,0,0), create_vec(0, 1, 0), 70, ratio);
 	//t_camera camera = create_camera(create_vec(278,278,-800), create_vec(278,278,0), create_vec(0, 1, 0), 40, ratio);
 	//t_camera camera = create_camera(create_vec(26,8,6), create_vec(0,2,0), create_vec(0, 1, 0), 20, ratio);
 	set_camera(&camera);
