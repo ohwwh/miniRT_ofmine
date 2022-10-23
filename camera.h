@@ -9,6 +9,7 @@ typedef struct s_camera {
 	double fov;
 	double ratio;
 	int count;
+	double distance;
 
 	t_vec right;
 	t_vec forward;

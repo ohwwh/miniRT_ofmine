@@ -61,7 +61,7 @@ void path_render(t_minirt vars)
 				u = (((double)x + random_double(0, 1, vars.scene.anti)) * 2 / WIDTH) - 1;
 				v = (((double)y + random_double(0, 1, vars.scene.anti)) * 2 / HEIGHT) - 1;
 				init_ray = ray_primary(&(vars.scene.camera), u, v);
-				if (x == 0 && y == 0)
+				if (x == 320 && y == 3)
 						x = x;
 				if (vars.is_trace == 1)
 					color = vec_sum(color, ray_color(init_ray, vars.scene.world, vars.scene.light, MAX_DEPTH));
@@ -80,8 +80,8 @@ void path_render(t_minirt vars)
 
 int	main(int argc, char *argv[])
 {
-	t_objs light1 = create_sphere(create_vec(5,8, -1), 3, 
-	create_vec(15, 15, 15), -1);
+	/*t_objs light1 = create_sphere(create_vec(5,8, -1), 1, 
+	create_vec(45, 45, 45), -1);
 
 	t_objs surface = create_sphere(create_vec(0, -100.5, -1), 100, 
 	//create_vec(1, 1, 1), 0);
@@ -91,7 +91,7 @@ int	main(int argc, char *argv[])
 	t_objs sphere = create_sphere(create_vec(0,0,-2), 0.5, 
 	create_vec(0.7, 0.3, 0.3), 0);
 	surface.next = &sphere;
-	set_specular(&sphere, 0);
+	set_specular(&sphere, 0.5);
 
 	t_objs metal = create_sphere(create_vec(1,0, -1), 0.5, 
 	create_vec(0.8, 0.8, 0.8), 1);
@@ -107,8 +107,37 @@ int	main(int argc, char *argv[])
 	light.object = light1;
 	light.next = 0;
 	light.count = 1;
-	//light.count = 0 일 때 segfault??
+	//light.count = 0 일 때 segfault??*/
 	
+
+	t_objs light1 = create_sphere(create_vec(-40,0, 30), 10, 
+	create_vec(45, 45, 45), -1);
+
+	t_objs surface = create_plane(create_vec(0, -20, 0), create_vec(0, 1, 0), 
+	create_vec(1, 0, 1), 0);
+	//set_specular(&surface, 0.5);
+
+	t_objs sphere = create_sphere(create_vec(0,-10,10), 10, 
+	create_vec(1, 0, 0), 0);
+	surface.next = &sphere;
+	set_specular(&sphere, 0.8);
+
+	t_objs cylinder1 = create_cylinder(create_vec(-10,-10, 0), 7.1, 21.42,
+	create_vec(0,1,0), create_vec(10/255, 0, 1), 0);
+	sphere.next = &cylinder1;
+	set_specular(&cylinder1, 0.8);
+
+	t_objs cylinder2 = create_cylinder(create_vec(0,-10,30), 7.1, 21.42,
+	create_vec(0,1,1), create_vec(10/255, 0, 1), 0);
+	cylinder1.next = &cylinder2;
+	cylinder2.next = 0;
+	set_specular(&cylinder2, 0.8);
+
+	t_light light;
+	light.object = light1;
+	light.next = 0;
+	light.count = 1;
+
 	/*double r = 0.25;
 	int m = 0;
 	
@@ -326,14 +355,16 @@ int	main(int argc, char *argv[])
 
 	//t_camera camera = create_camera(create_vec(0,3,-2), create_vec(0,0,0), create_vec(0, 1, 0), 70, ratio);
 	//t_camera camera = create_camera(create_vec(-2,2,1), create_vec(0,0,-1), create_vec(0, 1, 0), 70, ratio);
-	t_camera camera = create_camera(create_vec(0,0,0), create_vec(0,0,-1), create_vec(0, 1, 0), 70, ratio);
+	//t_camera camera = create_camera(create_vec(0,0,0), create_vec(0,0,-1), create_vec(0, 1, 0), 70, ratio);
+	t_camera camera = create_camera(create_vec(-50,-1,-20), create_vec(1,0,0), create_vec(0, 1, 0), 70, ratio);
 	//t_camera camera = create_camera(create_vec(278,278,-800), create_vec(278,278,0), create_vec(0, 1, 0), 40, ratio);
 	//t_camera camera = create_camera(create_vec(26,8,6), create_vec(0,2,0), create_vec(0, 1, 0), 20, ratio);
 	set_camera(&camera);
 
 	//srand(time(0));
 	vars.scene.camera = camera;
-	//ft_mlx_init(&vars);
+	vars.scene.camera.distance = vec_len(vec_sub(vars.scene.camera.origin, 
+	vars.scene.world->center));
 	path_render(vars);
 	mlx_hook(vars.mlx.mlx_win, 2, 0, &keypress, &vars);
 	mlx_hook(vars.mlx.mlx_win, 3, 0, &keyrelease, &vars);

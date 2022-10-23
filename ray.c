@@ -114,20 +114,24 @@ void generate_light_sample_sphere(t_hit_record *rec, t_ray *scattered, t_objs *l
 double sphere_light_pdf_value(t_hit_record* rec, t_ray* scattered, t_objs* light)
 {
 	t_hit_record rec_new;
-	const double length_squared = powf(vec_len(scattered->dir), 2);
+	//const double length_squared = powf(vec_len(scattered->dir), 2);
 	double cos_max;
 	double angle;
+	double temp;
 
 	if (!light)
 		return (0);
 	rec_new.t = -1.0;
-	//rec_new.tmin = 0.001;
-	//rec_new.tmax = INFINITY;
 	hit_sphere(light, scattered, &rec_new);
 	if (rec_new.t < 0.001)
 		return 0;
-	cos_max = sqrt(1 - (light->radius * light->radius / 
-	powf(vec_len(vec_sub(light->center, scattered->origin)), 2)));
+	
+	temp = (light->radius * light->radius / 
+	powf(vec_len(vec_sub(light->center, scattered->origin)), 2));
+	/*if (temp > 1)
+		return (1);*/
+	cos_max = sqrt(1 - temp);
+	
 	angle = 2 * 3.1415926535897932385 * (1 - cos_max);
 
 	return (1 / angle);
@@ -415,7 +419,7 @@ t_color ray_color_2(t_ray r, t_objs* world, t_light* light)
 	rec.t = -1.0;
 	rec.tmin = 0.001;
 	//rec.tmax = INFINITY;
-	find_hitpoint_path(&r, world, light, &rec);
+	find_hitpoint_path(&r, world, light, &rec, MAX_DEPTH);
 	if (rec.t != -1)
 		return (rec.color);
 	t = 0.5 * (unit_vec((r.dir)).y + 1.0);
@@ -438,7 +442,7 @@ t_color ray_color(t_ray r, t_objs* world, t_light* light, int depth)
 
 	if (depth <= 0)
         return (create_vec(0,0,0));
-	find_hitpoint_path(&r, world, light, &rec);
+	find_hitpoint_path(&r, world, light, &rec, depth);
 	if (rec.t >= 0.0)
 	{
 		pdf = scatter(&r, &rec, &scattered, light);
@@ -453,6 +457,6 @@ t_color ray_color(t_ray r, t_objs* world, t_light* light, int depth)
 	}
 	t = 0.5 * (unit_vec((r.dir)).y + 1.0);
 	return (vec_scalar_mul(
-		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 0.5)
+		create_vec((1.0 - t) + (0.5 * t), (1.0 - t) + (0.7 * t), (1.0 - t) + (1.0 * t)), 0.1)
 	);
 }

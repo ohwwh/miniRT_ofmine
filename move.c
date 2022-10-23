@@ -45,7 +45,7 @@ void camera_move(t_minirt* vars)
 	}
 	else
 		return ;
-	delta = vec_division(vec_scalar_mul(dir, d), 1);
+	delta = vec_scalar_mul(vec_scalar_mul(dir, d), vars->scene.camera.distance / 10);
 	t_vec new_org = vec_sum(vars->scene.camera.origin, delta);
 	vars->scene.camera.origin = new_org;
 }
@@ -182,7 +182,7 @@ void key_press_mode_change(t_minirt* vars, int keycode)
 	if (vars->is_trace == 0)
 	{
 		vars->is_trace = 1;
-		vars->scene.anti = 10;
+		vars->scene.anti = 100;
 		vars->scene.changed = 1;
 	}
 	else

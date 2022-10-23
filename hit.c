@@ -10,10 +10,12 @@ void set_face_normal(t_hit_record* rec, t_ray *ray, t_vec outward_normal)
 		rec->normal = vec_scalar_mul(outward_normal, -1);
 }
 
-int find_hitpoint_light(t_ray* ray, t_light *light, t_hit_record* rec)
+int find_hitpoint_light(t_ray* ray, t_light *light, t_hit_record* rec, int depth)
 {
 	t_light *temp;
 
+	/*if (depth == MAX_DEPTH)
+		return (1);*/
 	temp = light;
 	while (temp)
     {
@@ -37,7 +39,7 @@ int find_hitpoint_light(t_ray* ray, t_light *light, t_hit_record* rec)
 	return (1);
 }
 
-int find_hitpoint_path(t_ray* ray, t_objs *objs, t_light *light, t_hit_record* rec)
+int find_hitpoint_path(t_ray* ray, t_objs *objs, t_light *light, t_hit_record* rec, int depth)
 {
     t_objs *tmp;
 	int end;
@@ -65,7 +67,7 @@ int find_hitpoint_path(t_ray* ray, t_objs *objs, t_light *light, t_hit_record* r
         tmp = tmp->next;
     }
 	if (light && light->count != 0)
-		find_hitpoint_light(ray, light, rec);
+		find_hitpoint_light(ray, light, rec, depth);
     return (1);
 }
 

@@ -45,6 +45,7 @@ typedef struct s_hit_record {
 	double specular;
 	double u;
 	double v;
+	int is_first;
 } t_hit_record;
 
 typedef struct s_ambient
@@ -122,7 +123,7 @@ void	ft_mlx_new(t_minirt *vars, int x, int y, char *name);
 
 
 int front_face(t_ray *r, t_hit_record* rec);
-int find_hitpoint_path(t_ray* ray, t_objs *objs, t_light *light, t_hit_record* rec);
+int find_hitpoint_path(t_ray* ray, t_objs *objs, t_light *light, t_hit_record* rec, int depth);
 void hit_sphere(t_objs* s, t_ray* r, t_hit_record* rec);
 void hit_cylinder(t_objs *cy, t_ray *ray, t_hit_record *rec);
 void hit_caps(t_objs *cy, t_ray *ray, t_hit_record *rec);
