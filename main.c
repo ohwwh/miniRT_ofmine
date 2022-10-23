@@ -80,16 +80,16 @@ void path_render(t_minirt vars)
 
 int	main(int argc, char *argv[])
 {
-	/*t_objs light1 = create_sphere(create_vec(5,8, -1), 1, 
-	create_vec(45, 45, 45), -1);
+	t_objs light1 = create_sphere(create_vec(5,8, -1), 1.5, 
+	create_vec(15, 15, 15), -1);
 
 	t_objs surface = create_sphere(create_vec(0, -100.5, -1), 100, 
 	//create_vec(1, 1, 1), 0);
 	create_vec(0.8, 0.8, 0), 0);
-	set_specular(&surface, 0);
+	set_specular(&surface, 0.5);
 
 	t_objs sphere = create_sphere(create_vec(0,0,-2), 0.5, 
-	create_vec(0.7, 0.3, 0.3), 0);
+	create_vec(1, 0.0, 0.0), 0);
 	surface.next = &sphere;
 	set_specular(&sphere, 0.6);
 
@@ -136,7 +136,7 @@ int	main(int argc, char *argv[])
 	t_light light;
 	light.object = light1;
 	light.next = 0;
-	light.count = 1;*/
+	light.count = 1;
 
 	/*double r = 0.25;
 	int m = 0;
@@ -307,7 +307,7 @@ int	main(int argc, char *argv[])
 	//t_objs light = create_rectangle_xy(create_vec(3,5,0), create_vec(1,3,0), 
 	//-5, create_vec(15, 15, 15), -1);
 
-	t_objs light1 = create_sphere(create_vec(2, 14, -10), 4, 
+	/*t_objs light1 = create_sphere(create_vec(2, 14, -10), 4, 
 	create_vec(25, 0, 0), -1);
 	t_objs light2 = create_sphere(create_vec(2, 14, 10), 4, 
 	create_vec(0, 0, 25), -1);
@@ -339,7 +339,7 @@ int	main(int argc, char *argv[])
 	t_objs cylinder = create_cylinder(create_vec(1.5,0, -6), 1, 4, 
 	create_vec(0,1,0), create_vec(0.3,0.3,0.7), 0);
 	wall.next = &cylinder;
-	cylinder.next = 0;
+	cylinder.next = 0;*/
 
 
 	t_minirt	vars;
@@ -355,10 +355,10 @@ int	main(int argc, char *argv[])
 
 	//t_camera camera = create_camera(create_vec(0,3,-2), create_vec(0,0,0), create_vec(0, 1, 0), 70, ratio);
 	//t_camera camera = create_camera(create_vec(-2,2,1), create_vec(0,0,-1), create_vec(0, 1, 0), 70, ratio);
-	//t_camera camera = create_camera(create_vec(0,0,0), create_vec(0,0,-1), create_vec(0, 1, 0), 70, ratio);
+	t_camera camera = create_camera(create_vec(0,0,0), create_vec(0,0,-1), create_vec(0, 1, 0), 70, ratio);
 	//t_camera camera = create_camera(create_vec(-50,-1,-20), create_vec(1,0,0), create_vec(0, 1, 0), 70, ratio);
 	//t_camera camera = create_camera(create_vec(278,278,-800), create_vec(278,278,0), create_vec(0, 1, 0), 40, ratio);
-	t_camera camera = create_camera(create_vec(26,8,6), create_vec(0,2,0), create_vec(0, 1, 0), 20, ratio);
+	//t_camera camera = create_camera(create_vec(26,8,6), create_vec(0,2,0), create_vec(0, 1, 0), 20, ratio);
 	set_camera(&camera);
 	t_vec test = unit_vec(vec_sub(create_vec(0,5,0), create_vec(26,3,6)));
 	printf("%lf, %lf, %lf\n", test.x,test.y,test.z);
