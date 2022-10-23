@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 #define PI 3.1415926535897932385
-#define EPS 0.001
+#define EPS 0.01
 #define WIDTH 640
 #define HEIGHT 320
 
