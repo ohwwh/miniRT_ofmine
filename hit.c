@@ -17,21 +17,21 @@ int find_hitpoint_light(t_ray* ray, t_light *light, t_hit_record* rec)
 	temp = light;
 	while (temp)
     {
-        if (temp->object->type == 3)
-            hit_sphere(temp->object, ray, rec);
-        else if (temp->object->type == 1)
-			hit_plane(temp->object, ray, rec);
-        else if (temp->object->type == 2)
+        if (temp->object.type == 3)
+            hit_sphere(&temp->object, ray, rec);
+        else if (temp->object.type == 1)
+			hit_plane(&temp->object, ray, rec);
+        else if (temp->object.type == 2)
         {
-            hit_cylinder(temp->object, ray, rec);
-			hit_caps(temp->object, ray, rec);
+            hit_cylinder(&temp->object, ray, rec);
+			hit_caps(&temp->object, ray, rec);
         }
-		else if (temp->object->type == 4)
-			hit_rectangle_xy(temp->object, ray, rec);
-		else if (temp->object->type == 5)
-			hit_rectangle_yz(temp->object, ray, rec);
-		else if (temp->object->type == 6)
-			hit_rectangle_xz(temp->object, ray, rec);
+		else if (temp->object.type == 4)
+			hit_rectangle_xy(&temp->object, ray, rec);
+		else if (temp->object.type == 5)
+			hit_rectangle_yz(&temp->object, ray, rec);
+		else if (temp->object.type == 6)
+			hit_rectangle_xz(&temp->object, ray, rec);
         temp = temp->next;
     }
 	return (1);

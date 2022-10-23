@@ -72,7 +72,7 @@ typedef struct s_light
 {
 	t_vec			src;
 	double			ratio;
-	t_objs		*object;
+	t_objs			object;
 	t_ambient		ambient;
 	int				count;
 	struct s_light	*next;

@@ -104,11 +104,107 @@ int	main(int argc, char *argv[])
 	cylinder.next = 0;
 
 	t_light light;
-	light.object = &light1;
+	light.object = light1;
 	light.next = 0;
 	light.count = 1;
 	//light.count = 0 일 때 segfault??
 	
+	/*double r = 0.25;
+	int m = 0;
+	
+	t_objs light1 = create_sphere(create_vec(5,8, -1), 4, 
+	create_vec(15, 15, 15), -1);
+
+	t_objs surface = create_plane(create_vec(0,-1, 0), create_vec(0,1, 0),
+	create_vec(0.8, 1, 0), 0);
+
+	t_objs sphere = create_sphere(create_vec(0,0,-1), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	surface.next = &sphere;
+	t_objs sphere1 = create_sphere(create_vec(0.235,0,-0.8), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	sphere.next = &sphere1;
+	t_objs sphere2 = create_sphere(create_vec(0.508,0,-0.6), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	sphere1.next = &sphere2;
+	t_objs sphere3 = create_sphere(create_vec(0.72,0,-0.4), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	sphere2.next = &sphere3;
+	t_objs sphere4 = create_sphere(create_vec(0.881,0,-0.2), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	sphere3.next = &sphere4;
+	t_objs sphere5 = create_sphere(create_vec(1,0,0), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	sphere4.next = &sphere5;
+	t_objs sphere6 = create_sphere(create_vec(1.082,0,0.2), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	sphere5.next = &sphere6;
+	t_objs sphere7 = create_sphere(create_vec(1.12853,0,0.4), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	sphere6.next = &sphere7;
+	t_objs sphere8 = create_sphere(create_vec(1.13745,0,0.6), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	sphere7.next = &sphere8;
+	t_objs sphere9 = create_sphere(create_vec(1.10147,0,0.8), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	sphere8.next = &sphere9;
+	t_objs sphere10 = create_sphere(create_vec(1,0,1), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	sphere9.next = &sphere10;
+	t_objs sphere11 = create_sphere(create_vec(0.73,0,1.2), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	sphere10.next = &sphere11;
+	t_objs sphere12 = create_sphere(create_vec(0.2874,0,1.2), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	sphere11.next = &sphere12;
+	//sphere10.next = 0;
+
+	t_objs spher1 = create_sphere(create_vec(-0.235,0,-0.8), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	sphere12.next = &spher1;
+	t_objs spher2 = create_sphere(create_vec(-0.508,0,-0.6), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	spher1.next = &spher2;
+	t_objs spher3 = create_sphere(create_vec(-0.72,0,-0.4), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	spher2.next = &spher3;
+	t_objs spher4 = create_sphere(create_vec(-0.881,0,-0.2), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	spher3.next = &spher4;
+	t_objs spher5 = create_sphere(create_vec(-1,0,0), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	spher4.next = &spher5;
+	t_objs spher6 = create_sphere(create_vec(-1.082,0,0.2), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	spher5.next = &spher6;
+	t_objs spher7 = create_sphere(create_vec(-1.12853,0,0.4), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	spher6.next = &spher7;
+	t_objs spher8 = create_sphere(create_vec(-1.13745,0,0.6), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	spher7.next = &spher8;
+	t_objs spher9 = create_sphere(create_vec(-1.10147,0,0.8), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	spher8.next = &spher9;
+	t_objs spher10 = create_sphere(create_vec(-1,0,1), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	spher9.next = &spher10;
+	t_objs spher11 = create_sphere(create_vec(0,0,1), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	spher10.next = &spher11;
+	t_objs spher12 = create_sphere(create_vec(-0.73,0,1.2), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	spher11.next = &spher12;
+	t_objs spher13 = create_sphere(create_vec(-0.2874,0,1.2), r, 
+	create_vec(0.7, 0.3, 0.3), m);
+	spher12.next = &spher13;
+	spher13.next = 0;
+
+	t_light light;
+	light.object = &light1;
+	light.next = 0;
+	light.count = 1;
+	//light.count = 0 일 때 segfault??*/
 	
 
 
@@ -228,6 +324,7 @@ int	main(int argc, char *argv[])
 	vars.scene.light = &light;
 	double ratio = (double)WIDTH / (double)HEIGHT;
 
+	//t_camera camera = create_camera(create_vec(0,3,-2), create_vec(0,0,0), create_vec(0, 1, 0), 70, ratio);
 	//t_camera camera = create_camera(create_vec(-2,2,1), create_vec(0,0,-1), create_vec(0, 1, 0), 70, ratio);
 	t_camera camera = create_camera(create_vec(0,0,0), create_vec(0,0,-1), create_vec(0, 1, 0), 70, ratio);
 	//t_camera camera = create_camera(create_vec(278,278,-800), create_vec(278,278,0), create_vec(0, 1, 0), 40, ratio);
