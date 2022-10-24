@@ -1,9 +1,20 @@
-#include "vector.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   vector.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hako <hako@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/10/21 20:16:39 by hako              #+#    #+#             */
+/*   Updated: 2022/10/21 20:17:16 by hako             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "minirt.h"
 
 t_vec create_vec(double x, double y, double z)
 {
     t_vec vec;
-    
     vec.x = x;
     vec.y = y;
     vec.z = z;
@@ -81,10 +92,10 @@ t_vec  vcross(t_vec vec1, t_vec vec2)
 t_vec      unit_vec(t_vec vec)
 {
     double len = vec_len(vec);
+    int *ptr;
     if (len == 0)
     {
-        int *ptr = 0;
-        *ptr = 1;
+        *ptr = 0;
         printf("Error : the length of vector is 0\n");
         exit(1);
     }
@@ -103,4 +114,11 @@ t_vec  vmin(t_vec vec1, t_vec vec2)
     if (vec1.z > vec2.z)
         vec1.z = vec2.z;
     return (vec1);
+}
+
+int near_zero(t_vec vec)
+{
+    const double s = 1e-8;
+
+    return ((fabs(vec.x) < s) && (fabs(vec.y) < s) && (fabs(vec.z) < s));
 }

@@ -1,4 +1,16 @@
-#include "miniRT.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_mlx.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hako <hako@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/10/21 20:29:08 by hako              #+#    #+#             */
+/*   Updated: 2022/10/21 20:29:09 by hako             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "minirt.h"
 
 double clamp(double x)
 {
@@ -19,33 +31,20 @@ double clamp(double x)
     return (x);
 }
 
-int		convert_rgb(int r, int g, int b)
-{
-	return (((r & 0xff) << 16) + ((g & 0xff) << 8) + (b & 0xff));
-}
 
 int rgb_to_int(t_color c)
 {
-	return ((int)(255.999 * sqrt(clamp(c.x))) << 16 | (int)(255.999 * sqrt(clamp(c.y))) << 8 | (int)(255.999 * sqrt(clamp(c.z))));
+	if (c.x != c.x)
+		c.x = 0;
+	if (c.y != c.y)
+		c.y = 0;
+	if (c.z != c.z)
+		c.z = 0;
+	return ((int)(255.999 * 0) << 24 | (int)(255.999 * sqrt(clamp(c.x))) << 16 | (int)(255.999 * sqrt(clamp(c.y))) << 8 | (int)(255.999 * sqrt(clamp(c.z))));
+	//return ((int)(255.999 * (clamp(c.x))) << 16 | (int)(255.999 * (clamp(c.y))) << 8 | (int)(255.999 * (clamp(c.z))));
 } //감마보정?
 
-/*int rgb_to_int(t_color c)
-{
-	return ((int)(255.999 * 0) << 24 | (int)(255.999 * (clamp(c.x))) << 16 | (int)(255.999 * (clamp(c.y))) << 8 | (int)(255.999 * (clamp(c.z))));
-}*/
 
-/*int rgb_to_int(t_color c)
-{
-	return ((int)(255.999 * 0) << 24 | (int)(255.999 * c.x) << 16 | (int)(255.999 * c.y) << 8 | (int)(255.999 * c.z));
-}*/
-
-void	put_color(t_mlx *data, int x, int y, int color)
-{
-	char	*dst;
-
-	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
-	*(unsigned int *)dst = color;
-}
 
 void ft_pixel_put(t_minirt *vars, int x, int y, int color)
 {
