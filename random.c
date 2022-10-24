@@ -12,30 +12,31 @@
 
 #include "random.h"
 
-double random_double(double min, double max, int anti)
+double	random_double(double min, double max, int anti)
 {
 	if (anti == 0 || anti == 1)
 		return (0);
-	return ((max-min) * ((double)rand() / (double)RAND_MAX) + min);
+	return ((max - min) * ((double)rand() / (double)RAND_MAX) + min);
 }
 
-t_vec rand_sphere()
+t_vec	rand_sphere(void)
 {
-	t_vec ret;
+	t_vec	ret;
 
 	while (1)
 	{
 		ret = create_vec(random_double(-1, 1, 7),
-			random_double(-1,1,7), random_double(-1, 1, 7));
+				random_double(-1, 1, 7), random_double(-1, 1, 7));
 		if (vec_len(ret) >= 1.0)
 			continue ;
 		return (ret);
 	}
 }
 
-t_vec rand_hemi_sphere(t_vec normal)
+t_vec	rand_hemi_sphere(t_vec normal)
 {
-	t_vec ret;
+	t_vec	ret;
+
 	ret = rand_sphere();
 	if (vdot(ret, normal) > 0.0)
 		return (ret);
@@ -43,7 +44,7 @@ t_vec rand_hemi_sphere(t_vec normal)
 		return (vec_scalar_mul(ret, -1));
 }
 
-t_vec random_cosine_direction()
+t_vec	random_cosine_direction(void)
 {
 	double pi = 3.1415926535897932385;
 	double r1 = random_double(0, 1, 7);
@@ -57,10 +58,10 @@ t_vec random_cosine_direction()
 	return (create_vec(x, y, z));
 }
 
-t_onb create_onb(t_vec n)
+t_onb	create_onb(t_vec n)
 {
-	t_onb ret;
-	t_vec a;
+	t_onb	ret;
+	t_vec	a;
 
 	ret.w = unit_vec(n);
 	if (fabs(ret.w.x) > 0.9)
@@ -69,11 +70,10 @@ t_onb create_onb(t_vec n)
 		a = create_vec(1, 0, 0);
 	ret.v = unit_vec(vcross(ret.w, a));
 	ret.u = vcross(ret.w, ret.v);
-
 	return (ret);
 }
 
-t_vec local(t_onb *onb, t_vec a)
+t_vec	local(t_onb *onb, t_vec a)
 {
 	return (
 		vec_sum(
@@ -85,5 +85,3 @@ t_vec local(t_onb *onb, t_vec a)
 		)
 	);
 }
-
-
