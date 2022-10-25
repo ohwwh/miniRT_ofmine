@@ -43,6 +43,8 @@
 # define PL 2
 # define SP 3
 
+typedef struct s_minirt t_minirt;
+
 typedef enum s_bool{
 	FALSE = 0,
 	TRUE
@@ -145,6 +147,24 @@ typedef struct s_hit_record
 	int			type;
 }	t_hit_record;
 
+typedef struct s_shared
+{
+	//t_color			color[6];
+	t_color			color;
+	pthread_mutex_t	mutex;
+	t_minirt		*vars;
+	int				sampling;
+	int				x;
+	int				y;
+} t_shared;
+
+typedef struct s_thread
+{
+	int 		thr_num;
+	pthread_t 	thr;
+	t_shared	*sh;
+} t_thread;
+
 typedef struct s_minirt
 {
 	t_mlx		mlx;
@@ -157,9 +177,7 @@ typedef struct s_minirt
 	double		v;
 	int			x;
 	int			y;
-	t_color		*color;
-	pthread_mutex_t	*mutex;
-	pthread_t thr[6];
+	t_thread	thr[6];
 }	t_minirt;
 
 typedef struct s_discriminant
@@ -267,7 +285,7 @@ void			ft_mlx_new(t_minirt *vars, int x, int y, char *name);
 double			get_light_size(t_objs object);
 double			clamp(double x);
 
-void			routine(void *data);
+void			*routine(void *data);
 int				threading(t_minirt *vars, int x, int y);
 
 

@@ -2,52 +2,56 @@
 
 #define MAX_DEPTH 50
 
-void routine(void *data)
+void *routine(void *data)
 {
-	t_minirt	*vars;
+	t_thread	*pdata;
 	t_ray		init_ray;
 	double		u;
 	double		v;
-	int 		x = vars->x;
-	int			y = vars->y;
+	int 		x;
+	int			y;
 	int			s = 0;
 	
-	srand(time(0));
-	vars = (t_minirt *)data;
-	while (s ++ < vars->scene.anti / 6)
+	pdata = (t_thread *)data;
+	while (1)
 	{
-		u = (((double)x + random_double(0, 1, vars->scene.anti)) * 2 / WIDTH) - 1;
-		v = (((double)y + random_double(0, 1, vars->scene.anti)) * 2 / HEIGHT) - 1;
-		init_ray = ray_primary(&(vars->scene.camera), u, v);
-		if (x == 0 && y == 0)
-			x = x;
-		pthread_mutex_lock(vars->mutex);
-		if (vars->is_trace == 1)
-			*(vars->color) = vec_sum(vars->ray.color,
-					ray_color(init_ray, &vars->scene, MAX_DEPTH));
-		else
-			*(vars->color) = vec_sum(vars->ray.color,
-					ray_color_raw(init_ray, &vars->scene));
-		pthread_mutex_unlock(vars->mutex);
+		while (1)
+		{
+			pthread_mutex_lock(&(pdata->sh->mutex));
+			if (pdata->sh->sampling != 0)
+			{
+				//printf("%d\n", pdata->sh->sampling);
+				x = pdata->sh->x;
+				y = pdata->sh->y;
+				pthread_mutex_unlock(&(pdata->sh->mutex));
+				break ;
+			}
+			pthread_mutex_unlock(&(pdata->sh->mutex));
+		}
+		while (s ++ < pdata->sh->vars->scene.anti / 6)
+		{
+			u = (((double)x + random_double(0, 1, pdata->sh->vars->scene.anti)) * 2 / WIDTH) - 1;
+			v = (((double)y + random_double(0, 1, pdata->sh->vars->scene.anti)) * 2 / HEIGHT) - 1;
+			init_ray = ray_primary(&(pdata->sh->vars->scene.camera), u, v);
+			pthread_mutex_lock(&(pdata->sh->mutex));
+			/*printf("%p\n", vars->color);
+			sleep(5);*/
+			if (pdata->sh->vars->is_trace == 1)
+				pdata->sh->color = vec_sum(pdata->sh->color,
+						ray_color(init_ray, &pdata->sh->vars->scene, MAX_DEPTH));
+			else
+				pdata->sh->color = vec_sum(pdata->sh->color,
+						ray_color_raw(init_ray, &pdata->sh->vars->scene));
+			/*if (x==320 && y==160)
+				printf("%lf, %lf, %lf\n", pdata->sh->color.x, pdata->sh->color.y, pdata->sh->color.z);*/
+			printf("thr_num[%d]: %d, %d\n", pdata->thr_num, x, y);
+			pthread_mutex_unlock(&(pdata->sh->mutex));
+		}
+		pthread_mutex_lock(&(pdata->sh->mutex));
+		if (pdata->sh->sampling > 0)
+			pdata->sh->sampling --;
+		pthread_mutex_unlock(&(pdata->sh->mutex));
+		if (x == WIDTH && y == -1)
+			break ;
 	}
-}
-
-int threading(t_minirt *vars, int x, int y)
-{
-	int	i;
-
-	i = 0;
-	vars->x = x;
-	vars->y = y;
-	vars->color = (t_color *)malloc(sizeof(t_color));
-	vars->mutex = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t));
-	pthread_mutex_init(vars->mutex, 0);
-	while (i < 6)
-	{
-		if (pthread_create(&((vars->thr)[i]), 0, &routine, (void *)(vars)))
-			return (printf("thread create error!\n"));
-		pthread_detach(((vars->thr)[i]));
-		i ++;
-	}
-	pthread_mutex_destroy(vars->mutex);
 }

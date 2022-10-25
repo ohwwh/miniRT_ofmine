@@ -349,7 +349,7 @@ void	key_press_mode_change(t_minirt *vars, int keycode)
 			vars->is_trace = 1;
 		else if (keycode == 35)
 			vars->is_trace = 2;
-		vars->scene.anti = 100;
+		vars->scene.anti = 6;
 		vars->scene.changed = 1;
 	}
 	else
