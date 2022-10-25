@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hako <hako@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 20:28:58 by hako              #+#    #+#             */
-/*   Updated: 2022/10/24 18:47:51 by hako             ###   ########.fr       */
+/*   Updated: 2022/10/25 10:40:12 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,11 +66,13 @@ void	path_render(t_minirt *v)
 		}
 		while (x ++ < WIDTH)
 		{
-			v->ray.color = create_vec(0, 0, 0);
-			s = 0;
+			//v->ray.color = create_vec(0, 0, 0);
+			*(v->color) = create_vec(0, 0, 0);
+			/*s = 0;
 			while (s ++ < v->scene.anti)
-				sampling(v, x, y);
-			v->ray.color = vec_division(v->ray.color, v->scene.anti);
+				sampling(v, x, y);*/
+			v->ray.color = vec_division(*(v->color), v->scene.anti);
+			//v->ray.color = vec_division(v->ray.color, v->scene.anti);
 			put_color(&v->mlx, x - 1,
 				HEIGHT - 2 - y, rgb_to_int(v->ray.color));
 		}
@@ -78,7 +80,7 @@ void	path_render(t_minirt *v)
 	mlx_put_image_to_window(v->mlx.mlx, v->mlx.mlx_win, v->mlx.img, 0, 0);
 }
 
-set_init_distance(t_minirt *data)
+void	set_init_distance(t_minirt *data)
 {
 	data->scene.camera.distance = vec_len(vec_sub(data->scene.camera.origin,
 				data->scene.objs->center));

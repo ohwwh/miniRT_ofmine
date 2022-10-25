@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minirt.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hako <hako@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 18:37:08 by hako              #+#    #+#             */
-/*   Updated: 2022/10/24 19:22:48 by hako             ###   ########.fr       */
+/*   Updated: 2022/10/25 10:41:14 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 # include <stdio.h>
 # include <fcntl.h>
 # include <math.h>
+#include <stdlib.h>
+#include <pthread.h>
 
 # include "../mlx/mlx.h"
 # include "../libohw/includes/libft.h"
@@ -77,29 +79,6 @@ typedef struct s_mlx
 	int		line_length;
 	int		endian;
 }				t_mlx;
-
-/*typedef struct s_vec
-{
-	double	x;
-	double	y;
-	double	z;
-}	t_vec;*/
-
-/*typedef struct t_camera
-{
-	t_vec	origin;
-	t_vec	dir;
-	double	fov;
-	double	ratio;
-	double	viewport_height;
-	double 	viewport_width;
-	t_vec 	forward;
-	t_vec	vup;
-	t_vec	up;
-	t_vec	right;
-	int		count;
-
-}	t_camera;*/
 
 typedef struct s_amb
 {
@@ -178,6 +157,9 @@ typedef struct s_minirt
 	double		v;
 	int			x;
 	int			y;
+	t_color		*color;
+	pthread_mutex_t	*mutex;
+	pthread_t thr[6];
 }	t_minirt;
 
 typedef struct s_discriminant
@@ -284,5 +266,9 @@ void			ft_mlx_new(t_minirt *vars, int x, int y, char *name);
 
 double			get_light_size(t_objs object);
 double			clamp(double x);
+
+void			routine(void *data);
+int				threading(t_minirt *vars, int x, int y);
+
 
 #endif

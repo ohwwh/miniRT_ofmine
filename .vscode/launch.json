@@ -29,7 +29,7 @@
             "program": "${fileDirname}/${fileBasenameNoExtension}",
             //"program": "/Users/ohw/OHW/42Seoul/so_long/남의 것/so_long/so_long_bonus",
             "args": [
-                "${workspaceFolder}/map/map.ber"
+                "example.rt"
             ],
             "cwd": "${fileDirname}",
             //"cwd": "/Users/ohw/OHW/42Seoul/so_long/남의 것/so_long",

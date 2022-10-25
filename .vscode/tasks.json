@@ -8,7 +8,7 @@
                 "-fdiagnostics-color=always",
                 "-g",
                 "-I${workspaceFolder}/mlx/",
-                "-I${workspaceFolder}/incs/",
+                "-I${workspaceFolder}/includes/",
                 "-L${workspaceFolder}/mlx/",
                 "-L./libohw/",
                 "${workspaceFolder}/*.c",
