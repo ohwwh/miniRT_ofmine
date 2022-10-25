@@ -26,8 +26,8 @@ void	thread_init(t_minirt *vars)
 	vars->thr[0].sh->y = HEIGHT - 2;
 	vars->thr[0].sh->color = create_vec(0, 0, 0);
 	pthread_mutex_init(&(vars->thr[0].sh->mutex), 0);
-	vars->thr[0].sh->sampling = 6;
-	vars->thr[0].sh->working = 0;
+	vars->thr[0].sh->sampling = 0;
+	vars->thr[0].sh->working = 6;
 	vars->thr[0].sh->vars = vars;
 }
 
@@ -109,9 +109,10 @@ void	path_render(t_minirt *vars)
 				pthread_mutex_lock(&(vars->thr[0].sh->mutex));
 				//sleep(1);
 				//printf("i wanna break, son - sampling is %d\n", vars->thr[0].sh->sampling);
-				if (vars->thr[0].sh->sampling == 0)
+				if (vars->thr[0].sh->working == 0)
 				{
 					//printf("i'm' break, son\n");
+					vars->thr[0].sh->sampling = 1;
 					vars->thr[0].sh->x = x;
 					vars->thr[0].sh->y = y;
 					vars->thr[0].sh->color = create_vec(0, 0, 0);
@@ -129,8 +130,19 @@ void	path_render(t_minirt *vars)
 				HEIGHT - 2 - y, rgb_to_int(vars->ray.color));
 			/*if (x == 1 && y == HEIGHT - 2)
 				while(1);*/
+			/*while(1)
+			{
+				pthread_mutex_lock(&(vars->thr[0].sh->mutex));
+				if (vars->thr[0].sh->sampling == 0)
+				{
+					vars->thr[0].sh->sampling = 6;
+					break ;
+				}
+				pthread_mutex_unlock(&(vars->thr[0].sh->mutex));
+			}*/
 			pthread_mutex_lock(&(vars->thr[0].sh->mutex));
-			vars->thr[0].sh->sampling = 6;
+			vars->thr[0].sh->working = 6;
+			vars->thr[0].sh->sampling = 0;
 			pthread_mutex_unlock(&(vars->thr[0].sh->mutex));
 		}
 	}
