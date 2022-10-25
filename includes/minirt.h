@@ -154,6 +154,7 @@ typedef struct s_shared
 	pthread_mutex_t	mutex;
 	t_minirt		*vars;
 	int				sampling;
+	int				working;
 	int				x;
 	int				y;
 } t_shared;
