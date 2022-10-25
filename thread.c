@@ -18,10 +18,10 @@ void *routine(void *data)
 		while (1)
 		{
 			pthread_mutex_lock(&(pdata->sh->mutex));
-			printf("thr_num[%d], sampling: %d\n", pdata->thr_num, pdata->sh->sampling);
+			//printf("thr_num[%d], sampling: %d\n", pdata->thr_num, pdata->sh->sampling);
 			if (pdata->sh->sampling != 0)
 			{
-				printf("thr_num[%d]: i'm here, papa!\n", pdata->thr_num);
+				//printf("thr_num[%d]: i'm here, papa!\n", pdata->thr_num);
 				x = pdata->sh->x;
 				y = pdata->sh->y;
 				//pdata->sh->sampling ++;
@@ -47,8 +47,7 @@ void *routine(void *data)
 			pthread_mutex_unlock(&(pdata->sh->mutex));
 		}
 		pthread_mutex_lock(&(pdata->sh->mutex));
-		pdata->sh->working --;
-		if (pdata->sh->sampling > 0)
+		//if (pdata->sh->sampling > 0)
 			pdata->sh->sampling --;
 		sleep(1);
 			printf("thr_num[%d], x: %d, y: %d, sampling: %d\n", pdata->thr_num, x, y, pdata->sh->sampling);
@@ -58,10 +57,12 @@ void *routine(void *data)
 			pthread_mutex_lock(&(pdata->sh->mutex));
 			if (pdata->sh->sampling == 0)
 			{
-				//printf("thr_num[%d]: i'm break!\n", pdata->thr_num);
+				printf("thr_num[%d]: i'm break!\n", pdata->thr_num);
 				pthread_mutex_unlock(&(pdata->sh->mutex));
 				break ;
 			}
+			//sleep(1);
+			printf("thr_num[%d]: i cant' break, papa! sampling is %d\n", pdata->thr_num, pdata->sh->sampling);
 			pthread_mutex_unlock(&(pdata->sh->mutex));
 		}
 	}

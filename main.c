@@ -108,7 +108,7 @@ void	path_render(t_minirt *vars)
 			{
 				pthread_mutex_lock(&(vars->thr[0].sh->mutex));
 				//sleep(1);
-				printf("i wanna break, son - sampling is %d\n", vars->thr[0].sh->sampling);
+				//printf("i wanna break, son - sampling is %d\n", vars->thr[0].sh->sampling);
 				if (vars->thr[0].sh->sampling == 0)
 				{
 					//printf("i'm' break, son\n");
