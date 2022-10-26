@@ -6,7 +6,7 @@
 /*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 18:37:08 by hako              #+#    #+#             */
-/*   Updated: 2022/10/25 10:41:14 by ohw              ###   ########.fr       */
+/*   Updated: 2022/10/26 16:59:57 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <math.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <time.h>
 
 # include "../mlx/mlx.h"
 # include "../libohw/includes/libft.h"
@@ -35,6 +36,7 @@
 # define MAX_DEPTH 50
 # define KSN 64 
 # define KS 0.5
+# define TH 3
 
 # define HEIGHT 320
 # define WIDTH 640
@@ -149,12 +151,12 @@ typedef struct s_hit_record
 
 typedef struct s_shared
 {
-	//t_color			color[6];
-	t_color			color;
+	//t_color			color[TH];
 	pthread_mutex_t	mutex;
 	t_minirt		*vars;
 	int				sampling;
 	int				working;
+	int				work[TH];
 	int				x;
 	int				y;
 } t_shared;
@@ -163,6 +165,7 @@ typedef struct s_thread
 {
 	int 		thr_num;
 	pthread_t 	thr;
+	t_color		color;
 	t_shared	*sh;
 } t_thread;
 
@@ -178,7 +181,7 @@ typedef struct s_minirt
 	double		v;
 	int			x;
 	int			y;
-	t_thread	thr[6];
+	t_thread	thr[TH];
 }	t_minirt;
 
 typedef struct s_discriminant
@@ -288,6 +291,7 @@ double			clamp(double x);
 
 void			*routine(void *data);
 int				threading(t_minirt *vars, int x, int y);
+int				all_thread_work(int work[]);
 
 
 #endif

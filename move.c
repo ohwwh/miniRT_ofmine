@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   move.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hako <hako@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 20:28:52 by hako              #+#    #+#             */
-/*   Updated: 2022/10/24 18:57:55 by hako             ###   ########.fr       */
+/*   Updated: 2022/10/26 09:53:37 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ int	ft_close(t_minirt *data)
 	t_light	*light;
 	t_objs	*obj;
 
+	free(data->thr[0].sh);
 	mlx_clear_window(data->mlx.mlx, data->mlx.mlx_win);
 	mlx_destroy_window(data->mlx.mlx, data->mlx.mlx_win);
 	while (data->scene.light)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   vector3.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hako <hako@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/24 17:21:52 by hako              #+#    #+#             */
-/*   Updated: 2022/10/24 17:22:01 by hako             ###   ########.fr       */
+/*   Updated: 2022/10/26 17:34:27 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,15 @@
 t_vec	unit_vec(t_vec vec)
 {
 	double	len;
-	int		*ptr;
+	//int		*ptr;
 
 	len = vec_len(vec);
 	if (len == 0)
 	{
-		*ptr = 0;
-		printf("Error : the length of vector is 0\n");
-		exit(1);
+		//*ptr = 0;
+		//printf("Error : the length of vector is 0\n");
+		//exit(1);
+		return (create_vec(1, 0, 0));
 	}
 	vec.x /= len;
 	vec.y /= len;
