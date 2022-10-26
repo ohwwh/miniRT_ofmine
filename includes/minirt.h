@@ -6,7 +6,7 @@
 /*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 18:37:08 by hako              #+#    #+#             */
-/*   Updated: 2022/10/26 16:59:57 by ohw              ###   ########.fr       */
+/*   Updated: 2022/10/27 00:27:03 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@
 # define MAX_DEPTH 50
 # define KSN 64 
 # define KS 0.5
-# define TH 3
 
 # define HEIGHT 320
 # define WIDTH 640
@@ -151,7 +150,6 @@ typedef struct s_hit_record
 
 typedef struct s_shared
 {
-	//t_color			color[TH];
 	pthread_mutex_t	mutex;
 	t_minirt		*vars;
 	int				sampling;
@@ -289,9 +287,7 @@ void			ft_mlx_new(t_minirt *vars, int x, int y, char *name);
 double			get_light_size(t_objs object);
 double			clamp(double x);
 
-void			*routine(void *data);
-int				threading(t_minirt *vars, int x, int y);
-int				all_thread_work(int work[]);
+void			path_render_threaded(t_minirt *vars);
 
 
 #endif
