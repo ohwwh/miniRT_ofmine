@@ -21,7 +21,7 @@
                 "-lmlx",
                 "-lohw",
             ],
-            "options": {
+            "options": { 
                 "cwd": "${workspaceFolder}"
             },
             "problemMatcher": [
