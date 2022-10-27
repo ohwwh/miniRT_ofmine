@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ohw <ohw@student.42seoul.kr>               +#+  +:+       +#+         #
+#    By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/10/23 02:36:10 by ohw               #+#    #+#              #
-#    Updated: 2022/04/28 12:44:39 by hoh              ###   ########.fr        #
+#    Updated: 2022/10/27 15:28:10 by ohw              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,8 +14,8 @@ CC=gcc
 CFLAGS=
 NAME=miniRT
 NAME_BONUS=miniRT_bonus
-MLXDIR=./mlx
-LIBDIR=./libohw
+MLXDIR=../mlx
+LIBDIR=../libohw
 LIBINCSDIR=./libohw/includes
 SRCSDIR=./
 INCSDIR=./

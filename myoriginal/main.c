@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   so_long.c                                          :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hoh <marvin@42.fr>                         +#+  +:+       +#+        */
+/*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 15:32:42 by hoh               #+#    #+#             */
-/*   Updated: 2022/04/19 15:32:43 by hoh              ###   ########.fr       */
+/*   Updated: 2022/10/27 15:48:26 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,8 @@ void path_render(t_minirt vars)
 				u = (((double)x + random_double(0, 1, vars.scene.anti)) * 2 / WIDTH) - 1;
 				v = (((double)y + random_double(0, 1, vars.scene.anti)) * 2 / HEIGHT) - 1;
 				init_ray = ray_primary(&(vars.scene.camera), u, v);
-				if (x == 20 && y == HEIGHT - 20)
-						x = x;
+				if (x == 320 && y == 160)
+					x=x;
 				if (vars.is_trace == 1)
 					color = vec_sum(color, ray_color(init_ray, vars.scene.world, vars.scene.light, MAX_DEPTH));
 					//여러 개의 광원이 있을 때는?
@@ -86,12 +86,12 @@ int	main(int argc, char *argv[])
 	t_objs surface = create_sphere(create_vec(0, -100.5, -1), 100, 
 	//create_vec(1, 1, 1), 0);
 	create_vec(0.8, 0.8, 0), 0);
-	set_specular(&surface, 0.5);
+	set_specular(&surface, 0);
 
 	t_objs sphere = create_sphere(create_vec(0,0,-2), 0.5, 
-	create_vec(1, 0.0, 0.0), 0);
+	create_vec(0.7, 0.3, 0.3), 0);
 	surface.next = &sphere;
-	set_specular(&sphere, 0.6);
+	set_specular(&sphere, 0);
 
 	t_objs metal = create_sphere(create_vec(1,0, -1), 0.5, 
 	create_vec(0.8, 0.8, 0.8), 1);
@@ -344,13 +344,13 @@ int	main(int argc, char *argv[])
 
 	t_minirt	vars;
 	init_rt(&vars);
-	vars.is_trace = 0;
+	vars.is_trace = 1;
 	vars.scene.anti = 1;
 	//vars.scene.ambient.col = create_vec(0, 0, 0);
 	vars.is_move = -1;
 	vars.scene.changed = 0;
 	vars.scene.world = &surface;
-	vars.scene.light = &light;
+	vars.scene.light = 0;
 	double ratio = (double)WIDTH / (double)HEIGHT;
 
 	//t_camera camera = create_camera(create_vec(0,3,-2), create_vec(0,0,0), create_vec(0, 1, 0), 70, ratio);

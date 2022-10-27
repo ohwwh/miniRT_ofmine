@@ -9,8 +9,8 @@
 #include "camera.h"
 #include "vector.h"
 #include "random.h"
-#include "libohw/includes/libft.h"
-#include "./mlx/mlx.h"
+#include "../libohw/includes/libft.h"
+#include "../mlx/mlx.h"
 #define MAX_DEPTH 50
 //#define EPS 0.001
 //#define ANTI 100
