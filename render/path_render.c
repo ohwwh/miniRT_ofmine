@@ -70,8 +70,8 @@ void	stratified_sampling(t_minirt *vars, int x, int y, int s, int t)
 	double	v;
 	t_ray	init_ray;
 
-	u = (((double)x + ((double)s + random_double(0, 1, vars->scene.anti)) / 20) * 2 / WIDTH) - 1;
-	v = (((double)y + ((double)t + random_double(0, 1, vars->scene.anti)) / 20) * 2 / HEIGHT) - 1;
+	u = (((double)x + ((double)s + random_double(0, 1, vars->scene.anti)) / 10) * 2 / WIDTH) - 1;
+	v = (((double)y + ((double)t + random_double(-1, 0, vars->scene.anti)) / 10) * 2 / HEIGHT) - 1;
 	init_ray = ray_primary(&(vars->scene.camera), u, v);
 	if (vars->is_trace == 1)
 		vars->ray.color = vec_sum(vars->ray.color,
@@ -88,7 +88,9 @@ void	sampling(t_minirt *vars, int x, int y)
 	t_ray	init_ray;
 
 	u = (((double)x + random_double(0, 1, vars->scene.anti)) * 2 / WIDTH) - 1;
-	v = (((double)y + random_double(0, 1, vars->scene.anti)) * 2 / HEIGHT) - 1;
+	v = (((double)y + random_double(-1, 0, vars->scene.anti)) * 2 / HEIGHT) - 1;
+	/*u = (((double)x * 2 / WIDTH) - 1) + (random_double(-1, 1, vars->scene.anti) / WIDTH);
+	v = (((double)y * 2 / HEIGHT) - 1) + (random_double(-1, 1, vars->scene.anti) / HEIGHT);*/
 	init_ray = ray_primary(&(vars->scene.camera), u, v);
 	if (vars->is_trace == 1)
 		vars->ray.color = vec_sum(vars->ray.color,
@@ -146,10 +148,10 @@ void	path_render(t_minirt *v)
 				x=x;
 			while (s ++ < v->scene.anti)
 				sampling(v, x, y);
-			/*while (s ++ < 20)
+			/*while (s ++ < 10) 
 			{
 				t = 0;
-				while (t ++ < 20)
+				while (t ++ < 10)
 					stratified_sampling(v, x, y, s, t);
 			}*/
 			v->ray.color = vec_division(v->ray.color, v->scene.anti);
