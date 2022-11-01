@@ -64,6 +64,23 @@ t_color	ray_color(t_ray r, t_scene *sc, int depth)
 	return (vec_scalar_mul(get_sky_color(r), sc->amb.ratio));
 }
 
+void	stratified_sampling(t_minirt *vars, int x, int y, int s, int t)
+{
+	double	u;
+	double	v;
+	t_ray	init_ray;
+
+	u = (((double)x + ((double)s + random_double(0, 1, vars->scene.anti)) / 20) * 2 / WIDTH) - 1;
+	v = (((double)y + ((double)t + random_double(0, 1, vars->scene.anti)) / 20) * 2 / HEIGHT) - 1;
+	init_ray = ray_primary(&(vars->scene.camera), u, v);
+	if (vars->is_trace == 1)
+		vars->ray.color = vec_sum(vars->ray.color,
+				ray_color(init_ray, &vars->scene, MAX_DEPTH));
+	else
+		vars->ray.color = vec_sum(vars->ray.color,
+				ray_color_raw(init_ray, &vars->scene));
+}
+
 void	sampling(t_minirt *vars, int x, int y)
 {
 	double	u;
@@ -79,7 +96,6 @@ void	sampling(t_minirt *vars, int x, int y)
 	else
 		vars->ray.color = vec_sum(vars->ray.color,
 				ray_color_raw(init_ray, &vars->scene));
-	//firefly(&vars->ray.color);
 }
 
 void	raw_render(t_minirt *v)
@@ -108,6 +124,7 @@ void	path_render(t_minirt *v)
 	int			x;
 	int			y;
 	int			s;
+	int			t;
 	time_t		start, end;
 	double		result;
 
@@ -129,6 +146,12 @@ void	path_render(t_minirt *v)
 				x=x;
 			while (s ++ < v->scene.anti)
 				sampling(v, x, y);
+			/*while (s ++ < 20)
+			{
+				t = 0;
+				while (t ++ < 20)
+					stratified_sampling(v, x, y, s, t);
+			}*/
 			v->ray.color = vec_division(v->ray.color, v->scene.anti);
 			put_color(&v->mlx, x - 1,
 				HEIGHT - 2 - y, rgb_to_int(v->ray.color));

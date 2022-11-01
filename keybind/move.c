@@ -40,7 +40,7 @@ int	key_hook_move(t_minirt *vars)
 	if (vars->scene.changed == 1)
 	{
 		if (vars->is_trace == 1)
-			path_render_threaded(vars);
+			path_render(vars);
 		else if (vars->is_trace == 0)
 			raw_render(vars);
 		else if (vars->is_trace == 2)
