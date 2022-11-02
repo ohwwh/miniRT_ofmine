@@ -6,7 +6,7 @@
 /*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/25 00:08:40 by ohw               #+#    #+#             */
-/*   Updated: 2022/10/29 15:23:48 by ohw              ###   ########.fr       */
+/*   Updated: 2022/11/01 23:29:40 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,14 +146,14 @@ void	path_render(t_minirt *v)
 			s = 0;
 			if (x == 366 && y == 496)
 				x=x;
-			while (s ++ < v->scene.anti)
-				sampling(v, x, y);
-			/*while (s ++ < 10) 
+			/*while (s ++ < v->scene.anti)
+				sampling(v, x, y);*/
+			while (s ++ < 10) 
 			{
 				t = 0;
 				while (t ++ < 10)
 					stratified_sampling(v, x, y, s, t);
-			}*/
+			}
 			v->ray.color = vec_division(v->ray.color, v->scene.anti);
 			put_color(&v->mlx, x - 1,
 				HEIGHT - 2 - y, rgb_to_int(v->ray.color));

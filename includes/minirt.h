@@ -6,7 +6,7 @@
 /*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 18:37:08 by hako              #+#    #+#             */
-/*   Updated: 2022/10/30 22:47:45 by ohw              ###   ########.fr       */
+/*   Updated: 2022/11/01 23:20:51 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@
 # define WIDTH 800
 # define HEIGHT 600
 
-# define ANTI 100
+# define ANTI 111
 # define LT	0.5
 
 # define CAM_SPEED 30

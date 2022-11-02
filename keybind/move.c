@@ -6,7 +6,7 @@
 /*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 20:28:52 by hako              #+#    #+#             */
-/*   Updated: 2022/10/28 10:47:58 by ohw              ###   ########.fr       */
+/*   Updated: 2022/11/01 23:38:27 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	key_hook_move(t_minirt *vars)
 	if (vars->scene.changed == 1)
 	{
 		if (vars->is_trace == 1)
-			path_render(vars);
+			path_render_threaded(vars);
 		else if (vars->is_trace == 0)
 			raw_render(vars);
 		else if (vars->is_trace == 2)
