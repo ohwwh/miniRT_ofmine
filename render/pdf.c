@@ -6,7 +6,7 @@
 /*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/25 00:40:46 by ohw               #+#    #+#             */
-/*   Updated: 2022/11/05 14:28:20 by ohw              ###   ########.fr       */
+/*   Updated: 2022/11/08 14:42:31 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ double	get_pdf(t_hit_record *rec, t_ray *scattered, t_light *light, t_onb *uvw)
 	}
 	if (pdf_sum < EPS)
 		pdf_sum = 1;
-	return (t * light_pdf_val / pdf_sum + (1 - t) * cosine_pdf(&(rec->normal), &(uvw->w)));
+	return (t * light_pdf_val / pdf_sum + (1 - t) * cosine_pdf(&(scattered->dir), &(uvw->w)));
 
 	/*while (temp)
 	{
@@ -147,7 +147,8 @@ double	mixture_pdf_value(t_hit_record *rec, t_ray *scattered, t_light *light)
 	if (!light)
 	{
 		generate_scattered(rec, scattered, &uvw);
-		return (cosine_pdf(&(rec->normal), &(uvw.w)));
+		return (cosine_pdf(&(scattered->dir), &(uvw.w)));
+		//return (cosine_pdf(&(rec->normal), &(uvw.w)));
 	}
 	idx = rand() % light->count;
 	while (temp && light->count && idx --)

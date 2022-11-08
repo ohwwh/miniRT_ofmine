@@ -6,7 +6,7 @@
 /*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/25 00:08:40 by ohw               #+#    #+#             */
-/*   Updated: 2022/11/07 01:20:33 by ohw              ###   ########.fr       */
+/*   Updated: 2022/11/08 14:40:25 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,8 @@ void	sampling(t_minirt *vars, int x, int y)
 	/*u = (((double)x * 2 / WIDTH) - 1) + (random_double(-1, 1, vars->scene.anti) / WIDTH);
 	v = (((double)y * 2 / HEIGHT) - 1) + (random_double(-1, 1, vars->scene.anti) / HEIGHT);*/
 	init_ray = ray_primary(&(vars->scene.camera), u, v);
+	if (x == 400 && y == HEIGHT - 400)
+		x=x;
 	if (vars->is_trace == 1)
 		vars->ray.color = vec_sum(vars->ray.color,
 				ray_color(init_ray, &vars->scene, MAX_DEPTH));
@@ -122,8 +124,6 @@ void	raw_render(t_minirt *v)
 		x = 0;
 		while (x ++ < WIDTH)
 		{
-			if (x == 526 && y == HEIGHT - 414)
-				x=x;
 			v->ray.color = create_vec(0, 0, 0);
 			sampling(v, x, y);
 			v->ray.color = vec_division(v->ray.color, v->scene.anti);

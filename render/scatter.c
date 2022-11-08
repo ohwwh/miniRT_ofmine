@@ -6,7 +6,7 @@
 /*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/25 00:40:55 by ohw               #+#    #+#             */
-/*   Updated: 2022/10/26 23:51:09 by ohw              ###   ########.fr       */
+/*   Updated: 2022/11/07 13:45:12 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ double	scattering_pdf(t_ray *scattered, t_hit_record *rec)
 	if (rec->mat != 0)
 		return (1);
 	cos = vdot(rec->normal, unit_vec(scattered->dir));
-	if (cos < 0)
+	if (cos < 0.0)
 		scat_pdf = 0;
 	else
 		scat_pdf = cos / PI;
