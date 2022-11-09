@@ -6,7 +6,7 @@
 /*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/25 00:08:40 by ohw               #+#    #+#             */
-/*   Updated: 2022/11/08 14:40:25 by ohw              ###   ########.fr       */
+/*   Updated: 2022/11/09 10:13:07 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ t_color	ray_color(t_ray r, t_scene *sc, int depth)
 		{
 			if (pdf != 1)
 				pdf = scattering_pdf(&scattered, &rec) / pdf;
+			//pdf = 1;
 			r.color = vec_scalar_mul(rec.color, pdf);
 			if (r.color.x < EPS && r.color.y < EPS && r.color.z < EPS)
 				return (r.color);
