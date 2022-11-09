@@ -38,8 +38,8 @@
 # define WIDTH 800
 # define HEIGHT 600
 
-# define ANTI 111
-# define LT	1
+# define ANTI 1110
+# define LT	0.5
 double	lt;
 
 # define CAM_SPEED 30

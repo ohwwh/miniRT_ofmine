@@ -93,7 +93,7 @@ double	get_pdf(t_hit_record *rec, t_ray *scattered, t_light *light, t_onb *uvw)
 	light_pdf_val = 0.0;
 	pdf_sum = 0.0;
 	temp = light;
-	/*while (temp)
+	while (temp)
 	{
 		if (temp->object.type == 3)
 			light_pdf_val += sphere_light_pdf(rec, scattered, &temp->object);
@@ -102,9 +102,9 @@ double	get_pdf(t_hit_record *rec, t_ray *scattered, t_light *light, t_onb *uvw)
 		temp = temp->next;
 	}
 	return (t * light_pdf_val / light->count
-		+ (1 - t) * cosine_pdf(&(rec->normal), &(uvw->w)));*/
+		+ (1 - t) * cosine_pdf(&(scattered->dir), &(uvw->w)));
 
-	while (temp)
+	/*while (temp)
 	{
 		if (temp->object.type == 3)
 			pdf_temp = sphere_light_pdf(rec, scattered, &temp->object);
@@ -116,7 +116,7 @@ double	get_pdf(t_hit_record *rec, t_ray *scattered, t_light *light, t_onb *uvw)
 	}
 	if (pdf_sum < EPS)
 		pdf_sum = 1;
-	return (t * light_pdf_val / pdf_sum + (1 - t) * cosine_pdf(&(scattered->dir), &(uvw->w)));
+	return (t * light_pdf_val / pdf_sum + (1 - t) * cosine_pdf(&(scattered->dir), &(uvw->w)));*/
 
 	/*while (temp)
 	{
@@ -128,7 +128,7 @@ double	get_pdf(t_hit_record *rec, t_ray *scattered, t_light *light, t_onb *uvw)
 		light_pdf_val += (pdf_temp * pdf_temp);
 		temp = temp->next;
 	}
-	pdf_temp = cosine_pdf(&(rec->normal), &(uvw->w));
+	pdf_temp = cosine_pdf(&(scattered->dir), &(uvw->w));
 	pdf_sum += pdf_temp;
 	light_pdf_val += (pdf_temp * pdf_temp);
 	if (pdf_sum < EPS)
