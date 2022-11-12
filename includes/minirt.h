@@ -115,6 +115,15 @@ typedef struct s_objs
 	double			fuzzy;
 }	t_objs;
 
+typedef struct s_aabb
+{
+	t_point			minimum;
+	t_point			maximum;
+	struct s_aabb	*left;
+	struct s_aabb	*right;
+	t_objs			*inner;
+} t_aabb;
+
 typedef struct s_camera
 {
 	t_vec	origin;

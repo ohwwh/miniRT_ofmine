@@ -74,8 +74,8 @@ int	find_hitpoint_path(t_ray *ray, t_objs *objs,
 			hit_rectangle_yz(tmp, ray, rec);
 		else if (tmp->type == 6)
 			hit_rectangle_xz(tmp, ray, rec);
-		/*else if (tmp->type == BX)
-			hit_box(tmp, ray, rec);*/
+		else if (tmp->type == BX)
+			hit_box(tmp, ray, rec);
 		tmp = tmp->next;
 	}
 	if (light && light->count != 0)

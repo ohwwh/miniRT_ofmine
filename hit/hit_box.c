@@ -1,6 +1,5 @@
 #include "minirt.h"
 
-
 void	hit_box(t_objs *box, t_ray *ray, t_hit_record* rec)
 {
 	double	t0;
