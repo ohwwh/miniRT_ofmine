@@ -6,7 +6,7 @@
 /*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 18:37:08 by hako              #+#    #+#             */
-/*   Updated: 2022/11/09 10:12:05 by ohw              ###   ########.fr       */
+/*   Updated: 2022/11/13 13:05:17 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,12 @@ typedef struct s_amb
 	int		count;
 }	t_amb;
 
+typedef struct s_aabb
+{
+	t_point			minimum;
+	t_point			maximum;
+} t_aabb;
+
 typedef struct s_objs
 {
 	int				type;
@@ -113,16 +119,15 @@ typedef struct s_objs
 	double			refraction;
 	double			specular;
 	double			fuzzy;
+	t_aabb			*box;
 }	t_objs;
 
-typedef struct s_aabb
+typedef struct s_bvh_node
 {
-	t_point			minimum;
-	t_point			maximum;
-	struct s_aabb	*left;
-	struct s_aabb	*right;
-	t_objs			*inner;
-} t_aabb;
+	t_aabb				*box;
+	struct s_bvh_node	*left;
+	struct s_bvh_node	*right;
+} t_bvh_node;
 
 typedef struct s_camera
 {
@@ -158,6 +163,7 @@ typedef struct s_scene
 	t_light		*light;
 	t_amb		amb;
 	t_objs		*objs;
+	int			objs_num;
 	int			anti;
 	int			changed;
 }	t_scene;
@@ -285,6 +291,7 @@ double			vdot(t_vec vec, t_vec vec2);
 t_vec			vcross(t_vec vec1, t_vec vec2);
 t_vec			unit_vec(t_vec vec);
 t_vec			vmin(t_vec vec1, t_vec vec2);
+t_vec			vmax(t_vec vec1, t_vec vec2);
 
 t_ray			ray(t_point origin, t_vec dir);
 t_ray			ray_primary(t_camera *cam, double u, double v);
@@ -383,5 +390,13 @@ double			clamp(double x);
 void 			firefly(t_vec *color);
 
 void			path_render_threaded(t_minirt *vars);
+
+t_objs  		**make_objs_array(t_objs *objs, t_light *light, int num);
+t_aabb			*make_aabb(t_objs *objs);
+t_aabb			*make_surrounding_aabb(t_aabb *a, t_aabb *b);
+void			quick_sort(t_objs **objs_array, int start, int end);
+
+t_bvh_node  	*make_bvh(t_objs **objs_array, int start, int end);
+void    		free_bvh(t_bvh_node *root);
 
 #endif

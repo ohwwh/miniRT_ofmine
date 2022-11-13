@@ -6,7 +6,7 @@
 /*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 18:53:04 by hako              #+#    #+#             */
-/*   Updated: 2022/11/05 15:54:49 by ohw              ###   ########.fr       */
+/*   Updated: 2022/11/12 23:39:22 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ void	parse_sphere(t_scene *sc, char **tokens)
 		obj->fuzzy = 0;
 	else
 		obj->fuzzy = ft_atod(tokens[7]);
+	sc->objs_num ++;
+	obj->box = 0;
 }
 
 void	parse_cylinder(t_scene *sc, char **tokens)
@@ -57,11 +59,11 @@ void	parse_cylinder(t_scene *sc, char **tokens)
 	sc->objs = obj;
 	obj->type = CY;
 	obj->center = get_vec(tokens[1]);
-	obj->dir = get_vec(tokens[2]);
-	if (obj->dir.x > 1 || obj->dir.y > 1 || obj->dir.z > 1)
+	obj->dir = unit_vec(get_vec(tokens[2]));
+	/*if (obj->dir.x > 1 || obj->dir.y > 1 || obj->dir.z > 1)
 		err_handler("invalid orientation cylinder");
 	if (obj->dir.x < -1 || obj->dir.y < -1 || obj->dir.z < -1)
-		err_handler("invalid orientation cylinder");
+		err_handler("invalid orientation cylinder");*/
 	obj->radius = ft_atod(tokens[3]) / 2.0;
 	obj->height = ft_atod(tokens[4]);
 	if (obj->radius <= 0 || obj->height <= 0)
@@ -83,6 +85,8 @@ void	parse_cylinder(t_scene *sc, char **tokens)
 		obj->fuzzy = 0;
 	else
 		obj->fuzzy = ft_atod(tokens[9]);
+	sc->objs_num ++;
+	obj->box = 0;
 }
 
 void	parse_plane(t_scene *sc, char **tokens)
@@ -118,6 +122,8 @@ void	parse_plane(t_scene *sc, char **tokens)
 		obj->fuzzy = 0;
 	else
 		obj->fuzzy = ft_atod(tokens[7]);
+	sc->objs_num ++;
+	obj->box = 0;
 }
 
 void	parse_rectangle_xy(t_scene *sc, char **tokens)
@@ -149,6 +155,8 @@ void	parse_rectangle_xy(t_scene *sc, char **tokens)
 		obj->fuzzy = 0;
 	else
 		obj->fuzzy = ft_atod(tokens[8]);
+	sc->objs_num ++;
+	obj->box = 0;
 }
 
 void	parse_rectangle_yz(t_scene *sc, char **tokens)
@@ -180,6 +188,8 @@ void	parse_rectangle_yz(t_scene *sc, char **tokens)
 		obj->fuzzy = 0;
 	else
 		obj->fuzzy = ft_atod(tokens[8]);
+	sc->objs_num ++;
+	obj->box = 0;
 }
 
 void	parse_rectangle_xz(t_scene *sc, char **tokens)
@@ -211,6 +221,8 @@ void	parse_rectangle_xz(t_scene *sc, char **tokens)
 		obj->fuzzy = 0;
 	else
 		obj->fuzzy = ft_atod(tokens[8]);
+	sc->objs_num ++;
+	obj->box = 0;
 }
 
 void	parse_box(t_scene *sc, char **tokens)
@@ -242,4 +254,6 @@ void	parse_box(t_scene *sc, char **tokens)
 		obj->fuzzy = 0;
 	else
 		obj->fuzzy = ft_atod(tokens[7]);
+	sc->objs_num ++;
+	obj->box = 0;
 }

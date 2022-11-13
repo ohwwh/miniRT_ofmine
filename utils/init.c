@@ -6,7 +6,7 @@
 /*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/25 00:10:20 by ohw               #+#    #+#             */
-/*   Updated: 2022/11/07 14:09:37 by ohw              ###   ########.fr       */
+/*   Updated: 2022/11/12 19:13:33 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ void	init_rt(t_minirt *data)
 	data->mode = 0;
 	data->scene.anti = 1;
 	data->scene.changed = 0;
+	data->scene.objs_num = 0;
 }
 
 void	set_init_distance(t_minirt *data)

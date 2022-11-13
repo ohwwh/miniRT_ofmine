@@ -41,7 +41,7 @@ int hit_aabb(t_aabb *aabb, t_ray *ray, t_hit_record* rec)
 	return (1);
 }
 
-int hit_aabb_tree(t_aabb *aabb, t_ray *ray, t_hit_record *rec)
+/*int hit_aabb_tree(t_aabb *aabb, t_ray *ray, t_hit_record *rec)
 {
     int hit_left, hit_right;
 
@@ -58,4 +58,4 @@ int hit_aabb_tree(t_aabb *aabb, t_ray *ray, t_hit_record *rec)
     hit_left = hit_aabb(aabb->left, ray, rec);
     hit_right = hit_aabb(aabb->right, ray, rec);
     return (hit_left || hit_right);
-}
+}*/

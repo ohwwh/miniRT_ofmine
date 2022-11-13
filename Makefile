@@ -11,7 +11,7 @@ SRCS = main.c ./parse/parse.c ./parse/parse_objs.c ./utils/utils.c ./parse/parse
 		./hit/hit_sphere.c ./hit/hit_plane.c ./hit/hit_cylinder.c ./hit/hit_rectangle.c ./hit/hit_box.c \
 		./render/path_render.c ./keybind/move_camera.c ./keybind/move_object.c \
 		./keybind/keypress.c ./utils/init.c ./ray/ray_create.c ./ray/ray_utils.c ./utils/color2.c \
-		./render/pdf.c ./render/pdf2.c ./render/scatter.c ./render/thread.c
+		./render/pdf.c ./render/pdf2.c ./render/scatter.c ./render/thread.c bvh.c
 INCS = ./includes/
 OBJS = $(SRCS:.c=.o)
 

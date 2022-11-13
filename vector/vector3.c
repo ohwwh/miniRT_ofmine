@@ -6,7 +6,7 @@
 /*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/24 17:21:52 by hako              #+#    #+#             */
-/*   Updated: 2022/10/27 00:34:19 by ohw              ###   ########.fr       */
+/*   Updated: 2022/11/12 22:28:09 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,17 @@ t_vec	vmin(t_vec vec1, t_vec vec2)
 	if (vec1.y > vec2.y)
 		vec1.y = vec2.y;
 	if (vec1.z > vec2.z)
+		vec1.z = vec2.z;
+	return (vec1);
+}
+
+t_vec	vmax(t_vec vec1, t_vec vec2)
+{
+	if (vec1.x < vec2.x)
+		vec1.x = vec2.x;
+	if (vec1.y < vec2.y)
+		vec1.y = vec2.y;
+	if (vec1.z < vec2.z)
 		vec1.z = vec2.z;
 	return (vec1);
 }
