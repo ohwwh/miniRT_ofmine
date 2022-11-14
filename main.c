@@ -6,7 +6,7 @@
 /*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 20:28:58 by hako              #+#    #+#             */
-/*   Updated: 2022/11/13 13:05:55 by ohw              ###   ########.fr       */
+/*   Updated: 2022/11/14 14:32:09 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,9 @@ int	main(int ac, char **av)
 	set_init_distance(&data);
 	create_light_object(&data.scene);
 	t_objs **objs_array = make_objs_array(data.scene.objs, data.scene.light, data.scene.objs_num);
+	test_print(data.scene, objs_array);
 	t_bvh_node *bvh = make_bvh(objs_array, 0, data.scene.objs_num - 1);
+	test_print(data.scene, objs_array);
 	free_bvh(bvh);
 	free(objs_array);
 	set_camera(&data.scene.camera);

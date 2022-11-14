@@ -6,7 +6,7 @@
 /*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 18:53:39 by hako              #+#    #+#             */
-/*   Updated: 2022/11/13 13:08:50 by ohw              ###   ########.fr       */
+/*   Updated: 2022/11/14 12:41:47 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,8 +107,10 @@ t_vec	calcul_color(t_scene *sc, t_hit_record hr, t_vec amb, t_ray ray)
 
 void	test_print(t_scene sc, t_objs **objs_array)
 {
-	for (int i = 0; i < sc.objs_num, i ++)
+	for (int i = 0; i < sc.objs_num; i ++)
 	{
-		printf("%d ", objs_array[i]->type);
+		printf("%lf ", objs_array[i]->center.x);
 	}
+	printf("%d ", objs_array[14]->type);
+	printf("\n");
 }

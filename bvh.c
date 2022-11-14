@@ -12,13 +12,15 @@ t_objs  **make_objs_array(t_objs *objs, t_light *light, int num)
     ret = (t_objs **)malloc(sizeof(t_objs *) * num);
     while (tmp)
     {
+        if (tmp->type == PL)
+            continue ;
         ret[i] = tmp;
         tmp->box = make_aabb(tmp);
         tmp = tmp->next;
         i ++;
     }
     tmp_light = light;
-    while (tmp)
+    while (tmp_light)
     {
         ret[i] = &(tmp_light->object);
         tmp_light->object.box = make_aabb(&(tmp_light->object));

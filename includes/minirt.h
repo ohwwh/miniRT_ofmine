@@ -6,7 +6,7 @@
 /*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 18:37:08 by hako              #+#    #+#             */
-/*   Updated: 2022/11/13 13:05:17 by ohw              ###   ########.fr       */
+/*   Updated: 2022/11/14 12:20:24 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -398,5 +398,6 @@ void			quick_sort(t_objs **objs_array, int start, int end);
 
 t_bvh_node  	*make_bvh(t_objs **objs_array, int start, int end);
 void    		free_bvh(t_bvh_node *root);
+void			test_print(t_scene sc, t_objs **objs_array);
 
 #endif

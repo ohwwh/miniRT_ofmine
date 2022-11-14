@@ -6,7 +6,7 @@
 /*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 18:53:04 by hako              #+#    #+#             */
-/*   Updated: 2022/11/12 23:39:22 by ohw              ###   ########.fr       */
+/*   Updated: 2022/11/14 12:24:43 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ void	parse_plane(t_scene *sc, char **tokens)
 		obj->fuzzy = 0;
 	else
 		obj->fuzzy = ft_atod(tokens[7]);
-	sc->objs_num ++;
+	//sc->objs_num ++;
 	obj->box = 0;
 }
 
