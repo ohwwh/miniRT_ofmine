@@ -32,6 +32,7 @@ int	ft_close(t_minirt *data)
 		data->scene.objs = data->scene.objs->next;
 		free(obj);
 	}
+	free_bvh(data->scene.bvh);
 	exit(0);
 }
 

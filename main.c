@@ -25,10 +25,10 @@ int	main(int ac, char **av)
 	set_init_distance(&data);
 	create_light_object(&data.scene);
 	t_objs **objs_array = make_objs_array(data.scene.objs, data.scene.light, data.scene.objs_num);
-	test_print(data.scene, objs_array);
+	//test_print(data.scene.objs_num, objs_array);
 	t_bvh_node *bvh = make_bvh(objs_array, 0, data.scene.objs_num - 1);
-	test_print(data.scene, objs_array);
-	free_bvh(bvh);
+	data.scene.bvh = bvh;
+	//test_print(data.scene.objs_num, objs_array);
 	free(objs_array);
 	set_camera(&data.scene.camera);
 	raw_render(&data);

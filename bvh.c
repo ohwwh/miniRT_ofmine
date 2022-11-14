@@ -15,6 +15,7 @@ t_objs  **make_objs_array(t_objs *objs, t_light *light, int num)
         if (tmp->type == PL)
             continue ;
         ret[i] = tmp;
+        tmp->idx = i;
         tmp->box = make_aabb(tmp);
         tmp = tmp->next;
         i ++;
@@ -23,6 +24,7 @@ t_objs  **make_objs_array(t_objs *objs, t_light *light, int num)
     while (tmp_light)
     {
         ret[i] = &(tmp_light->object);
+        tmp_light->object.idx = i;
         tmp_light->object.box = make_aabb(&(tmp_light->object));
         tmp_light = tmp_light->next;
         i ++;
@@ -42,12 +44,14 @@ t_bvh_node  *make_bvh(t_objs **objs_array, int start, int end)
     if (span == 0)
     {
         node->box = (objs_array[start])->box;
+        //printf("%d\n", objs_array[start]->idx);
         node->left = 0;
         node->right = 0;
 
         return (node);
     }
-    quick_sort(objs_array, start, end);
+    //quick_sort(objs_array, start, end, (rand() % 3));
+    quick_sort(objs_array, start, end, 0);
     mid = start + span / 2;
     node->left = make_bvh(objs_array, start, mid);
     node->right = make_bvh(objs_array, mid + 1, end);
@@ -64,5 +68,4 @@ void    free_bvh(t_bvh_node *root)
     free_bvh(root->right);
     free(root->box);
     free(root);
-    
 }

@@ -105,12 +105,11 @@ t_vec	calcul_color(t_scene *sc, t_hit_record hr, t_vec amb, t_ray ray)
 	return (vmin(ret, create_vec(1, 1, 1)));
 }
 
-void	test_print(t_scene sc, t_objs **objs_array)
+void	test_print(int num, t_objs **objs_array)
 {
-	for (int i = 0; i < sc.objs_num; i ++)
+	for (int i = 0; i < num; i ++)
 	{
-		printf("%lf ", objs_array[i]->center.x);
+		printf("%d ", objs_array[i]->idx);
 	}
-	printf("%d ", objs_array[14]->type);
 	printf("\n");
 }

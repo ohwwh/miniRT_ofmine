@@ -38,7 +38,7 @@
 # define WIDTH 800
 # define HEIGHT 600
 
-# define ANTI 1110
+# define ANTI 111
 # define LT	0.5
 double	lt;
 
@@ -55,6 +55,7 @@ double	lt;
 # define TH 3
 
 typedef struct s_minirt t_minirt;
+typedef struct s_objs t_objs;
 
 typedef enum s_bool{
 	FALSE = 0,
@@ -104,6 +105,7 @@ typedef struct s_aabb
 {
 	t_point			minimum;
 	t_point			maximum;
+	t_objs			*inner;
 } t_aabb;
 
 typedef struct s_objs
@@ -120,6 +122,7 @@ typedef struct s_objs
 	double			specular;
 	double			fuzzy;
 	t_aabb			*box;
+	int				idx;
 }	t_objs;
 
 typedef struct s_bvh_node
@@ -163,6 +166,7 @@ typedef struct s_scene
 	t_light		*light;
 	t_amb		amb;
 	t_objs		*objs;
+	t_bvh_node	*bvh;
 	int			objs_num;
 	int			anti;
 	int			changed;
@@ -334,6 +338,7 @@ double			mixture_pdf_value(t_hit_record *rec,
 t_hit_record	find_hitpoint(t_ray *ray, t_objs *objs);
 int				find_hitpoint_path(t_ray *ray, t_objs *objs,
 					t_light *light, t_hit_record *rec);
+int				find_hitpoint_bvh(t_ray *ray, t_bvh_node *bvh, t_hit_record *rec);
 void			hit_plane(t_objs *pl, t_ray *ray, t_hit_record *rec);
 void			hit_sphere(t_objs *s, t_ray	*r, t_hit_record *rec);
 void			hit_cylinder(t_objs *cy, t_ray *ray, t_hit_record *rec);
@@ -342,6 +347,7 @@ void			hit_rectangle_xy(t_objs *rect, t_ray *ray, t_hit_record *rec);
 void			hit_rectangle_yz(t_objs *rect, t_ray *ray, t_hit_record *rec);
 void			hit_rectangle_xz(t_objs *rect, t_ray *ray, t_hit_record *rec);
 void			hit_box(t_objs *box, t_ray *ray, t_hit_record* rec);
+int 			hit_aabb(t_aabb *aabb, t_ray *ray, t_hit_record* rec);
 void			set_face_normal(t_hit_record *rec,
 					t_ray *ray, t_vec outward_normal);
 
@@ -394,10 +400,10 @@ void			path_render_threaded(t_minirt *vars);
 t_objs  		**make_objs_array(t_objs *objs, t_light *light, int num);
 t_aabb			*make_aabb(t_objs *objs);
 t_aabb			*make_surrounding_aabb(t_aabb *a, t_aabb *b);
-void			quick_sort(t_objs **objs_array, int start, int end);
+void			quick_sort(t_objs **objs_array, int start, int end, int axis);
 
 t_bvh_node  	*make_bvh(t_objs **objs_array, int start, int end);
 void    		free_bvh(t_bvh_node *root);
-void			test_print(t_scene sc, t_objs **objs_array);
+void			test_print(int num, t_objs **objs_array);
 
 #endif

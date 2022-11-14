@@ -93,3 +93,35 @@ void	set_record(t_objs *s, t_ray *r, t_hit_record *rec, double root)
 	rec->fuzzy = s->fuzzy;
 	rec->type = s->type;
 }
+
+int	find_hitpoint_bvh(t_ray *ray, t_bvh_node *bvh, t_hit_record *rec)
+{
+	int hit_left, hit_right;
+
+    if (!hit_aabb(bvh->box, ray, rec))
+        return (0);
+    if (!bvh->left)
+    {
+        if (bvh->box->inner->type == SP)
+			hit_sphere(bvh->box->inner, ray, rec);
+		else if (bvh->box->inner->type == PL)
+			hit_plane(bvh->box->inner, ray, rec);
+		else if (bvh->box->inner->type == CY)
+		{
+			hit_cylinder(bvh->box->inner, ray, rec);
+			hit_caps(bvh->box->inner, ray, rec);
+		}
+		else if (bvh->box->inner->type == 4)
+			hit_rectangle_xy(bvh->box->inner, ray, rec);
+		else if (bvh->box->inner->type == 5)
+			hit_rectangle_yz(bvh->box->inner, ray, rec);
+		else if (bvh->box->inner->type == 6)
+			hit_rectangle_xz(bvh->box->inner, ray, rec);
+        //light와 plane이 아닌 오브젝트에 대해 충돌 검사.
+        return (1);
+    }
+    hit_left = find_hitpoint_bvh(ray, bvh->left, rec);
+    hit_right = find_hitpoint_bvh(ray, bvh->right, rec);
+
+    return (hit_left || hit_right);
+}

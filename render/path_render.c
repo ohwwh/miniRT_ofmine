@@ -29,6 +29,7 @@ t_color	ray_color_raw(t_ray r, t_scene *sc)
 	rec.tmax = -1.0;
 	rec.tmin = EPS;
 	find_hitpoint_path(&r, sc->objs, sc->light, &rec);
+	//find_hitpoint_bvh(&r, sc->bvh, &rec);
 	if (rec.t > EPS)
 		return (rec.color);
 	t = 0.5 * (unit_vec((r.dir)).y + 1.0);
@@ -47,7 +48,8 @@ t_color	ray_color(t_ray r, t_scene *sc, int depth)
 	rec.tmin = EPS;
 	if (depth <= 0)
 		return (create_vec(0, 0, 0));
-	find_hitpoint_path(&r, sc->objs, sc->light, &rec);
+	//find_hitpoint_path(&r, sc->objs, sc->light, &rec);
+	find_hitpoint_bvh(&r, sc->bvh, &rec);
 	if (rec.t >= EPS)
 	{
 		pdf = scatter(&r, &rec, &scattered, sc->light);
@@ -104,7 +106,7 @@ void	sampling(t_minirt *vars, int x, int y)
 	/*u = (((double)x * 2 / WIDTH) - 1) + (random_double(-1, 1, vars->scene.anti) / WIDTH);
 	v = (((double)y * 2 / HEIGHT) - 1) + (random_double(-1, 1, vars->scene.anti) / HEIGHT);*/
 	init_ray = ray_primary(&(vars->scene.camera), u, v);
-	if (x == 400 && y == HEIGHT - 400)
+	if (x == 179 && y == HEIGHT - 167)
 		x=x;
 	if (vars->is_trace == 1)
 		vars->ray.color = vec_sum(vars->ray.color,

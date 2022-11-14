@@ -5,6 +5,7 @@ t_aabb	*make_aabb(t_objs *objs)
 	t_aabb	*ret;
 
 	ret = (t_aabb *)malloc(sizeof(t_aabb));
+	ret->inner = objs;
 	if (objs->type == SP)
 	{
 		t_point	radius = create_vec(objs->radius, objs->radius, objs->radius);
@@ -24,9 +25,9 @@ t_aabb	*make_aabb(t_objs *objs)
 	else if (objs->type == RCXY)
 	{
 		ret->minimum = create_vec(objs->center.x
-							, objs->center.y
+							, objs->dir.x
 							, objs->radius - 0.0001);
-		ret->maximum = create_vec(objs->dir.x
+		ret->maximum = create_vec(objs->center.y
 							, objs->dir.y
 							, objs->radius + 0.0001);				
 	}
@@ -34,17 +35,17 @@ t_aabb	*make_aabb(t_objs *objs)
 	{
 		ret->minimum = create_vec(objs->radius - 0.0001
 							, objs->center.x
-							, objs->center.y);
+							, objs->dir.x);
 		ret->maximum = create_vec(objs->radius + 0.0001
-							, objs->dir.x
+							, objs->center.y
 							, objs->dir.y);				
 	}
 	else if (objs->type == RCXZ)
 	{
 		ret->minimum = create_vec(objs->center.x
 							, objs->radius - 0.0001
-							, objs->center.y);
-		ret->maximum = create_vec(objs->dir.x
+							, objs->dir.x);
+		ret->maximum = create_vec(objs->center.y
 							, objs->radius + 0.0001
 							, objs->dir.y);				
 	}
@@ -68,9 +69,9 @@ t_aabb	*make_surrounding_aabb(t_aabb *a, t_aabb *b)
 	small.y = fmin(a->minimum.y, b->minimum.y);
 	small.z = fmin(a->minimum.z, b->minimum.z);
 
-	big.x = fmin(a->maximum.x, b->maximum.x);
-	big.y = fmin(a->maximum.y, b->maximum.y);
-	big.z = fmin(a->maximum.z, b->maximum.z);
+	big.x = fmax(a->maximum.x, b->maximum.x);
+	big.y = fmax(a->maximum.y, b->maximum.y);
+	big.z = fmax(a->maximum.z, b->maximum.z);
 
 	ret->minimum = small;
 	ret->maximum = big;
