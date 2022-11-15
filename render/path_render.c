@@ -6,7 +6,7 @@
 /*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/25 00:08:40 by ohw               #+#    #+#             */
-/*   Updated: 2022/11/09 10:13:07 by ohw              ###   ########.fr       */
+/*   Updated: 2022/11/15 15:26:11 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,8 @@ t_color	ray_color(t_ray r, t_scene *sc, int depth)
 	rec.tmin = EPS;
 	if (depth <= 0)
 		return (create_vec(0, 0, 0));
-	//find_hitpoint_path(&r, sc->objs, sc->light, &rec);
-	find_hitpoint_bvh(&r, sc->bvh, &rec);
+	find_hitpoint_path(&r, sc->objs, sc->light, &rec);
+	//find_hitpoint_bvh(&r, sc->bvh, &rec);
 	if (rec.t >= EPS)
 	{
 		pdf = scatter(&r, &rec, &scattered, sc->light);
