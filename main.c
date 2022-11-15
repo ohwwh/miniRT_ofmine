@@ -6,7 +6,7 @@
 /*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 20:28:58 by hako              #+#    #+#             */
-/*   Updated: 2022/11/14 14:32:09 by ohw              ###   ########.fr       */
+/*   Updated: 2022/11/16 01:23:39 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ int	main(int ac, char **av)
 	t_objs **objs_array = make_objs_array(data.scene.objs, data.scene.light, data.scene.objs_num);
 	//test_print(data.scene.objs_num, objs_array);
 	t_bvh_node *bvh = make_bvh(objs_array, 0, data.scene.objs_num - 1);
+	data.scene.objs = make_none_bvh(data.scene.objs);
 	data.scene.bvh = bvh;
 	//test_print(data.scene.objs_num, objs_array);
 	free(objs_array);

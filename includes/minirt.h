@@ -6,7 +6,7 @@
 /*   By: ohw <ohw@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 18:37:08 by hako              #+#    #+#             */
-/*   Updated: 2022/11/14 12:20:24 by ohw              ###   ########.fr       */
+/*   Updated: 2022/11/16 01:13:18 by ohw              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -403,6 +403,7 @@ t_aabb			*make_surrounding_aabb(t_aabb *a, t_aabb *b);
 void			quick_sort(t_objs **objs_array, int start, int end, int axis);
 
 t_bvh_node  	*make_bvh(t_objs **objs_array, int start, int end);
+t_objs  		*make_none_bvh(t_objs *objs);
 void    		free_bvh(t_bvh_node *root);
 void			test_print(int num, t_objs **objs_array);
 
